@@ -13,8 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Fetching RSS feed from sydologie.com...');
-    const response = await fetch('https://sydologie.com/feed/');
+    console.log('Fetching RSS feed from politepol...');
+    const response = await fetch('https://politepol.com/fd/vqTGYzibhecy.xml');
     
     if (!response.ok) {
       throw new Error(`Failed to fetch RSS feed: ${response.status} ${response.statusText}`);
