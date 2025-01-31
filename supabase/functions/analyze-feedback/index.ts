@@ -31,6 +31,11 @@ serve(async (req) => {
       throw new Error('Feedback text and question text are required');
     }
 
+    if (!AZURE_API_KEY) {
+      console.error('Azure OpenAI API key is not set');
+      throw new Error('Azure OpenAI API key is not configured');
+    }
+
     const feedbackLines = feedbackText.split('\n').filter(line => line.trim().length > 0);
     const numberOfResponses = feedbackLines.length;
 
