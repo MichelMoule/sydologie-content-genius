@@ -22,6 +22,7 @@ export default {
         sydologie: {
           green: "#1B4D3E",
           coral: "#FF9B7A",
+          red: "#FF4B4B",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
