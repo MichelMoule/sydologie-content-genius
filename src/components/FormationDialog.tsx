@@ -5,7 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Clock, Euro, MapPin } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Clock, Euro, MapPin, User } from "lucide-react";
 
 interface FormationDialogProps {
   formation: {
@@ -48,29 +49,45 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
         )}
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{formation.name}</DialogTitle>
-          <DialogDescription className="flex flex-wrap gap-4 mt-2">
-            <span className="inline-flex items-center text-sm">
-              <Clock className="w-4 h-4 mr-1" />
-              {formation.durationInHours}h
-            </span>
-            <span className="inline-flex items-center text-sm">
-              <MapPin className="w-4 h-4 mr-1" />
-              {formation.trainingModality}
-            </span>
-            {mainCost && (
-              <span className="inline-flex items-center text-sm">
-                <Euro className="w-4 h-4 mr-1" />
-                {mainCost.cost}€
-              </span>
-            )}
-          </DialogDescription>
         </DialogHeader>
-        <div className="mt-4">
-          <h3 className="font-semibold mb-2">Description</h3>
-          <p className="text-muted-foreground whitespace-pre-wrap">{formation.description}</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-2 text-lg">Informations clés</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span>Formation {formation.trainingModality.toLowerCase()}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="w-4 h-4" />
+                  <span>Durée : {formation.durationInHours}h</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  <span>Accessible</span>
+                </div>
+                {mainCost && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Euro className="w-4 h-4" />
+                    <span>{mainCost.cost}€</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold mb-2 text-lg">Description</h3>
+            <p className="text-muted-foreground whitespace-pre-wrap">{formation.description}</p>
+          </div>
         </div>
+
+        <Separator className="my-6" />
+        
         {formation.publicRegistrationUrl && (
-          <div className="mt-6">
+          <div className="mt-2">
             <a
               href={formation.publicRegistrationUrl}
               target="_blank"

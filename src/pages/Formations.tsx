@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
-import { Clock, Euro, MapPin } from "lucide-react";
 import { useState, useMemo } from "react";
 import SearchBar from "@/components/SearchBar";
 import FormationFilters, { FormationType } from "@/components/FormationFilters";
 import FormationDialog from "@/components/FormationDialog";
+import FormationCard from "@/components/FormationCard";
 
 interface Formation {
   id: string;
@@ -31,57 +30,6 @@ interface Formation {
     type: string;
   }[];
 }
-
-const FormationCard = ({ formation, onClick }: { formation: Formation; onClick: () => void }) => {
-  const mainCost = formation.costs.find(cost => cost.type === 'INTER');
-  
-  return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer" onClick={onClick}>
-      {formation.image?.url && (
-        <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
-          <img
-            src={formation.image.url}
-            alt={formation.name}
-            className="object-cover w-full h-full"
-          />
-        </div>
-      )}
-      <CardHeader>
-        <CardTitle className="text-xl line-clamp-2">{formation.name}</CardTitle>
-        <CardDescription className="flex flex-wrap gap-2 mt-2">
-          <span className="inline-flex items-center text-sm">
-            <Clock className="w-4 h-4 mr-1" />
-            {formation.durationInHours}h
-          </span>
-          <span className="inline-flex items-center text-sm">
-            <MapPin className="w-4 h-4 mr-1" />
-            {formation.trainingModality}
-          </span>
-          {mainCost && (
-            <span className="inline-flex items-center text-sm">
-              <Euro className="w-4 h-4 mr-1" />
-              {mainCost.cost}€
-            </span>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow flex flex-col">
-        <p className="text-muted-foreground mb-4 line-clamp-3 flex-grow">
-          {formation.description}
-        </p>
-        <Button 
-          className="w-full bg-sydologie-green hover:bg-sydologie-green/90"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick();
-          }}
-        >
-          En savoir plus
-        </Button>
-      </CardContent>
-    </Card>
-  );
-};
 
 const fetchFormations = async (): Promise<Formation[]> => {
   const { data, error } = await supabase.functions.invoke('get-formations');
@@ -164,14 +112,15 @@ const Formations = () => {
                   <div className="w-full h-48 bg-muted rounded-t-lg">
                     <Skeleton className="h-full w-full" />
                   </div>
-                  <CardHeader>
-                    <Skeleton className="h-8 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-full" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20 w-full mb-4" />
+                  <div className="p-6">
+                    <Skeleton className="h-8 w-3/4 mb-4" />
+                    <div className="space-y-3 mb-4">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
                     <Skeleton className="h-10 w-full" />
-                  </CardContent>
+                  </div>
                 </Card>
               ))
             ) : (
