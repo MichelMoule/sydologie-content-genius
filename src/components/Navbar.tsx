@@ -1,17 +1,44 @@
 import { Button } from "./ui/button";
-import { User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { User, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
   return (
     <nav className="bg-black text-white">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/" className="text-2xl font-sans flex items-center">
+            <Link to="/" className="text-2xl font-sans flex items-center">
               Sydologie<span className="text-[#00FF00]">.ai</span>
-            </a>
+            </Link>
           </div>
 
           {/* Navigation Links */}
@@ -30,15 +57,28 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Login Button */}
+          {/* Auth Buttons */}
           <div className="flex items-center space-x-2">
-            <Button 
-              variant="ghost" 
-              className="text-[#00FF00] hover:text-white hover:bg-[#00FF00]/20"
-            >
-              <User className="mr-2 h-4 w-4" />
-              Me connecter
-            </Button>
+            {user ? (
+              <Button
+                variant="ghost"
+                className="text-[#00FF00] hover:text-white hover:bg-[#00FF00]/20"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Déconnexion
+              </Button>
+            ) : (
+              <Link to="/auth">
+                <Button
+                  variant="ghost"
+                  className="text-[#00FF00] hover:text-white hover:bg-[#00FF00]/20"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Me connecter
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
