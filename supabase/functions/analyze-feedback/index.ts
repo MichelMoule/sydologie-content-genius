@@ -77,7 +77,9 @@ Assurez-vous que :
 
     const userPrompt = `J'ai fait une formation sur "${questionText}".
 
-À l'issue de cela, j'ai proposé un questionnaire afin de récupérer les témoignages de mes participants. Voici les ${numberOfResponses} réponses reçues à la question "${questionText}" :
+À l'issue de cela j'ai proposé un questionnaire afin de récupérer les témoignages de mes participants. Ils pouvaient mettre des commentaires suivant cette question : "${questionText}"
+
+Voici les ${numberOfResponses} réponses reçues :
 
 ${feedbackText}
 
@@ -131,7 +133,7 @@ Merci de suivre strictement le format JSON demandé dans le prompt système pour
       },
     );
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error('Error processing feedback:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
