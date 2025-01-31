@@ -33,13 +33,13 @@ const Actualites = () => {
           </Button>
         </div>
         
-        <div className="flex flex-col space-y-8 max-w-3xl mx-auto">
+        <div className="flex flex-col space-y-8 max-w-2xl mx-auto">
           {articles.map((article) => (
-            <div key={article.id} className="flex flex-col space-y-4">
-              <div className="relative">
-                <div className="absolute left-0 bottom-0 z-10 p-4 space-y-1">
-                  <span className="text-[#00FF00] font-bold block">{article.category}</span>
-                  <span className="text-white block">{article.date}</span>
+            <div key={article.id} className="flex flex-col space-y-3 bg-white rounded-lg shadow-sm p-4">
+              <div className="relative max-w-sm mx-auto w-full">
+                <div className="absolute left-0 bottom-0 z-10 p-3 space-y-0.5">
+                  <span className="text-[#00FF00] font-bold block text-sm">{article.category}</span>
+                  <span className="text-white block text-xs">{article.date}</span>
                 </div>
                 <img
                   src={article.image}
@@ -48,10 +48,10 @@ const Actualites = () => {
                 />
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">
+                <h3 className="text-lg font-bold">
                   <span className="text-[#00FF00]">_</span>{article.title}
                 </h3>
-                <p className="text-gray-700 leading-relaxed text-sm">{article.description}</p>
+                <p className="text-gray-700 leading-relaxed text-xs">{article.description}</p>
               </div>
             </div>
           ))}
