@@ -21,6 +21,9 @@ const formSchema = z.object({
   trainingName: z.string().min(2, {
     message: "Le nom de la formation doit faire au moins 2 caractères.",
   }),
+  questionText: z.string().min(10, {
+    message: "La question doit faire au moins 10 caractères.",
+  }),
   feedbackText: z.string().min(10, {
     message: "Le retour doit faire au moins 10 caractères.",
   }),
@@ -32,6 +35,7 @@ const FeedbaIck = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       trainingName: "",
+      questionText: "Comment avez-vous trouvé la formation ?",
       feedbackText: "",
     },
   });
@@ -54,6 +58,7 @@ const FeedbaIck = () => {
       const { error } = await supabase.from("training_feedback").insert({
         user_id: user.id,
         training_name: values.trainingName,
+        question_text: values.questionText,
         feedback_text: values.feedbackText,
       });
 
@@ -114,6 +119,23 @@ const FeedbaIck = () => {
                       <FormLabel>Nom de la formation</FormLabel>
                       <FormControl>
                         <Input placeholder="Ex: Formation Excel Avancé" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="questionText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question posée aux apprenants</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Ex: Comment avez-vous trouvé la formation ?"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

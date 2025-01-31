@@ -39,6 +39,7 @@ export type Database = {
           created_at: string
           feedback_text: string
           id: string
+          question_text: string
           training_name: string
           user_id: string
         }
@@ -47,6 +48,7 @@ export type Database = {
           created_at?: string
           feedback_text: string
           id?: string
+          question_text?: string
           training_name: string
           user_id: string
         }
@@ -55,6 +57,7 @@ export type Database = {
           created_at?: string
           feedback_text?: string
           id?: string
+          question_text?: string
           training_name?: string
           user_id?: string
         }
