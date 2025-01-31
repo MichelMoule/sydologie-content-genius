@@ -8,6 +8,7 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Formations from "./pages/Formations";
 import Actualites from "./pages/Actualites";
+import Outils from "./pages/Outils";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/formations" element={<Formations />} />
           <Route path="/actualites" element={<Actualites />} />
+          <Route path="/outils" element={<Outils />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
