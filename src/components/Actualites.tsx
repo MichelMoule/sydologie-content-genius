@@ -21,36 +21,38 @@ const articles = [
 
 const Actualites = () => {
   return (
-    <section className="w-full py-16 bg-[#AEADAD]">
+    <section className="w-full py-16" style={{ backgroundColor: 'rgba(174, 173, 173, 0.1)' }}>
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-4xl font-bold">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+          <h2 className="text-4xl font-bold mb-4 md:mb-0">
             <span className="text-[#00FF00]">_</span>Les dernières actualités{" "}
             <span className="text-[#00FF00]">autour de l'ia</span>
           </h2>
-          <Button className="bg-[#00FF00] hover:bg-[#00DD00] text-black font-medium px-6 py-3">
+          <Button variant="ghost" className="text-black hover:text-[#00FF00] transition-colors">
             Voir plus d'actualités
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {articles.map((article) => (
-            <div key={article.id} className="flex flex-col">
-              <div className="relative aspect-video mb-4">
+            <div key={article.id} className="flex flex-col space-y-4">
+              <div className="relative">
+                <div className="absolute left-0 bottom-0 z-10 p-4 space-y-1">
+                  <span className="text-[#00FF00] font-bold block">{article.category}</span>
+                  <span className="text-white block">{article.date}</span>
+                </div>
                 <img
                   src={article.image}
                   alt={article.title}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full aspect-[16/9] object-cover rounded-lg"
                 />
-                <div className="absolute bottom-4 left-4 flex flex-col">
-                  <span className="text-[#00FF00] font-bold">{article.category}</span>
-                  <span className="text-white">{article.date}</span>
-                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-2">
-                <span className="text-[#00FF00]">_</span>{article.title}
-              </h3>
-              <p className="text-gray-800">{article.description}</p>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold">
+                  <span className="text-[#00FF00]">_</span>{article.title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed">{article.description}</p>
+              </div>
             </div>
           ))}
         </div>
