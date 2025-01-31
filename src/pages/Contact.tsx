@@ -16,11 +16,13 @@ const Contact = () => {
 
   if (isSubmitted) {
     return (
-      <>
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div className="min-h-[600px] bg-[#1EFF02] flex flex-col items-center justify-center px-4">
+        <div className="flex-1 bg-[#1EFF02] flex flex-col items-center justify-center px-4">
           <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl text-white">
-            VOTRE MESSAGE A BIEN ÉTÉ ENVOYÉ
+            VOTRE MESSAGE
+            <br />
+            A BIEN ÉTÉ ENVOYÉ
           </h1>
           <p className="text-center mb-8 max-w-xl text-white">
             Nous vous remercions pour l'intérêt que vous nous portez et nous répondrons dans les plus brefs délais.
@@ -32,7 +34,7 @@ const Contact = () => {
             Revenir à la page d'accueil
           </Link>
         </div>
-      </>
+      </div>
     );
   }
 
