@@ -14,10 +14,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const formSchema = z.object({
   trainingName: z.string().min(2, {
@@ -35,6 +41,7 @@ const FeedbaIck = () => {
   const { toast } = useToast();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +68,6 @@ const FeedbaIck = () => {
         return;
       }
 
-      // Analyze feedback using Azure OpenAI
       const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-feedback', {
         body: {
           feedbackText: values.feedbackText,
@@ -73,8 +79,8 @@ const FeedbaIck = () => {
       
       const aiAnalysis = analysisData.analysis;
       setAnalysis(aiAnalysis);
+      setIsDialogOpen(true);
 
-      // Save feedback and analysis to database
       const { error } = await supabase.from("training_feedback").insert({
         user_id: user.id,
         training_name: values.trainingName,
@@ -127,15 +133,6 @@ const FeedbaIck = () => {
             <p className="text-lg">
               Notre système d'IA vous aide à identifier les points clés et les tendances dans les retours qualitatifs de vos formations.
             </p>
-
-            {analysis && (
-              <Alert className="mt-6">
-                <AlertTitle className="text-xl">Analyse IA du retour</AlertTitle>
-                <AlertDescription className="mt-2 whitespace-pre-wrap text-base">
-                  {analysis}
-                </AlertDescription>
-              </Alert>
-            )}
           </div>
           
           {/* Right Column - Feedback Form */}
@@ -198,6 +195,17 @@ const FeedbaIck = () => {
             </Form>
           </div>
         </div>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Analyse des retours</DialogTitle>
+            </DialogHeader>
+            <div className="prose prose-sm dark:prose-invert mt-4">
+              {analysis && <ReactMarkdown>{analysis}</ReactMarkdown>}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
