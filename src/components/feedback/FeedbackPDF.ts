@@ -34,7 +34,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
 
     pdf.setFontSize(fontSize);
     pdf.setFont("helvetica", isBold ? "bold" : "normal");
-    pdf.setTextColor(...color);
+    pdf.setTextColor(color[0], color[1], color[2]);
 
     const lines = pdf.splitTextToSize(text, maxWidth - indent);
     pdf.text(lines, margin + indent, y);
@@ -89,7 +89,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     }
 
     // Theme header
-    const themeColor = theme.isNegative ? [255, 75, 75] : [27, 77, 62];
+    const themeColor: [number, number, number] = theme.isNegative ? [255, 75, 75] : [27, 77, 62];
     const themeIcon = theme.isNegative ? "⚠️" : "✅";
     
     yPosition = addText(
