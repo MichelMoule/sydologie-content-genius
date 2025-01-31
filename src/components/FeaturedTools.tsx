@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "./ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const tools = [
   {
@@ -25,8 +26,8 @@ const tools = [
 
 const FeaturedTools = () => {
   return (
-    <div className="container mx-auto py-16">
-      <h2 className="text-3xl font-bold mb-12 font-unbounded">
+    <div className="w-full max-w-none py-16">
+      <h2 className="text-3xl font-bold mb-12 font-unbounded container mx-auto">
         <span className="text-[#00FF00]">_</span>Nos outils à la une
       </h2>
       <div className="space-y-8">
@@ -55,10 +56,14 @@ const FeaturedTools = () => {
                 ))}
               </CarouselContent>
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-auto w-auto bg-transparent hover:bg-transparent border-none text-white" />
+                <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                  <ChevronRight className="h-8 w-8" />
+                </CarouselNext>
               </div>
               <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-auto w-auto bg-transparent hover:bg-transparent border-none text-white" />
+                <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                  <ChevronLeft className="h-8 w-8" />
+                </CarouselPrevious>
               </div>
             </Carousel>
           </div>
