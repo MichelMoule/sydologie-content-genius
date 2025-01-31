@@ -30,7 +30,7 @@ const FeedbaIck = () => {
           </div>
           
           {/* Right Column - Will be used for the form/interface later */}
-          <div className="bg-white rounded-lg shadow-xl p-8">
+          <div className="bg-white rounded-lg shadow-xl p-12 min-h-[600px] md:col-span-1 lg:col-span-1">
             {/* Placeholder for future content */}
           </div>
         </div>
