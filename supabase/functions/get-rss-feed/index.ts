@@ -24,7 +24,7 @@ serve(async (req) => {
     const xmlText = await response.text();
     
     const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlText, 'text/xml');
+    const doc = parser.parseFromString(xmlText, 'application/xml');
     
     if (!doc) {
       throw new Error('Failed to parse RSS feed XML');
