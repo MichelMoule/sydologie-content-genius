@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -24,9 +25,9 @@ const Navbar = () => {
             <a href="#" className="hover:text-[#00FF00] transition-colors">
               _Formations
             </a>
-            <a href="#" className="hover:text-[#00FF00] transition-colors">
+            <Link to="/contact" className="hover:text-[#00FF00] transition-colors">
               Nous contacter
-            </a>
+            </Link>
           </div>
 
           {/* Login Button */}
