@@ -82,17 +82,17 @@ const Outils = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.conception.map((tool) => (
-              <div key={tool.id} className="bg-zinc-900 rounded-lg p-6">
+              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
                 <img
                   src={tool.image}
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2 text-white">
+                <h4 className="text-xl font-bold mb-2">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
-                <p className="text-gray-300">{tool.description}</p>
+                <p className="text-gray-700">{tool.description}</p>
               </div>
             ))}
           </div>
@@ -105,17 +105,17 @@ const Outils = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.realisation.map((tool) => (
-              <div key={tool.id} className="bg-zinc-900 rounded-lg p-6">
+              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
                 <img
                   src={tool.image}
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2 text-white">
+                <h4 className="text-xl font-bold mb-2">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
-                <p className="text-gray-300">{tool.description}</p>
+                <p className="text-gray-700">{tool.description}</p>
               </div>
             ))}
           </div>
@@ -128,17 +128,17 @@ const Outils = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.analyse.map((tool) => (
-              <div key={tool.id} className="bg-zinc-900 rounded-lg p-6">
+              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
                 <img
                   src={tool.image}
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2 text-white">
+                <h4 className="text-xl font-bold mb-2">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
-                <p className="text-gray-300">{tool.description}</p>
+                <p className="text-gray-700">{tool.description}</p>
               </div>
             ))}
           </div>
