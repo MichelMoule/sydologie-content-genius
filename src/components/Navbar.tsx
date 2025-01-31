@@ -46,9 +46,9 @@ const Navbar = () => {
             <a href="#" className="hover:text-[#00FF00] transition-colors">
               _Outils
             </a>
-            <a href="#" className="hover:text-[#00FF00] transition-colors">
+            <Link to="/actualites" className="hover:text-[#00FF00] transition-colors">
               _Actualités
-            </a>
+            </Link>
             <Link to="/formations" className="hover:text-[#00FF00] transition-colors">
               _Formations
             </Link>

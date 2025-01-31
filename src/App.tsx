@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Formations from "./pages/Formations";
+import Actualites from "./pages/Actualites";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/formations" element={<Formations />} />
+          <Route path="/actualites" element={<Actualites />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
