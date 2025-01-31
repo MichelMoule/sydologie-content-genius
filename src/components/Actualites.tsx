@@ -33,7 +33,7 @@ const Actualites = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="flex flex-col space-y-8 max-w-3xl mx-auto">
           {articles.map((article) => (
             <div key={article.id} className="flex flex-col space-y-4">
               <div className="relative">
@@ -48,10 +48,10 @@ const Actualites = () => {
                 />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold">
+                <h3 className="text-xl font-bold">
                   <span className="text-[#00FF00]">_</span>{article.title}
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{article.description}</p>
+                <p className="text-gray-700 leading-relaxed text-sm">{article.description}</p>
               </div>
             </div>
           ))}
