@@ -32,6 +32,18 @@ const tools = [
     ],
     cta: "TESTEZ CET OUTIL",
     rating: 4
+  },
+  {
+    id: 3,
+    name: "RÉSUM A.I.",
+    description: "GÉNÉREZ DES RÉSUMÉS DE VOS CONTENUS DE FORMATION",
+    quote: "Premium qualiA.I.",
+    images: [
+      "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png",
+      "/lovable-uploads/f36a7d7c-eae6-49b4-a128-6d31511bacd9.png"
+    ],
+    cta: "TESTEZ CET OUTIL",
+    rating: 4
   }
 ];
 
@@ -42,16 +54,16 @@ const FeaturedTools = () => {
         <span className="text-[#00FF00]">_</span>Nos outils à la une
       </h2>
       <div className="space-y-0">
-        {tools.map((tool) => (
+        {tools.map((tool, index) => (
           <div key={tool.id} className="w-full">
             <Carousel className="w-full relative">
               <CarouselContent>
-                {tool.images.map((image, index) => (
-                  <CarouselItem key={index}>
+                {tool.images.map((image, imageIndex) => (
+                  <CarouselItem key={imageIndex}>
                     <div className="relative">
                       <img 
                         src={image} 
-                        alt={`${tool.name} slide ${index + 1}`}
+                        alt={`${tool.name} slide ${imageIndex + 1}`}
                         className="w-full h-auto"
                       />
                       <div className="absolute bottom-0 left-0 w-full p-4 flex justify-center">
@@ -66,16 +78,34 @@ const FeaturedTools = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                  <ChevronRight className="h-8 w-8" />
-                </CarouselNext>
-              </div>
-              <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                  <ChevronLeft className="h-8 w-8" />
-                </CarouselPrevious>
-              </div>
+              {index === 0 && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                    <ChevronRight className="h-8 w-8" />
+                  </CarouselNext>
+                </div>
+              )}
+              {index === tools.length - 1 && (
+                <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                  <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                    <ChevronLeft className="h-8 w-8" />
+                  </CarouselPrevious>
+                </div>
+              )}
+              {index !== 0 && index !== tools.length - 1 && (
+                <>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                      <ChevronRight className="h-8 w-8" />
+                    </CarouselNext>
+                  </div>
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                      <ChevronLeft className="h-8 w-8" />
+                    </CarouselPrevious>
+                  </div>
+                </>
+              )}
             </Carousel>
           </div>
         ))}
