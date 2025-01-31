@@ -11,6 +11,8 @@ const AZURE_API_KEY = Deno.env.get('AZURE_OPENAI_API_KEY');
 
 serve(async (req) => {
   console.log('Function called - Starting execution');
+  console.log('Request method:', req.method);
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()));
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -19,22 +21,33 @@ serve(async (req) => {
   }
 
   try {
-    const { feedbackText, questionText } = await req.json();
-    console.log('Received request with:', { feedbackText, questionText });
+    const requestBody = await req.json();
+    console.log('Raw request body:', JSON.stringify(requestBody, null, 2));
+    
+    const { feedbackText, questionText } = requestBody;
+    console.log('Extracted fields:', { 
+      feedbackText: feedbackText?.substring(0, 100) + '...', // Log first 100 chars for privacy
+      questionText,
+      feedbackLength: feedbackText?.length,
+    });
 
     if (!feedbackText || !questionText) {
-      console.error('Missing required fields:', { feedbackText, questionText });
+      console.error('Missing required fields:', { 
+        hasFeedbackText: !!feedbackText, 
+        hasQuestionText: !!questionText 
+      });
       throw new Error('Feedback text and question text are required');
     }
 
     console.log('API Key present:', !!AZURE_API_KEY);
+    console.log('API Key length:', AZURE_API_KEY?.length);
     console.log('Using Azure endpoint:', AZURE_ENDPOINT);
 
     const systemPrompt = "Vous êtes un expert en analyse de retours de formation. Analysez le retour ci-dessous et fournissez une analyse constructive et détaillée.";
     const userPrompt = `Question posée : ${questionText}\n\nRetour de l'apprenant : ${feedbackText}\n\nVeuillez analyser ce retour et fournir des insights pertinents.`;
 
     console.log('Preparing request to Azure OpenAI');
-    const requestBody = {
+    const requestBodyForAzure = {
       messages: [
         {
           role: "system",
@@ -55,18 +68,20 @@ serve(async (req) => {
       top_p: 0.95,
       max_tokens: 800
     };
-    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+    console.log('Request body for Azure:', JSON.stringify(requestBodyForAzure, null, 2));
 
+    console.log('Making request to Azure...');
     const response = await fetch(AZURE_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'api-key': AZURE_API_KEY!,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBodyForAzure),
     });
 
     console.log('Azure API Response status:', response.status);
+    console.log('Azure API Response headers:', Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
       const error = await response.json();
@@ -74,10 +89,25 @@ serve(async (req) => {
       throw new Error('Failed to analyze feedback');
     }
 
-    const data = await response.json();
-    console.log('Azure API Response data:', JSON.stringify(data, null, 2));
+    const responseText = await response.text();
+    console.log('Raw response text:', responseText);
 
-    const analysis = data.choices[0].message.content[0].text;
+    let data;
+    try {
+      data = JSON.parse(responseText);
+      console.log('Parsed Azure API Response data:', JSON.stringify(data, null, 2));
+    } catch (parseError) {
+      console.error('Error parsing response:', parseError);
+      console.error('Invalid JSON response:', responseText);
+      throw new Error('Invalid response from Azure API');
+    }
+
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Unexpected response structure:', data);
+      throw new Error('Unexpected response structure from Azure API');
+    }
+
+    const analysis = data.choices[0].message.content;
     console.log('Final analysis:', analysis);
 
     return new Response(
@@ -89,7 +119,7 @@ serve(async (req) => {
     console.error('Error stack:', error.stack);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
+      {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
