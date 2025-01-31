@@ -70,7 +70,7 @@ const Formations = () => {
       <section className="relative overflow-hidden py-16 lg:py-24">
         {/* Background Text */}
         <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-          <span className="text-[12vw] font-bold text-sydologie-green whitespace-nowrap">
+          <span className="text-[12vw] font-bold text-[#1EFF02] whitespace-nowrap">
             FORMATIONS
           </span>
         </div>
@@ -81,7 +81,7 @@ const Formations = () => {
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold">
                 Nous proposons des formations{" "}
-                <span className="text-sydologie-green">
+                <span className="text-[#1EFF02]">
                   interactives et innovantes.
                 </span>
               </h1>
@@ -94,12 +94,12 @@ const Formations = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-sydologie-green/10 p-8 rounded-lg">
+            <div className="bg-[#1EFF02]/10 p-8 rounded-lg">
               <p className="text-lg">
                 Nous organisons des formations intra-entreprise dans vos locaux et des formations inter-entreprises à Lyon et à Paris. Nous sommes référencés au DATADOCK. Découvrez le rapport d'activité de nos formations sur ce{" "}
                 <a 
                   href="#" 
-                  className="text-sydologie-green hover:underline font-semibold"
+                  className="text-[#1EFF02] hover:underline font-semibold"
                 >
                   lien
                 </a>
