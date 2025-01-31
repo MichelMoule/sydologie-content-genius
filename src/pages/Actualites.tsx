@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import Navbar from "@/components/Navbar";
 
 interface Article {
   title: string;
@@ -31,13 +32,14 @@ const Actualites = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="container mx-auto px-4 py-16">
         <h1 className="text-4xl font-bold mb-12">
           <span className="text-[#00FF00]">_</span>Actualités
         </h1>
 
         {isLoading ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-8">
             {[...Array(6)].map((_, i) => (
               <Card key={i} className="overflow-hidden">
                 <Skeleton className="h-48 w-full" />
@@ -56,41 +58,41 @@ const Actualites = () => {
             Une erreur est survenue lors du chargement des articles.
           </div>
         ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-8">
             {articles?.map((article, index) => (
               <a
                 key={index}
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group"
+                className="group block"
               >
-                <Card className="h-full overflow-hidden transition-transform duration-200 hover:scale-[1.02]">
-                  {article.imageUrl && (
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <img
-                        src={article.imageUrl}
-                        alt={article.title}
-                        className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                <Card className="overflow-hidden transition-transform duration-200 hover:scale-[1.02]">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {article.imageUrl && (
+                      <div className="relative md:w-1/3">
+                        <img
+                          src={article.imageUrl}
+                          alt={article.title}
+                          className="h-48 w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 p-6">
+                      <CardTitle className="group-hover:text-[#00FF00] transition-colors mb-2">
+                        {article.title}
+                      </CardTitle>
+                      <CardDescription className="mb-4">
+                        {article.pubDate && format(new Date(article.pubDate), 'dd MMMM yyyy', { locale: fr })}
+                      </CardDescription>
+                      <div 
+                        className="text-muted-foreground line-clamp-3"
+                        dangerouslySetInnerHTML={{ 
+                          __html: article.description 
+                        }} 
                       />
                     </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="group-hover:text-[#00FF00] transition-colors">
-                      {article.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {article.pubDate && format(new Date(article.pubDate), 'dd MMMM yyyy', { locale: fr })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div 
-                      className="text-muted-foreground line-clamp-3"
-                      dangerouslySetInnerHTML={{ 
-                        __html: article.description 
-                      }} 
-                    />
-                  </CardContent>
+                  </div>
                 </Card>
               </a>
             ))}
