@@ -17,7 +17,7 @@ const Hero = () => {
         
         <div className="md:w-1/2 flex flex-col justify-end" style={{ paddingTop: "180px" }}>
           <p className="text-gray-600 mb-8 font-unbounded">
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores.
+            Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est RGPD !
           </p>
           <div className="space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
             <Button 
