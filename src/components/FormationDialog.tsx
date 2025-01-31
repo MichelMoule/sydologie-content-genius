@@ -98,7 +98,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
                   href={formation.publicRegistrationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-sydologie-green hover:bg-sydologie-green/90 text-white py-3 px-4 rounded text-center inline-block transition-colors"
+                  className="w-full bg-[#1EFF02] hover:bg-[#1EFF02]/90 text-black py-3 px-4 rounded text-center inline-block transition-colors"
                 >
                   S'inscrire à la formation
                 </a>
