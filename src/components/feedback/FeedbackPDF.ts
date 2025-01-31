@@ -58,6 +58,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     
+    // Fix: Properly set text color based on theme
     if (theme.isNegative) {
       pdf.setTextColor(255, 75, 75);
     } else {
