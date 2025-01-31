@@ -18,6 +18,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   const lineHeight = 7;
   const margin = 20;
   const pageWidth = pdf.internal.pageSize.width;
+  const pageHeight = pdf.internal.pageSize.height;
   const maxWidth = pageWidth - (2 * margin);
 
   // Helper function to calculate text height
@@ -25,6 +26,16 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     pdf.setFontSize(fontSize);
     const lines = pdf.splitTextToSize(text, maxWidth - indent);
     return lines.length * lineHeight;
+  };
+
+  // Helper function to check if we need a new page
+  const checkAndAddNewPage = (neededHeight: number) => {
+    if (yPosition + neededHeight > pageHeight - 20) {
+      pdf.addPage();
+      yPosition = 20;
+      return true;
+    }
+    return false;
   };
 
   // Helper function to add text and return new Y position
@@ -48,17 +59,23 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     pdf.setTextColor(color[0], color[1], color[2]);
 
     const lines = pdf.splitTextToSize(text, maxWidth - indent);
+    const textHeight = lines.length * lineHeight;
+    
+    // Check if we need a new page before adding text
+    if (!isHeader && checkAndAddNewPage(textHeight)) {
+      y = 20;
+    }
     
     if (isHeader) {
       pdf.setFillColor(249, 250, 251);
-      pdf.rect(margin, y - 5, maxWidth, 10 + (lines.length * lineHeight), 'F');
+      pdf.rect(margin, y - 5, maxWidth, 10 + textHeight, 'F');
     }
     
     lines.forEach((line: string, index: number) => {
       pdf.text(line, margin + indent, y + (index * lineHeight));
     });
     
-    return y + (lines.length * lineHeight) + (isHeader ? 5 : 0);
+    return y + textHeight + (isHeader ? 5 : 0);
   };
 
   // Title (training name)
@@ -91,15 +108,8 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
 
   // Process each theme
   analysis.themes.forEach((theme) => {
-    if (yPosition > pdf.internal.pageSize.height - 40) {
-      pdf.addPage();
-      yPosition = 20;
-    }
-
-    const startY = yPosition - 5;
-    let contentHeight = 0;
-
     // Calculate total height needed for this theme
+    let contentHeight = 0;
     contentHeight += calculateTextHeight(`${theme.title}`, 16);
     contentHeight += calculateTextHeight(theme.description);
     contentHeight += calculateTextHeight("Témoignages représentatifs :", 14);
@@ -117,6 +127,13 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
 
     // Add padding
     contentHeight += lineHeight * 3;
+
+    // Check if we need a new page
+    if (checkAndAddNewPage(contentHeight)) {
+      yPosition = 20;
+    }
+
+    const startY = yPosition - 5;
 
     const bgColor: [number, number, number] = theme.isNegative ? 
       [254, 242, 242] : 
@@ -174,7 +191,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   pdf.setFontSize(10);
   pdf.setTextColor(128, 128, 128);
   pdf.text(
-    `Rapport généré le ${today} via FEEDBAICK`,
+    `Rapport généré le ${today} via Sydologie.ai`,
     margin,
     pdf.internal.pageSize.height - 10
   );
