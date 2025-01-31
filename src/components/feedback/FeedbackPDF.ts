@@ -20,6 +20,13 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   const pageWidth = pdf.internal.pageSize.width;
   const maxWidth = pageWidth - (2 * margin);
 
+  // Helper function to calculate text height
+  const calculateTextHeight = (text: string, fontSize: number = 12, indent: number = 0) => {
+    pdf.setFontSize(fontSize);
+    const lines = pdf.splitTextToSize(text, maxWidth - indent);
+    return lines.length * lineHeight;
+  };
+
   // Helper function to add text and return new Y position
   const addText = (text: string, y: number, options: {
     fontSize?: number;
@@ -89,12 +96,34 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
       yPosition = 20;
     }
 
+    const startY = yPosition - 5;
+    let contentHeight = 0;
+
+    // Calculate total height needed for this theme
+    contentHeight += calculateTextHeight(`${theme.title}`, 16);
+    contentHeight += calculateTextHeight(theme.description);
+    contentHeight += calculateTextHeight("Témoignages représentatifs :", 14);
+    theme.testimonials.forEach((testimonial) => {
+      contentHeight += calculateTextHeight(`• ${testimonial}`, 12, 5);
+    });
+
+    if (theme.isNegative && theme.improvements) {
+      contentHeight += lineHeight;
+      contentHeight += calculateTextHeight("Suggestions d'amélioration :", 14);
+      theme.improvements.forEach((improvement) => {
+        contentHeight += calculateTextHeight(`• ${improvement}`, 12, 5);
+      });
+    }
+
+    // Add padding
+    contentHeight += lineHeight * 3;
+
     const bgColor: [number, number, number] = theme.isNegative ? 
       [254, 242, 242] : 
       [240, 253, 244];
     
     pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-    pdf.rect(margin, yPosition - 5, maxWidth, 40, 'F');
+    pdf.rect(margin, startY, maxWidth, contentHeight, 'F');
 
     const themeIcon = theme.isNegative ? "!" : "✓";
     yPosition = addText(
