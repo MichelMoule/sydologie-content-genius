@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const formSchema = z.object({
   trainingName: z.string().min(2, {
@@ -31,6 +32,9 @@ const formSchema = z.object({
 
 const FeedbaIck = () => {
   const { toast } = useToast();
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,6 +46,7 @@ const FeedbaIck = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      setIsAnalyzing(true);
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -55,21 +60,35 @@ const FeedbaIck = () => {
         return;
       }
 
+      // Analyze feedback using Azure OpenAI
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-feedback', {
+        body: {
+          feedbackText: values.feedbackText,
+          questionText: values.questionText,
+        },
+      });
+
+      if (analysisError) throw analysisError;
+      
+      const aiAnalysis = analysisData.analysis;
+      setAnalysis(aiAnalysis);
+
+      // Save feedback and analysis to database
       const { error } = await supabase.from("training_feedback").insert({
         user_id: user.id,
         training_name: values.trainingName,
         question_text: values.questionText,
         feedback_text: values.feedbackText,
+        ai_analysis: aiAnalysis,
       });
 
       if (error) throw error;
 
       toast({
         title: "Succès",
-        description: "Votre retour a été enregistré avec succès.",
+        description: "Votre retour a été enregistré et analysé avec succès.",
       });
 
-      form.reset();
     } catch (error) {
       console.error("Error submitting feedback:", error);
       toast({
@@ -77,6 +96,8 @@ const FeedbaIck = () => {
         title: "Erreur",
         description: "Une erreur est survenue lors de l'envoi du retour.",
       });
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -85,14 +106,14 @@ const FeedbaIck = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
-        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">
+        <Link to="/outils" className="text-[#00FF00] hover:underline mb-8 inline-block">
           &lt; Outils
         </Link>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
           {/* Left Column */}
           <div className="space-y-8">
-            <h1 className="text-6xl font-bold text-sydologie-red">FEEDBAICK</h1>
+            <h1 className="text-6xl font-bold">FEEDBAICK</h1>
             
             <h2 className="text-3xl font-bold leading-tight">
               Vous avez reçu des centaines de retours suite à votre dernière formation et ne savez pas comment les traiter rapidement ?
@@ -105,6 +126,13 @@ const FeedbaIck = () => {
             <p className="text-lg">
               Notre système d'IA vous aide à identifier les points clés et les tendances dans les retours qualitatifs de vos formations.
             </p>
+
+            {analysis && (
+              <div className="bg-white rounded-lg p-6 shadow-lg">
+                <h3 className="text-xl font-bold mb-4">Analyse IA du retour</h3>
+                <p className="whitespace-pre-wrap">{analysis}</p>
+              </div>
+            )}
           </div>
           
           {/* Right Column - Feedback Form */}
@@ -160,8 +188,8 @@ const FeedbaIck = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full">
-                  Analyser les retours
+                <Button type="submit" className="w-full" disabled={isAnalyzing}>
+                  {isAnalyzing ? "Analyse en cours..." : "Analyser les retours"}
                 </Button>
               </form>
             </Form>

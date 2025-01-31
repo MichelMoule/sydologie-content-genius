@@ -11,3 +11,6 @@ port = 54322
 [functions]
 [functions.get-rss-feed]
 verify_jwt = false
+
+[functions.analyze-feedback]
+verify_jwt = false
