@@ -5,6 +5,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { Clock, Euro, MapPin } from "lucide-react";
+import { useState, useMemo } from "react";
+import SearchBar from "@/components/SearchBar";
+import FormationFilters, { FormationType } from "@/components/FormationFilters";
 
 interface Formation {
   id: string;
@@ -27,15 +30,6 @@ interface Formation {
     type: string;
   }[];
 }
-
-const fetchFormations = async (): Promise<Formation[]> => {
-  const { data, error } = await supabase.functions.invoke('get-formations');
-  
-  if (error) throw error;
-  if (!data?.data?.programs) throw new Error('No formations found');
-  
-  return data.data.programs;
-};
 
 const FormationCard = ({ formation }: { formation: Formation }) => {
   const mainCost = formation.costs.find(cost => cost.type === 'INTER');
@@ -87,23 +81,69 @@ const FormationCard = ({ formation }: { formation: Formation }) => {
   );
 };
 
+const fetchFormations = async (): Promise<Formation[]> => {
+  const { data, error } = await supabase.functions.invoke('get-formations');
+  
+  if (error) throw error;
+  if (!data?.data?.programs) throw new Error('No formations found');
+  
+  return data.data.programs;
+};
+
 const Formations = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<FormationType>("all");
+  
   const { data: formations, isLoading, error } = useQuery({
     queryKey: ['formations'],
     queryFn: fetchFormations,
   });
 
+  const filteredFormations = useMemo(() => {
+    if (!formations) return [];
+
+    return formations.filter(formation => {
+      const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          formation.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesType = selectedType === "all" || 
+                         (selectedType === "presentielle" && formation.trainingModality.toLowerCase().includes("présentiel")) ||
+                         (selectedType === "mixte" && formation.trainingModality.toLowerCase().includes("mixte")) ||
+                         (selectedType === "a-distance" && formation.trainingModality.toLowerCase().includes("distance"));
+
+      return matchesSearch && matchesType;
+    });
+  }, [formations, searchQuery, selectedType]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
           Nos Formations
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Découvrez nos formations pour développer vos compétences et atteindre vos objectifs professionnels.
         </p>
+      </section>
+
+      {/* Filters Section */}
+      <section className="container mx-auto px-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="w-full md:w-[300px]">
+            <SearchBar 
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Rechercher une formation..."
+            />
+          </div>
+          <FormationFilters 
+            selectedType={selectedType}
+            onTypeChange={setSelectedType}
+          />
+        </div>
       </section>
 
       {/* Formations list */}
@@ -132,10 +172,16 @@ const Formations = () => {
                 </Card>
               ))
             ) : (
-              formations?.map((formation) => (
+              filteredFormations.map((formation) => (
                 <FormationCard key={formation.id} formation={formation} />
               ))
             )}
+          </div>
+        )}
+        
+        {!isLoading && filteredFormations.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            Aucune formation ne correspond à vos critères de recherche.
           </div>
         )}
       </section>
