@@ -24,6 +24,11 @@ interface FormationCardProps {
 }
 
 const FormationCard = ({ formation, onClick }: FormationCardProps) => {
+  const getTrainingModality = (modality: string) => {
+    if (typeof modality !== 'string') return 'Formation';
+    return `Formation ${modality.toLowerCase()}`;
+  };
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group" onClick={onClick}>
       {formation.image?.url && (
@@ -42,7 +47,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
         <div className="space-y-3 flex-grow">
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
-            <span>Formation {formation.trainingModality.toLowerCase()}</span>
+            <span>{getTrainingModality(formation.trainingModality)}</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="w-4 h-4" />

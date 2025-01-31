@@ -34,6 +34,11 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
   if (!formation) return null;
 
   const mainCost = formation.costs.find((cost) => cost.type === "INTER");
+  
+  const getTrainingModality = (modality: string) => {
+    if (typeof modality !== 'string') return 'Formation';
+    return `Formation ${modality.toLowerCase()}`;
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -58,7 +63,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
-                  <span>Formation {formation.trainingModality.toLowerCase()}</span>
+                  <span>{getTrainingModality(formation.trainingModality)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Clock className="w-4 h-4" />
