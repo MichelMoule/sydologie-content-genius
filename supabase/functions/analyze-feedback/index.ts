@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
-const AZURE_ENDPOINT = "https://sydo.openai.azure.com/openai/deployments/sydo/chat/completions?api-version=2023-07-01-preview";
+const AZURE_ENDPOINT = "https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini-2/chat/completions?api-version=2024-08-01-preview";
 const AZURE_API_KEY = Deno.env.get('AZURE_OPENAI_API_KEY');
 
 console.log("Hello from analyze-feedback Function!");
