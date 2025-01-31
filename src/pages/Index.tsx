@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FeaturedTools from "@/components/FeaturedTools";
 import Incontournables from "@/components/Incontournables";
+import Actualites from "@/components/Actualites";
 
 const Index = () => {
   return (
@@ -10,6 +11,7 @@ const Index = () => {
       <Hero />
       <FeaturedTools />
       <Incontournables />
+      <Actualites />
     </div>
   );
 };
