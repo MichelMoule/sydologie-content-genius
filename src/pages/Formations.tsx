@@ -66,17 +66,51 @@ const Formations = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-          Nos Formations
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Découvrez nos formations pour développer vos compétences et atteindre vos objectifs professionnels.
-        </p>
+      {/* New Hero Section with Background Text */}
+      <section className="relative overflow-hidden py-16 lg:py-24">
+        {/* Background Text */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+          <span className="text-[12vw] font-bold text-sydologie-green whitespace-nowrap">
+            FORMATIONS
+          </span>
+        </div>
+        
+        {/* Content */}
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold">
+                Nous proposons des formations{" "}
+                <span className="text-sydologie-green">
+                  interactives et innovantes.
+                </span>
+              </h1>
+              <div className="space-y-4 text-lg text-muted-foreground">
+                <p>
+                  Concevoir un e-learning, réaliser un PowerPoint pédagogique, savoir expliquer avec des schémas ou des illustrations, réaliser une vidéo pédagogique, utiliser le jeu pour transmettre des connaissances, découvrir et utiliser les liens entre neurosciences et pédagogie...
+                </p>
+                <p>
+                  De manière générale, nous vous formons sur tout ce qui peut vous permettre de concevoir et réaliser des formations efficaces grâce à l'intelligence artificielle !
+                </p>
+              </div>
+            </div>
+            <div className="bg-sydologie-green/10 p-8 rounded-lg">
+              <p className="text-lg">
+                Nous organisons des formations intra-entreprise dans vos locaux et des formations inter-entreprises à Lyon et à Paris. Nous sommes référencés au DATADOCK. Découvrez le rapport d'activité de nos formations sur ce{" "}
+                <a 
+                  href="#" 
+                  className="text-sydologie-green hover:underline font-semibold"
+                >
+                  lien
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Filters Section */}
+      {/* Search Section */}
       <section className="container mx-auto px-4 mb-8">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="w-full md:w-[300px]">
