@@ -42,9 +42,9 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         {formation.image?.url && (
-          <div className="relative w-full h-48 -mt-6 -mx-6 mb-4">
+          <div className="relative w-full h-48 -mt-6 -mx-6">
             <img
               src={formation.image.url}
               alt={formation.name}
@@ -52,14 +52,14 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
             />
           </div>
         )}
-        <DialogHeader>
+        <DialogHeader className="space-y-2">
           <DialogTitle className="text-2xl font-bold">{formation.name}</DialogTitle>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold mb-2 text-lg">Informations clés</h3>
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3 text-lg">Informations clés</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
@@ -83,8 +83,8 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
             </div>
           </div>
           
-          <div>
-            <h3 className="font-semibold mb-2 text-lg">Description</h3>
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-3 text-lg">Description</h3>
             <p className="text-muted-foreground whitespace-pre-wrap">{formation.description}</p>
           </div>
         </div>
