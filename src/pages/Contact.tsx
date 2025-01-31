@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Newsletter from "@/components/Newsletter";
+import Navbar from "@/components/Navbar";
 
 const Contact = () => {
   return (
     <>
+      <Navbar />
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row gap-12 min-h-[600px]">
           {/* Left side - Form */}
