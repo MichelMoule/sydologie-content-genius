@@ -5,9 +5,10 @@ import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useMemo } from "react";
 import SearchBar from "@/components/SearchBar";
-import FormationFilters, { FormationType } from "@/components/FormationFilters";
 import FormationDialog from "@/components/FormationDialog";
 import FormationCard from "@/components/FormationCard";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface Formation {
   id: string;
@@ -42,8 +43,8 @@ const fetchFormations = async (): Promise<Formation[]> => {
 
 const Formations = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<FormationType>("all");
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
+  const navigate = useNavigate();
   
   const { data: formations, isLoading, error } = useQuery({
     queryKey: ['formations'],
@@ -57,14 +58,9 @@ const Formations = () => {
       const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           formation.description.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesType = selectedType === "all" || 
-                         (selectedType === "presentielle" && formation.trainingModality.toLowerCase().includes("présentiel")) ||
-                         (selectedType === "mixte" && formation.trainingModality.toLowerCase().includes("mixte")) ||
-                         (selectedType === "a-distance" && formation.trainingModality.toLowerCase().includes("distance"));
-
-      return matchesSearch && matchesType;
+      return matchesSearch;
     });
-  }, [formations, searchQuery, selectedType]);
+  }, [formations, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -90,15 +86,11 @@ const Formations = () => {
               placeholder="Rechercher une formation..."
             />
           </div>
-          <FormationFilters 
-            selectedType={selectedType}
-            onTypeChange={setSelectedType}
-          />
         </div>
       </section>
 
       {/* Formations list */}
-      <section className="container mx-auto px-4 pb-16">
+      <section className="container mx-auto px-4">
         {error ? (
           <div className="text-sydologie-red text-center py-8">
             Une erreur est survenue lors du chargement des formations.
@@ -140,6 +132,25 @@ const Formations = () => {
             Aucune formation ne correspond à vos critères de recherche.
           </div>
         )}
+      </section>
+
+      {/* Custom Training Section */}
+      <section className="container mx-auto px-4 py-16 mt-8">
+        <div className="bg-muted/50 rounded-lg p-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Vous ne trouvez pas la formation adaptée ?
+          </h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Nous pouvons créer une formation sur mesure adaptée à vos besoins spécifiques. 
+            Contactez-nous pour discuter de votre projet.
+          </p>
+          <Button 
+            onClick={() => navigate('/contact')}
+            className="bg-sydologie-green hover:bg-sydologie-green/90"
+          >
+            Demander une formation sur mesure
+          </Button>
+        </div>
       </section>
 
       <FormationDialog
