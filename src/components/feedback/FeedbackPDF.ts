@@ -2,12 +2,8 @@ import jsPDF from "jspdf";
 import { AnalysisData } from "./types";
 
 export const generateFeedbackPDF = (analysis: AnalysisData) => {
-  // Initialize PDF with Unicode support
-  const pdf = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: "a4",
-  });
+  // Initialize PDF with Unicode support and required arguments
+  const pdf = new jsPDF("portrait", "mm", "a4", true);
 
   // Add Unicode font support
   pdf.addFont("helvetica", "normal");
