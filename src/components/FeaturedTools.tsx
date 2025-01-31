@@ -21,7 +21,18 @@ const tools = [
     cta: "TESTEZ CET OUTIL",
     rating: 4
   },
-  // Les autres outils seront ajoutés ici
+  {
+    id: 2,
+    name: "SCRYPTO-VIDÉO",
+    description: "CRÉEZ DES SCRIPTS POUR VOS VIDÉOS DE FORMATION",
+    quote: "NFT-free",
+    images: [
+      "/lovable-uploads/59464221-fdcc-4f6c-a58f-c27fcd17a54e.png",
+      "/lovable-uploads/110b3fe4-f43c-40d1-8151-cdd98945d58f.png"
+    ],
+    cta: "TESTEZ CET OUTIL",
+    rating: 4
+  }
 ];
 
 const FeaturedTools = () => {
@@ -30,7 +41,7 @@ const FeaturedTools = () => {
       <h2 className="text-3xl font-bold mb-12 font-unbounded container mx-auto">
         <span className="text-[#00FF00]">_</span>Nos outils à la une
       </h2>
-      <div className="space-y-8">
+      <div className="space-y-0">
         {tools.map((tool) => (
           <div key={tool.id} className="w-full">
             <Carousel className="w-full relative">
