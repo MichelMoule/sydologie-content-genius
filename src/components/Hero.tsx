@@ -15,7 +15,7 @@ const Hero = () => {
           </h1>
         </div>
         
-        <div className="md:w-1/2">
+        <div className="md:w-1/2 flex flex-col justify-end" style={{ paddingTop: "180px" }}>
           <p className="text-gray-600 mb-8">
             At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores.
           </p>
