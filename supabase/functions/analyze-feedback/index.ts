@@ -14,7 +14,6 @@ serve(async (req) => {
   console.log('Request method:', req.method);
   console.log('Request headers:', Object.fromEntries(req.headers.entries()));
   
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
@@ -26,25 +25,62 @@ serve(async (req) => {
     
     const { feedbackText, questionText } = requestBody;
     console.log('Extracted fields:', { 
-      feedbackText: feedbackText?.substring(0, 100) + '...', // Log first 100 chars for privacy
+      feedbackText: feedbackText?.substring(0, 100) + '...', 
       questionText,
       feedbackLength: feedbackText?.length,
     });
 
     if (!feedbackText || !questionText) {
-      console.error('Missing required fields:', { 
-        hasFeedbackText: !!feedbackText, 
-        hasQuestionText: !!questionText 
-      });
+      console.error('Missing required fields');
       throw new Error('Feedback text and question text are required');
     }
 
-    console.log('API Key present:', !!AZURE_API_KEY);
-    console.log('API Key length:', AZURE_API_KEY?.length);
-    console.log('Using Azure endpoint:', AZURE_ENDPOINT);
+    const feedbackLines = feedbackText.split('\n').filter(line => line.trim().length > 0);
+    const numberOfResponses = feedbackLines.length;
 
-    const systemPrompt = "Vous êtes un expert en analyse de retours de formation. Analysez le retour ci-dessous et fournissez une analyse constructive et détaillée.";
-    const userPrompt = `Question posée : ${questionText}\n\nRetour de l'apprenant : ${feedbackText}\n\nVeuillez analyser ce retour et fournir des insights pertinents.`;
+    const systemPrompt = `Vous êtes un expert en analyse de retours de formation qui excelle dans l'analyse sémantique et le regroupement thématique.
+
+Instructions spécifiques :
+1. Analysez les retours et regroupez-les par thèmes principaux
+2. Ne conservez que les thèmes qui représentent plus de 10% des retours
+3. Triez les thèmes par ordre décroissant de pourcentage d'occurrences
+4. Pour chaque thème identifié, fournissez :
+   - Une description claire de l'idée générale
+   - Le pourcentage précis d'occurrences
+   - 2-3 exemples de témoignages représentatifs
+   - Des propositions de solutions si les retours sont négatifs
+
+Format de sortie en Markdown :
+# Analyse des retours de formation : [Sujet]
+
+Question posée : [Question]
+Nombre de réponses analysées : [Nombre]
+
+## Résumé des thèmes principaux
+
+[Liste des thèmes avec leurs pourcentages]
+
+## Analyse détaillée par thème
+
+### [Thème 1]
+**Idée générale :** [Description]
+**Pourcentage d'occurrences :** [X]%
+**Exemples de témoignages :**
+- [Exemple 1]
+- [Exemple 2]
+[Si négatif] **Propositions d'amélioration :**
+- [Solution 1]
+- [Solution 2]
+
+[Répéter pour chaque thème]`;
+
+    const userPrompt = `J'ai fait une formation sur "${questionText}".
+
+À l'issue de cela, j'ai proposé un questionnaire afin de récupérer les témoignages de mes participants. Voici les ${numberOfResponses} réponses reçues à la question "${questionText}" :
+
+${feedbackText}
+
+Merci de suivre strictement le format demandé dans le prompt système pour l'analyse.`;
 
     console.log('Preparing request to Azure OpenAI');
     const requestBodyForAzure = {
@@ -66,7 +102,7 @@ serve(async (req) => {
       ],
       temperature: 0.7,
       top_p: 0.95,
-      max_tokens: 800
+      max_tokens: 1500
     };
     console.log('Request body for Azure:', JSON.stringify(requestBodyForAzure, null, 2));
 
