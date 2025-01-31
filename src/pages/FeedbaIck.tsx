@@ -17,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import ReactMarkdown from 'react-markdown';
 import {
   Dialog,
   DialogContent,
@@ -37,10 +36,27 @@ const formSchema = z.object({
   }),
 });
 
+interface Theme {
+  title: string;
+  percentage: number;
+  description: string;
+  testimonials: string[];
+  isNegative: boolean;
+  improvements?: string[];
+}
+
+interface AnalysisData {
+  subject: string;
+  question: string;
+  totalResponses: number;
+  summary: string;
+  themes: Theme[];
+}
+
 const FeedbaIck = () => {
   const { toast } = useToast();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,8 +93,14 @@ const FeedbaIck = () => {
 
       if (analysisError) throw analysisError;
       
-      const aiAnalysis = analysisData.analysis;
-      setAnalysis(aiAnalysis);
+      // Extract JSON from markdown response
+      const jsonMatch = analysisData.analysis.match(/```json\n([\s\S]*?)\n```/);
+      if (!jsonMatch) {
+        throw new Error("Format de réponse invalide");
+      }
+      
+      const parsedAnalysis: AnalysisData = JSON.parse(jsonMatch[1]);
+      setAnalysis(parsedAnalysis);
       setIsDialogOpen(true);
 
       const { error } = await supabase.from("training_feedback").insert({
@@ -86,7 +108,7 @@ const FeedbaIck = () => {
         training_name: values.trainingName,
         question_text: values.questionText,
         feedback_text: values.feedbackText,
-        ai_analysis: aiAnalysis,
+        ai_analysis: analysisData.analysis,
       });
 
       if (error) throw error;
@@ -118,7 +140,6 @@ const FeedbaIck = () => {
         </Link>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          {/* Left Column */}
           <div className="space-y-8">
             <h1 className="text-6xl font-bold">FEEDBAICK</h1>
             
@@ -135,7 +156,6 @@ const FeedbaIck = () => {
             </p>
           </div>
           
-          {/* Right Column - Feedback Form */}
           <div className="bg-white rounded-lg shadow-xl p-12 min-h-[600px]">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -197,13 +217,69 @@ const FeedbaIck = () => {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Analyse des retours</DialogTitle>
             </DialogHeader>
-            <div className="prose prose-sm dark:prose-invert mt-4">
-              {analysis && <ReactMarkdown>{analysis}</ReactMarkdown>}
-            </div>
+            {analysis && (
+              <div className="space-y-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h2 className="text-2xl font-bold mb-4">{analysis.subject}</h2>
+                  <p className="text-gray-600 mb-2">Question posée : {analysis.question}</p>
+                  <p className="text-gray-600">Nombre de réponses : {analysis.totalResponses}</p>
+                </div>
+
+                <div className="prose prose-sm max-w-none">
+                  <h3 className="text-xl font-semibold mb-4">Résumé global</h3>
+                  <p>{analysis.summary}</p>
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold">Analyse par thème</h3>
+                  {analysis.themes.map((theme, index) => (
+                    <div 
+                      key={index}
+                      className={`p-6 rounded-lg ${
+                        theme.isNegative ? 'bg-red-50' : 'bg-green-50'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <h4 className="text-lg font-semibold">{theme.title}</h4>
+                        <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium bg-white">
+                          {theme.percentage}%
+                        </span>
+                      </div>
+                      
+                      <p className="text-gray-700 mb-4">{theme.description}</p>
+                      
+                      <div className="space-y-2">
+                        <h5 className="font-medium">Témoignages représentatifs :</h5>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {theme.testimonials.map((testimonial, tIndex) => (
+                            <li key={tIndex} className="text-gray-600">
+                              {testimonial}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {theme.isNegative && theme.improvements && (
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <h5 className="font-medium mb-2">Suggestions d'amélioration :</h5>
+                          <ul className="list-disc pl-5 space-y-2">
+                            {theme.improvements.map((improvement, iIndex) => (
+                              <li key={iIndex} className="text-gray-600">
+                                {improvement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
