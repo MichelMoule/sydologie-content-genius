@@ -6,7 +6,9 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     orientation: "portrait",
     unit: "mm",
     format: "a4",
-    compress: true
+    compress: true,
+    putOnlyUsedFonts: true,
+    floatPrecision: 16
   });
 
   // Add Unicode font support
@@ -41,17 +43,18 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     const lines = pdf.splitTextToSize(text, maxWidth - indent);
     
     if (isHeader) {
-      // Add gray background for headers
-      pdf.setFillColor(249, 250, 251); // bg-gray-50
+      pdf.setFillColor(249, 250, 251);
       pdf.rect(margin, y - 5, maxWidth, 10 + (lines.length * lineHeight), 'F');
     }
     
-    pdf.text(lines, margin + indent, y);
+    lines.forEach((line: string, index: number) => {
+      pdf.text(line, margin + indent, y + (index * lineHeight));
+    });
     
     return y + (lines.length * lineHeight) + (isHeader ? 5 : 0);
   };
 
-  // Title and basic information (gray background section)
+  // Title and basic information
   yPosition = addText(analysis.subject, yPosition, { 
     fontSize: 24, 
     isBold: true,
@@ -59,12 +62,12 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   });
   yPosition += lineHeight;
 
-  yPosition = addText(`❓ Question posée : ${analysis.question}`, yPosition);
-  yPosition = addText(`👥 Nombre de réponses : ${analysis.totalResponses}`, yPosition);
+  yPosition = addText(`Question posée : ${analysis.question}`, yPosition);
+  yPosition = addText(`Nombre de réponses : ${analysis.totalResponses}`, yPosition);
   yPosition += lineHeight * 2;
 
   // Global summary
-  yPosition = addText("📝 Résumé global", yPosition, { 
+  yPosition = addText("Résumé global", yPosition, { 
     fontSize: 18, 
     isBold: true 
   });
@@ -72,7 +75,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   yPosition += lineHeight * 2;
 
   // Themes analysis
-  yPosition = addText("🎯 Analyse par thème", yPosition, { 
+  yPosition = addText("Analyse par thème", yPosition, { 
     fontSize: 18, 
     isBold: true 
   });
@@ -80,30 +83,25 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
 
   // Process each theme
   analysis.themes.forEach((theme) => {
-    // Check if we need a new page
     if (yPosition > pdf.internal.pageSize.height - 40) {
       pdf.addPage();
       yPosition = 20;
     }
 
-    // Theme background color
     const bgColor: [number, number, number] = theme.isNegative ? 
-      [254, 242, 242] : // bg-red-50
-      [240, 253, 244];  // bg-green-50
+      [254, 242, 242] : 
+      [240, 253, 244];
     
-    // Add colored background
     pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
     pdf.rect(margin, yPosition - 5, maxWidth, 40, 'F');
 
-    // Theme header with icon and percentage
-    const themeIcon = theme.isNegative ? "⚠️" : "✅";
+    const themeIcon = theme.isNegative ? "⚠️" : "✓";
     yPosition = addText(
       `${themeIcon} ${theme.title}`,
       yPosition,
       { fontSize: 16, isBold: true }
     );
     
-    // Add percentage on the right
     pdf.text(
       `${theme.percentage}%`,
       pageWidth - margin - 10,
@@ -114,8 +112,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     yPosition = addText(theme.description, yPosition);
     yPosition += lineHeight;
 
-    // Testimonials
-    yPosition = addText("💬 Témoignages représentatifs :", yPosition, { 
+    yPosition = addText("Témoignages représentatifs :", yPosition, { 
       fontSize: 14,
       isBold: true 
     });
@@ -123,10 +120,9 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
       yPosition = addText(`• ${testimonial}`, yPosition, { indent: 5 });
     });
 
-    // Improvements for negative themes
     if (theme.isNegative && theme.improvements) {
       yPosition += lineHeight;
-      yPosition = addText("💡 Suggestions d'amélioration :", yPosition, { 
+      yPosition = addText("Suggestions d'amélioration :", yPosition, { 
         fontSize: 14,
         isBold: true 
       });
@@ -138,7 +134,6 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     yPosition += lineHeight * 2;
   });
 
-  // Footer
   const today = new Date().toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
@@ -154,7 +149,6 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     pdf.internal.pageSize.height - 10
   );
 
-  // Save the PDF
   const filename = `analyse_${analysis.subject.toLowerCase().replace(/\s+/g, '_')}.pdf`;
   pdf.save(filename);
 };

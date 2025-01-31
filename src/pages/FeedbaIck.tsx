@@ -22,10 +22,13 @@ const FeedbaIck = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [trainingName, setTrainingName] = useState("");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsAnalyzing(true);
+      setTrainingName(values.trainingName);
+      
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -48,7 +51,6 @@ const FeedbaIck = () => {
 
       if (analysisError) throw analysisError;
       
-      // Extract JSON from markdown response
       const jsonMatch = analysisData.analysis.match(/```json\n([\s\S]*?)\n```/);
       if (!jsonMatch) {
         throw new Error("Format de réponse invalide");
@@ -101,7 +103,7 @@ const FeedbaIck = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
-        <Link to="/outils" className="text-[#00FF00] hover:underline mb-8 inline-block">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">
           &lt; Outils
         </Link>
         
@@ -129,7 +131,7 @@ const FeedbaIck = () => {
           <DialogContent className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center">
-                <span>📊 Analyse des retours</span>
+                <span>📊 {trainingName}</span>
                 {analysis && (
                   <Button
                     variant="outline"
