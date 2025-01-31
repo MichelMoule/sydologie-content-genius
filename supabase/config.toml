@@ -1,1 +1,10 @@
 project_id = "tijdikovauumiduljnrm"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[[functions]]
+name = "get-formations"
+verify_jwt = false
