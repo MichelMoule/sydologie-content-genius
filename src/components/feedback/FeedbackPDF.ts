@@ -2,145 +2,154 @@ import jsPDF from "jspdf";
 import { AnalysisData } from "./types";
 
 export const generateFeedbackPDF = (analysis: AnalysisData) => {
-  const pdf = new jsPDF();
+  // Initialize PDF with Unicode support
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  // Add Unicode font support
+  pdf.addFont("helvetica", "normal");
+  
   let yPosition = 20;
-  const lineHeight = 10;
+  const lineHeight = 7;
   const margin = 20;
   const pageWidth = pdf.internal.pageSize.width;
+  const maxWidth = pageWidth - (2 * margin);
 
-  // Configuration des styles
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(24);
-  pdf.setTextColor(27, 77, 62); // sydologie.green
+  // Helper function to add text and return new Y position
+  const addText = (text: string, y: number, options: {
+    fontSize?: number;
+    isBold?: boolean;
+    color?: [number, number, number];
+    indent?: number;
+  } = {}) => {
+    const {
+      fontSize = 12,
+      isBold = false,
+      color = [0, 0, 0],
+      indent = 0
+    } = options;
 
-  // Titre principal
-  pdf.text(`📊 Analyse des retours : ${analysis.subject}`, margin, yPosition);
-  yPosition += lineHeight * 2;
+    pdf.setFontSize(fontSize);
+    pdf.setFont("helvetica", isBold ? "bold" : "normal");
+    pdf.setTextColor(...color);
 
-  // Informations de base
-  pdf.setFontSize(14);
-  pdf.setTextColor(51, 51, 51);
-  pdf.text(`❓ Question posée : ${analysis.question}`, margin, yPosition);
+    const lines = pdf.splitTextToSize(text, maxWidth - indent);
+    pdf.text(lines, margin + indent, y);
+    
+    return y + (lines.length * lineHeight);
+  };
+
+  // Title
+  yPosition = addText(
+    `Analyse des retours : ${analysis.subject}`,
+    yPosition,
+    { fontSize: 24, isBold: true, color: [27, 77, 62] }
+  );
   yPosition += lineHeight;
-  pdf.text(`👥 Nombre de réponses : ${analysis.totalResponses}`, margin, yPosition);
-  yPosition += lineHeight * 2;
 
-  // Résumé global
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(18);
-  pdf.setTextColor(27, 77, 62);
-  pdf.text("📝 Résumé global", margin, yPosition);
+  // Basic information
+  yPosition = addText(
+    `Question posée : ${analysis.question}`,
+    yPosition,
+    { fontSize: 14 }
+  );
+  yPosition = addText(
+    `Nombre de réponses : ${analysis.totalResponses}`,
+    yPosition,
+    { fontSize: 14 }
+  );
   yPosition += lineHeight;
 
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(12);
-  pdf.setTextColor(51, 51, 51);
-  const summaryLines = pdf.splitTextToSize(analysis.summary, pageWidth - 2 * margin);
-  pdf.text(summaryLines, margin, yPosition);
-  yPosition += (summaryLines.length * lineHeight) + lineHeight * 1.5;
-
-  // Analyse par thème
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(18);
-  pdf.setTextColor(27, 77, 62);
-  pdf.text("🎯 Analyse par thème", margin, yPosition);
+  // Global summary
+  yPosition = addText(
+    "Résumé global",
+    yPosition,
+    { fontSize: 18, isBold: true, color: [27, 77, 62] }
+  );
+  yPosition = addText(analysis.summary, yPosition);
   yPosition += lineHeight * 2;
 
+  // Themes analysis
+  yPosition = addText(
+    "Analyse par thème",
+    yPosition,
+    { fontSize: 18, isBold: true, color: [27, 77, 62] }
+  );
+  yPosition += lineHeight;
+
+  // Process each theme
   analysis.themes.forEach((theme) => {
-    // Vérifier si on a besoin d'une nouvelle page
+    // Check if we need a new page
     if (yPosition > pdf.internal.pageSize.height - 40) {
       pdf.addPage();
       yPosition = 20;
     }
 
-    // Titre du thème avec pourcentage
-    const emoji = theme.isNegative ? "⚠️" : "✅";
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
+    // Theme header
+    const themeColor = theme.isNegative ? [255, 75, 75] : [27, 77, 62];
+    const themeIcon = theme.isNegative ? "⚠️" : "✅";
     
-    // Fix: Properly set text color based on theme
-    if (theme.isNegative) {
-      pdf.setTextColor(255, 75, 75);
-    } else {
-      pdf.setTextColor(27, 77, 62);
-    }
-    
-    pdf.text(`${emoji} ${theme.title}`, margin, yPosition);
-    
-    // Pourcentage sur la même ligne, aligné à droite
-    const percentageText = `${theme.percentage}%`;
-    const percentageWidth = pdf.getStringUnitWidth(percentageText) * 16 / pdf.internal.scaleFactor;
-    pdf.text(percentageText, pageWidth - margin - percentageWidth, yPosition);
-    
-    yPosition += lineHeight * 1.5;
+    yPosition = addText(
+      `${themeIcon} ${theme.title} (${theme.percentage}%)`,
+      yPosition,
+      { fontSize: 16, isBold: true, color: themeColor }
+    );
+    yPosition += lineHeight;
 
-    // Description du thème
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    pdf.setTextColor(51, 51, 51);
-    const descLines = pdf.splitTextToSize(theme.description, pageWidth - 2 * margin);
-    pdf.text(descLines, margin, yPosition);
-    yPosition += (descLines.length * lineHeight) + lineHeight;
+    // Theme description
+    yPosition = addText(theme.description, yPosition);
+    yPosition += lineHeight;
 
-    // Témoignages
-    pdf.setFont("helvetica", "italic");
-    pdf.setTextColor(102, 102, 102);
+    // Testimonials
+    yPosition = addText(
+      "Témoignages représentatifs :",
+      yPosition,
+      { fontSize: 14, isBold: true }
+    );
+    yPosition += lineHeight / 2;
+
     theme.testimonials.forEach((testimonial) => {
-      if (yPosition > pdf.internal.pageSize.height - 40) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      // Ajout d'une bordure grise à gauche pour les témoignages
-      pdf.setDrawColor(200, 200, 200);
-      pdf.setLineWidth(0.5);
-      pdf.line(margin + 5, yPosition - 5, margin + 5, yPosition + 15);
-      
-      const testLines = pdf.splitTextToSize(`"${testimonial}"`, pageWidth - 2 * margin - 15);
-      pdf.text(testLines, margin + 10, yPosition);
-      yPosition += (testLines.length * lineHeight) + 5;
+      yPosition = addText(`• ${testimonial}`, yPosition, { indent: 5 });
     });
 
-    // Suggestions d'amélioration pour les thèmes négatifs
+    // Improvements for negative themes
     if (theme.isNegative && theme.improvements) {
-      if (yPosition > pdf.internal.pageSize.height - 40) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(14);
-      pdf.setTextColor(255, 75, 75);
-      pdf.text("💡 Suggestions d'amélioration:", margin, yPosition);
-      yPosition += lineHeight * 1.5;
+      yPosition += lineHeight;
+      yPosition = addText(
+        "Suggestions d'amélioration :",
+        yPosition,
+        { fontSize: 14, isBold: true }
+      );
+      yPosition += lineHeight / 2;
 
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(12);
-      pdf.setTextColor(51, 51, 51);
       theme.improvements.forEach((improvement) => {
-        const bulletPoint = "•";
-        const impLines = pdf.splitTextToSize(improvement, pageWidth - 2 * margin - 15);
-        
-        pdf.text(bulletPoint, margin + 5, yPosition);
-        pdf.text(impLines, margin + 15, yPosition);
-        
-        yPosition += (impLines.length * lineHeight) + 5;
+        yPosition = addText(`• ${improvement}`, yPosition, { indent: 5 });
       });
     }
 
-    yPosition += lineHeight * 1.5;
+    yPosition += lineHeight * 2;
   });
 
-  // Pied de page
+  // Footer
   const today = new Date().toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
+  
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(10);
   pdf.setTextColor(128, 128, 128);
-  pdf.text(`Rapport généré le ${today} via FEEDBAICK`, margin, pdf.internal.pageSize.height - 10);
+  pdf.text(
+    `Rapport généré le ${today} via FEEDBAICK`,
+    margin,
+    pdf.internal.pageSize.height - 10
+  );
 
-  pdf.save(`analyse_${analysis.subject.toLowerCase().replace(/\s+/g, '_')}.pdf`);
+  // Save the PDF
+  const filename = `analyse_${analysis.subject.toLowerCase().replace(/\s+/g, '_')}.pdf`;
+  pdf.save(filename);
 };
