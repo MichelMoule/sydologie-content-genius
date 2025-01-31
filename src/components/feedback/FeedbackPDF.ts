@@ -54,7 +54,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     return y + (lines.length * lineHeight) + (isHeader ? 5 : 0);
   };
 
-  // Title and basic information
+  // Title (training name)
   yPosition = addText(analysis.subject, yPosition, { 
     fontSize: 24, 
     isBold: true,
@@ -62,8 +62,9 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
   });
   yPosition += lineHeight;
 
-  yPosition = addText(`Question posée : ${analysis.question}`, yPosition);
-  yPosition = addText(`Nombre de réponses : ${analysis.totalResponses}`, yPosition);
+  // Question and responses count
+  yPosition = addText("Question posée : " + analysis.question, yPosition);
+  yPosition = addText("Nombre de réponses : " + analysis.totalResponses, yPosition);
   yPosition += lineHeight * 2;
 
   // Global summary
@@ -95,7 +96,7 @@ export const generateFeedbackPDF = (analysis: AnalysisData) => {
     pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
     pdf.rect(margin, yPosition - 5, maxWidth, 40, 'F');
 
-    const themeIcon = theme.isNegative ? "⚠️" : "✓";
+    const themeIcon = theme.isNegative ? "!" : "✓";
     yPosition = addText(
       `${themeIcon} ${theme.title}`,
       yPosition,
