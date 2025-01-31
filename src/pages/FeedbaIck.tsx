@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -128,10 +129,12 @@ const FeedbaIck = () => {
             </p>
 
             {analysis && (
-              <div className="bg-white rounded-lg p-6 shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Analyse IA du retour</h3>
-                <p className="whitespace-pre-wrap">{analysis}</p>
-              </div>
+              <Alert className="mt-6">
+                <AlertTitle className="text-xl">Analyse IA du retour</AlertTitle>
+                <AlertDescription className="mt-2 whitespace-pre-wrap text-base">
+                  {analysis}
+                </AlertDescription>
+              </Alert>
             )}
           </div>
           
