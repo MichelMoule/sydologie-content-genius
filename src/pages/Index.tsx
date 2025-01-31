@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import FeaturedTools from "@/components/FeaturedTools";
 import Incontournables from "@/components/Incontournables";
 import Actualites from "@/components/Actualites";
+import Newsletter from "@/components/Newsletter";
 
 const Index = () => {
   return (
@@ -12,6 +13,7 @@ const Index = () => {
       <FeaturedTools />
       <Incontournables />
       <Actualites />
+      <Newsletter />
     </div>
   );
 };
