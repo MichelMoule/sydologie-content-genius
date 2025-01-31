@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
+import { XMLParser } from 'npm:fast-xml-parser';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,17 +23,14 @@ serve(async (req) => {
     console.log('Successfully fetched RSS feed, parsing XML...');
     const xmlText = await response.text();
     
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlText, 'application/xml');
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: "@_"
+    });
     
-    if (!doc) {
-      throw new Error('Failed to parse RSS feed XML');
-    }
-
-    console.log('Successfully parsed XML, extracting items...');
-    const items = doc.getElementsByTagName('item');
+    const result = parser.parse(xmlText);
     
-    if (!items || items.length === 0) {
+    if (!result?.rss?.channel?.item) {
       console.log('No items found in RSS feed');
       return new Response(
         JSON.stringify([]),
@@ -46,27 +43,28 @@ serve(async (req) => {
       )
     }
 
-    const articles = Array.from(items).map((item) => {
-      const title = item.getElementsByTagName('title')[0]?.textContent || '';
-      const link = item.getElementsByTagName('link')[0]?.textContent || '';
-      const description = item.getElementsByTagName('description')[0]?.textContent || '';
-      const pubDate = item.getElementsByTagName('pubDate')[0]?.textContent || '';
-      const content = item.getElementsByTagName('content:encoded')[0]?.textContent || '';
-      
+    const items = Array.isArray(result.rss.channel.item) 
+      ? result.rss.channel.item 
+      : [result.rss.channel.item];
+
+    console.log(`Found ${items.length} articles in the feed`);
+
+    const articles = items.map((item) => {
       // Extract the first image from the content if available
-      const imgMatch = content?.match(/<img[^>]+src="([^">]+)"/) || null;
+      const content = item['content:encoded'] || '';
+      const imgMatch = content.match(/<img[^>]+src="([^">]+)"/) || null;
       const imageUrl = imgMatch ? imgMatch[1] : null;
 
       return {
-        title,
-        link,
-        description,
-        pubDate,
+        title: item.title || '',
+        link: item.link || '',
+        description: item.description || '',
+        pubDate: item.pubDate || '',
         imageUrl,
       }
     });
 
-    console.log(`Successfully extracted ${articles.length} articles`);
+    console.log(`Successfully processed ${articles.length} articles`);
 
     return new Response(
       JSON.stringify(articles),

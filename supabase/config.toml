@@ -9,5 +9,5 @@ schemas = ["public", "storage", "graphql_public"]
 port = 54322
 
 [functions]
-[functions.get-formations]
+[functions.get-rss-feed]
 verify_jwt = false
