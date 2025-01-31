@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeedbackForm } from "@/components/feedback/FeedbackForm";
+import { FeedbackForm, formSchema } from "@/components/feedback/FeedbackForm";
 import { FeedbackAnalysis } from "@/components/feedback/FeedbackAnalysis";
 import { AnalysisData } from "@/components/feedback/types";
 import { generateFeedbackPDF } from "@/components/feedback/FeedbackPDF";

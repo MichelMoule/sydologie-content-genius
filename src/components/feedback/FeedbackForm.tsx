@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   trainingName: z.string().min(2, {
     message: "Le nom de la formation doit faire au moins 2 caractères.",
   }),
