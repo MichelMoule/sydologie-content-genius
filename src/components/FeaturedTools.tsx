@@ -32,30 +32,35 @@ const FeaturedTools = () => {
       <div className="space-y-8">
         {tools.map((tool) => (
           <div key={tool.id} className="w-full">
-            <Carousel className="w-full">
+            <Carousel className="w-full relative">
               <CarouselContent>
                 {tool.images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <img 
-                      src={image} 
-                      alt={`${tool.name} slide ${index + 1}`}
-                      className="w-full h-auto"
-                    />
+                    <div className="relative">
+                      <img 
+                        src={image} 
+                        alt={`${tool.name} slide ${index + 1}`}
+                        className="w-full h-auto"
+                      />
+                      <div className="absolute bottom-0 left-0 w-full p-4 flex justify-center">
+                        <Button 
+                          variant="ghost" 
+                          className="text-[#00FF00] hover:text-[#00FF00]/90 font-unbounded"
+                        >
+                          {tool.cta}
+                        </Button>
+                      </div>
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-auto w-auto bg-transparent hover:bg-transparent border-none text-white" />
               </div>
+              <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-auto w-auto bg-transparent hover:bg-transparent border-none text-white" />
+              </div>
             </Carousel>
-            <div className="mt-4 text-center">
-              <Button 
-                variant="ghost" 
-                className="text-[#00FF00] hover:text-[#00FF00]/90 font-unbounded"
-              >
-                {tool.cta}
-              </Button>
-            </div>
           </div>
         ))}
       </div>
