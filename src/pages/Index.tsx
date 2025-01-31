@@ -1,11 +1,13 @@
 import Navbar from "@/components/Navbar";
-import FeaturedContent from "@/components/FeaturedContent";
+import Hero from "@/components/Hero";
+import FeaturedTools from "@/components/FeaturedTools";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <FeaturedContent />
+      <Hero />
+      <FeaturedTools />
     </div>
   );
 };
