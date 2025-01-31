@@ -48,7 +48,7 @@ const tools = {
 
 const Outils = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       
       {/* Hero Section */}
@@ -88,7 +88,7 @@ const Outils = () => {
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2">
+                <h4 className="text-xl font-bold mb-2 text-white">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
@@ -111,7 +111,7 @@ const Outils = () => {
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2">
+                <h4 className="text-xl font-bold mb-2 text-white">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
@@ -134,7 +134,7 @@ const Outils = () => {
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h4 className="text-xl font-bold mb-2">
+                <h4 className="text-xl font-bold mb-2 text-white">
                   <span className="text-[#1EFF02]">_</span>
                   {tool.name}
                 </h4>
