@@ -14,8 +14,8 @@ const tools = [
     description: "ANALYSEZ LES RETOURS RÉCOLTÉS APRÈS VOS FORMATION",
     quote: '"An amazing tool" - John from Paris',
     images: [
-      "/lovable-uploads/cad45245-f1db-4a54-a2c5-1bc18b47967f.png",
-      "/lovable-uploads/15096693-685e-4df4-b6ab-a7a3d54d9a79.png"
+      "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",
+      "/lovable-uploads/17bf500e-81e6-4c34-8eab-a9c6f4f2a016.png"
     ],
     cta: "TESTEZ CET OUTIL",
     rating: 4
