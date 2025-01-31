@@ -21,7 +21,7 @@ const articles = [
 
 const Actualites = () => {
   return (
-    <section className="w-full py-16" style={{ backgroundColor: 'rgba(174, 173, 173, 0.1)' }}>
+    <section className="w-full py-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <h2 className="text-4xl font-bold mb-4 md:mb-0">
@@ -33,10 +33,10 @@ const Actualites = () => {
           </Button>
         </div>
         
-        <div className="flex flex-col space-y-8 max-w-2xl mx-auto">
+        <div className="flex flex-col space-y-8 max-w-5xl mx-auto">
           {articles.map((article) => (
-            <div key={article.id} className="flex flex-col space-y-3 bg-white rounded-lg shadow-sm p-4">
-              <div className="relative max-w-sm mx-auto w-full">
+            <div key={article.id} className="flex flex-col md:flex-row gap-6">
+              <div className="relative md:w-1/2">
                 <div className="absolute left-0 bottom-0 z-10 p-3 space-y-0.5">
                   <span className="text-[#00FF00] font-bold block text-sm">{article.category}</span>
                   <span className="text-white block text-xs">{article.date}</span>
@@ -47,11 +47,11 @@ const Actualites = () => {
                   className="w-full aspect-[16/9] object-cover rounded-lg"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="md:w-1/2 space-y-2">
                 <h3 className="text-lg font-bold">
                   <span className="text-[#00FF00]">_</span>{article.title}
                 </h3>
-                <p className="text-gray-700 leading-relaxed text-xs">{article.description}</p>
+                <p className="text-gray-700 leading-relaxed text-sm">{article.description}</p>
               </div>
             </div>
           ))}
