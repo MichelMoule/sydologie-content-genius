@@ -8,6 +8,7 @@ import { Clock, Euro, MapPin } from "lucide-react";
 import { useState, useMemo } from "react";
 import SearchBar from "@/components/SearchBar";
 import FormationFilters, { FormationType } from "@/components/FormationFilters";
+import FormationDialog from "@/components/FormationDialog";
 
 interface Formation {
   id: string;
@@ -31,11 +32,11 @@ interface Formation {
   }[];
 }
 
-const FormationCard = ({ formation }: { formation: Formation }) => {
+const FormationCard = ({ formation, onClick }: { formation: Formation; onClick: () => void }) => {
   const mainCost = formation.costs.find(cost => cost.type === 'INTER');
   
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer" onClick={onClick}>
       {formation.image?.url && (
         <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
           <img
@@ -68,14 +69,15 @@ const FormationCard = ({ formation }: { formation: Formation }) => {
         <p className="text-muted-foreground mb-4 line-clamp-3 flex-grow">
           {formation.description}
         </p>
-        {formation.publicRegistrationUrl && (
-          <Button 
-            className="w-full bg-sydologie-green hover:bg-sydologie-green/90 mt-auto"
-            onClick={() => window.open(formation.publicRegistrationUrl, '_blank')}
-          >
-            En savoir plus
-          </Button>
-        )}
+        <Button 
+          className="w-full bg-sydologie-green hover:bg-sydologie-green/90"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
+        >
+          En savoir plus
+        </Button>
       </CardContent>
     </Card>
   );
@@ -93,6 +95,7 @@ const fetchFormations = async (): Promise<Formation[]> => {
 const Formations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<FormationType>("all");
+  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   
   const { data: formations, isLoading, error } = useQuery({
     queryKey: ['formations'],
@@ -173,7 +176,11 @@ const Formations = () => {
               ))
             ) : (
               filteredFormations.map((formation) => (
-                <FormationCard key={formation.id} formation={formation} />
+                <FormationCard 
+                  key={formation.id} 
+                  formation={formation}
+                  onClick={() => setSelectedFormation(formation)}
+                />
               ))
             )}
           </div>
@@ -185,6 +192,12 @@ const Formations = () => {
           </div>
         )}
       </section>
+
+      <FormationDialog
+        formation={selectedFormation}
+        open={!!selectedFormation}
+        onOpenChange={(open) => !open && setSelectedFormation(null)}
+      />
     </div>
   );
 };
