@@ -43,9 +43,9 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8">
-            <a href="#" className="hover:text-[#00FF00] transition-colors">
+            <Link to="/outils" className="hover:text-[#00FF00] transition-colors">
               _Outils
-            </a>
+            </Link>
             <Link to="/actualites" className="hover:text-[#00FF00] transition-colors">
               _Actualités
             </Link>
