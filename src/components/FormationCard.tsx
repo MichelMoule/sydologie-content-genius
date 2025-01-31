@@ -59,7 +59,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           </div>
         </div>
         <Button 
-          className="w-full bg-sydologie-green hover:bg-sydologie-green/90"
+          className="w-full bg-[#1EFF02] hover:bg-[#1EFF02]/90 text-black"
           onClick={(e) => {
             e.stopPropagation();
             onClick();
