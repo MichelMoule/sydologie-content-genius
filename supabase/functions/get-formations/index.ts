@@ -29,6 +29,13 @@ serve(async (req) => {
           durationInHours
           trainingModality
           publicRegistrationUrl
+          image {
+            filename
+            id
+            mime
+            size
+            url
+          }
           costs {
             cost
             costMode

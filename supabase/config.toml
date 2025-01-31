@@ -5,6 +5,9 @@ enabled = true
 port = 54321
 schemas = ["public", "storage", "graphql_public"]
 
-[[functions]]
+[db]
+port = 54322
+
+[functions]
 [functions.get-formations]
 verify_jwt = false
