@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Formations from "./pages/Formations";
 import Actualites from "./pages/Actualites";
 import Outils from "./pages/Outils";
+import FeedbaIck from "./pages/FeedbaIck";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/formations" element={<Formations />} />
           <Route path="/actualites" element={<Actualites />} />
           <Route path="/outils" element={<Outils />} />
+          <Route path="/outils/feedbaick" element={<FeedbaIck />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

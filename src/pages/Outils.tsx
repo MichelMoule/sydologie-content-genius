@@ -41,7 +41,8 @@ const tools = {
       id: 6,
       name: "FeedbaIck",
       description: "Analysez les retours récoltés après vos formations",
-      image: "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png"
+      image: "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",
+      path: "/outils/feedbaick"
     }
   ]
 };
@@ -128,7 +129,11 @@ const Outils = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.analyse.map((tool) => (
-              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
+              <Link 
+                key={tool.id} 
+                to={tool.path || "#"} 
+                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              >
                 <img
                   src={tool.image}
                   alt={tool.name}
@@ -139,7 +144,7 @@ const Outils = () => {
                   {tool.name}
                 </h4>
                 <p className="text-gray-700">{tool.description}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
