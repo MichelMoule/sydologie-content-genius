@@ -3,8 +3,40 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Newsletter from "@/components/Newsletter";
 import Navbar from "@/components/Navbar";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Contact = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
+
+  if (isSubmitted) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-[600px] bg-[#1EFF02] flex flex-col items-center justify-center px-4">
+          <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl">
+            VOTRE MESSAGE A BIEN ÉTÉ ENVOYÉ
+          </h1>
+          <p className="text-center mb-8 max-w-xl">
+            Nous vous remercions pour l'intérêt que vous nous portez et nous répondrons dans les plus brefs délais.
+          </p>
+          <Link 
+            to="/"
+            className="bg-white px-6 py-2 rounded-md hover:bg-gray-100 transition-colors"
+          >
+            Revenir à la page d'accueil
+          </Link>
+        </div>
+        <Newsletter />
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -15,7 +47,7 @@ const Contact = () => {
             <h1 className="text-7xl font-bold mb-8">CONTACT</h1>
             <p className="text-sm mb-8">Les champs marqués d'une étoile * sont obligatoires</p>
             
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block">
