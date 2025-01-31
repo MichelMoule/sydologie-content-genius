@@ -128,7 +128,14 @@ const FeedbaIck = () => {
       const emoji = theme.isNegative ? "⚠️" : "✅";
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(16);
-      pdf.setTextColor(theme.isNegative ? 255, 75, 75 : 27, 77, 62);
+      
+      // Fix: Properly set text color using separate r, g, b values
+      if (theme.isNegative) {
+        pdf.setTextColor(255, 75, 75);
+      } else {
+        pdf.setTextColor(27, 77, 62);
+      }
+      
       pdf.text(`${emoji} ${theme.title}`, margin, yPosition);
       
       // Pourcentage sur la même ligne, aligné à droite
