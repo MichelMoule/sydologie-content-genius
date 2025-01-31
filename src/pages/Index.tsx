@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FeaturedTools from "@/components/FeaturedTools";
+import Incontournables from "@/components/Incontournables";
 
 const Index = () => {
   return (
@@ -8,6 +9,7 @@ const Index = () => {
       <Navbar />
       <Hero />
       <FeaturedTools />
+      <Incontournables />
     </div>
   );
 };
