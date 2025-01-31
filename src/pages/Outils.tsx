@@ -52,7 +52,7 @@ const Outils = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-24">
         <div className="flex gap-8">
           <div className="w-1/6">
             <h1 className="text-[#1EFF02] text-6xl font-bold rotate-[-90deg] translate-y-20 whitespace-nowrap">
