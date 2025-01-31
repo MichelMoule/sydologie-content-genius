@@ -19,10 +19,10 @@ const Contact = () => {
       <>
         <Navbar />
         <div className="min-h-[600px] bg-[#1EFF02] flex flex-col items-center justify-center px-4">
-          <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl">
+          <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl text-white">
             VOTRE MESSAGE A BIEN ÉTÉ ENVOYÉ
           </h1>
-          <p className="text-center mb-8 max-w-xl">
+          <p className="text-center mb-8 max-w-xl text-white">
             Nous vous remercions pour l'intérêt que vous nous portez et nous répondrons dans les plus brefs délais.
           </p>
           <Link 
@@ -32,7 +32,6 @@ const Contact = () => {
             Revenir à la page d'accueil
           </Link>
         </div>
-        <Newsletter />
       </>
     );
   }
