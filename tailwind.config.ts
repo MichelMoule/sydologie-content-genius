@@ -59,7 +59,7 @@ export default {
       },
       fontFamily: {
         serif: ["Georgia", "serif"],
-        sans: ["system-ui", "sans-serif"],
+        sans: ["Unbounded", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
