@@ -90,7 +90,7 @@ const FeedbaIck = () => {
   const handleDownloadPDF = () => {
     if (!analysis) return;
     
-    generateFeedbackPDF(analysis);
+    generateFeedbackPDF(analysis, trainingName);
     
     toast({
       title: "PDF généré avec succès",
@@ -127,8 +127,16 @@ const FeedbaIck = () => {
           <FeedbackForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto">
+        <Dialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          modal={true}
+        >
+          <DialogContent 
+            className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto"
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
+          >
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center">
                 <span>📊 {trainingName}</span>
