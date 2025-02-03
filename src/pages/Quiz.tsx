@@ -15,6 +15,7 @@ import { QuizForm, formSchema } from "@/components/quiz/QuizForm";
 import { QuizAnalysis } from "@/components/quiz/QuizAnalysis";
 import { QuizData } from "@/components/quiz/types";
 import { generateQuizPDF } from "@/components/quiz/QuizPDF";
+import { supabase } from "@/integrations/supabase/client";
 
 const Quiz = () => {
   const { toast } = useToast();
@@ -27,24 +28,27 @@ const Quiz = () => {
     try {
       setIsAnalyzing(true);
       setQuizName(values.quizName);
+      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      // TODO: Implement quiz generation logic with AI
-      const mockQuizData: QuizData = {
-        questions: [
-          {
-            question: "Question exemple 1",
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctAnswer: 0
-          },
-          {
-            question: "Question exemple 2",
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctAnswer: 1
-          }
-        ]
-      };
+      if (!user) {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Vous devez être connecté pour générer un quiz.",
+        });
+        return;
+      }
 
-      setAnalysis(mockQuizData);
+      const { data: quizData, error: quizError } = await supabase.functions.invoke('generate-quiz', {
+        body: values,
+      });
+
+      if (quizError) throw quizError;
+      
+      setAnalysis(quizData.quiz);
       setIsDialogOpen(true);
 
       toast({
