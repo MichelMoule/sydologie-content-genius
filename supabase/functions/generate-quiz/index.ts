@@ -33,6 +33,7 @@ Instructions spécifiques :
 1. Créez un quiz de ${numberOfQuestions} questions basé sur le contenu fourni
 2. Adaptez les questions au niveau ${difficultyLevel} et au type ${quizType}
 3. Assurez-vous que les questions testent les objectifs pédagogiques suivants : ${learningObjectives}
+4. Pour chaque question, fournissez un feedback explicatif qui aide à comprendre pourquoi la réponse est correcte
 
 Format de sortie STRICT en JSON dans le Markdown :
 
@@ -42,7 +43,8 @@ Format de sortie STRICT en JSON dans le Markdown :
     {
       "question": "Texte de la question",
       "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": 0
+      "correctAnswer": 0,
+      "feedback": "Explication détaillée de la réponse correcte"
     }
   ]
 }
@@ -52,7 +54,8 @@ Assurez-vous que :
 1. Le JSON soit valide et parsable
 2. correctAnswer soit un nombre (index de la bonne réponse)
 3. Chaque question ait exactement 4 options
-4. Le JSON soit encadré par les triples backticks et le mot 'json'`;
+4. Chaque question ait un feedback explicatif
+5. Le JSON soit encadré par les triples backticks et le mot 'json'`;
 
     const userPrompt = `Voici le contenu du cours pour lequel je souhaite générer un quiz :
 

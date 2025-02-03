@@ -12,7 +12,7 @@ export const QuizAnalysis = ({ quiz }: QuizAnalysisProps) => {
           <h3 className="text-xl font-semibold mb-4">
             Question {index + 1}: {question.question}
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-2 mb-4">
             {question.options.map((option, optionIndex) => (
               <div
                 key={optionIndex}
@@ -31,6 +31,12 @@ export const QuizAnalysis = ({ quiz }: QuizAnalysisProps) => {
               </div>
             ))}
           </div>
+          {question.feedback && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-md border border-blue-200">
+              <h4 className="text-sm font-semibold text-blue-800 mb-2">Feedback :</h4>
+              <p className="text-blue-700">{question.feedback}</p>
+            </div>
+          )}
         </div>
       ))}
     </div>
