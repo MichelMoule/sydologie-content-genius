@@ -12,22 +12,22 @@ import {
 } from "@/components/ui/dialog";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeedbackForm, formSchema } from "@/components/feedback/FeedbackForm";
-import { FeedbackAnalysis } from "@/components/feedback/FeedbackAnalysis";
-import { AnalysisData } from "@/components/feedback/types";
-import { generateFeedbackPDF } from "@/components/feedback/FeedbackPDF";
+import { QuizForm, formSchema } from "@/components/quiz/QuizForm";
+import { QuizAnalysis } from "@/components/quiz/QuizAnalysis";
+import { QuizData } from "@/components/quiz/types";
+import { generateQuizPDF } from "@/components/quiz/QuizPDF";
 
-const FeedbaIck = () => {
+const Quiz = () => {
   const { toast } = useToast();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [analysis, setAnalysis] = useState<QuizData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [trainingName, setTrainingName] = useState("");
+  const [quizName, setQuizName] = useState("");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsAnalyzing(true);
-      setTrainingName(values.trainingName);
+      setQuizName(values.quizName);
       
       const {
         data: { user },
@@ -37,50 +37,41 @@ const FeedbaIck = () => {
         toast({
           variant: "destructive",
           title: "Erreur",
-          description: "Vous devez être connecté pour soumettre un retour.",
+          description: "Vous devez être connecté pour créer un quiz.",
         });
         return;
       }
 
-      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-feedback', {
-        body: {
-          feedbackText: values.feedbackText,
-          questionText: values.questionText,
-        },
-      });
+      // TODO: Implement quiz generation logic with AI
+      const mockQuizData: QuizData = {
+        questions: [
+          {
+            question: "Question exemple 1",
+            options: ["Option A", "Option B", "Option C", "Option D"],
+            correctAnswer: 0
+          },
+          {
+            question: "Question exemple 2",
+            options: ["Option A", "Option B", "Option C", "Option D"],
+            correctAnswer: 1
+          }
+        ]
+      };
 
-      if (analysisError) throw analysisError;
-      
-      const jsonMatch = analysisData.analysis.match(/```json\n([\s\S]*?)\n```/);
-      if (!jsonMatch) {
-        throw new Error("Format de réponse invalide");
-      }
-      
-      const parsedAnalysis: AnalysisData = JSON.parse(jsonMatch[1]);
-      setAnalysis(parsedAnalysis);
+      setAnalysis(mockQuizData);
       setIsDialogOpen(true);
-
-      const { error } = await supabase.from("training_feedback").insert({
-        user_id: user.id,
-        training_name: values.trainingName,
-        question_text: values.questionText,
-        feedback_text: values.feedbackText,
-        ai_analysis: analysisData.analysis,
-      });
-
-      if (error) throw error;
 
       toast({
         title: "Succès",
-        description: "Votre retour a été enregistré et analysé avec succès.",
+        description: "Votre quiz a été généré avec succès.",
       });
 
     } catch (error) {
-      console.error("Error submitting feedback:", error);
+      console.error("Error generating quiz:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi du retour.",
+        description: "Une erreur est survenue lors de la génération du quiz.",
       });
     } finally {
       setIsAnalyzing(false);
@@ -89,7 +80,7 @@ const FeedbaIck = () => {
 
   const handleDownloadPDF = () => {
     if (!analysis) return;
-    generateFeedbackPDF(analysis, trainingName);
+    generateQuizPDF(analysis, quizName);
     
     toast({
       title: "PDF généré avec succès",
@@ -108,22 +99,22 @@ const FeedbaIck = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
           <div className="space-y-8">
-            <h1 className="text-6xl font-bold">FEEDBAICK</h1>
+            <h1 className="text-6xl font-bold">QUIIIIIZ?</h1>
             
             <h2 className="text-3xl font-bold leading-tight">
-              Vous avez reçu des centaines de retours suite à votre dernière formation et ne savez pas comment les traiter rapidement ?
+              Vous souhaitez créer rapidement un quiz pour évaluer vos apprenants ?
             </h2>
             
             <p className="text-lg">
-              Utilisez notre outil pour analyser rapidement les retours de vos apprenants et obtenir une synthèse claire et actionnable.
+              Utilisez notre outil pour générer automatiquement des quiz pertinents basés sur vos contenus de formation.
             </p>
             
             <p className="text-lg">
-              Notre système d'IA vous aide à identifier les points clés et les tendances dans les retours qualitatifs de vos formations.
+              Notre système d'IA vous aide à créer des questions variées et adaptées à votre contenu.
             </p>
           </div>
           
-          <FeedbackForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
+          <QuizForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
         </div>
 
         <Dialog 
@@ -138,7 +129,7 @@ const FeedbaIck = () => {
           >
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center">
-                <span>📊 {trainingName}</span>
+                <span>❓ {quizName}</span>
                 {analysis && (
                   <Button
                     variant="outline"
@@ -152,7 +143,7 @@ const FeedbaIck = () => {
                 )}
               </DialogTitle>
             </DialogHeader>
-            {analysis && <FeedbackAnalysis analysis={analysis} />}
+            {analysis && <QuizAnalysis quiz={analysis} />}
           </DialogContent>
         </Dialog>
       </div>
@@ -160,4 +151,4 @@ const FeedbaIck = () => {
   );
 };
 
-export default FeedbaIck;
+export default Quiz;
