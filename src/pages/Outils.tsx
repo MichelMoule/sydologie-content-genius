@@ -35,11 +35,18 @@ const tools = {
       name: "RésumA.I.",
       description: "Générez des résumés de vos contenus de formation",
       image: "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png"
+    },
+    {
+      id: 6,
+      name: "Flashcards",
+      description: "Créez des cartes pour mémoriser vos contenus",
+      image: "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png",
+      path: "/outils/flashcards"
     }
   ],
   analyse: [
     {
-      id: 6,
+      id: 7,
       name: "FeedbaIck",
       description: "Analysez les retours récoltés après vos formations",
       image: "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",
