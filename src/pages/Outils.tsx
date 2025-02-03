@@ -13,7 +13,8 @@ const tools = {
       id: 2,
       name: "Quiiiiiz?",
       description: "Créez des quiz personnalisés pour vos apprenants",
-      image: "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png"
+      image: "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png",
+      path: "/outils/quiz"
     },
     {
       id: 3,

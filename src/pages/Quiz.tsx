@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
 import Navbar from "@/components/Navbar";
-import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import {
   Dialog,
@@ -28,19 +27,6 @@ const Quiz = () => {
     try {
       setIsAnalyzing(true);
       setQuizName(values.quizName);
-      
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Vous devez être connecté pour créer un quiz.",
-        });
-        return;
-      }
 
       // TODO: Implement quiz generation logic with AI
       const mockQuizData: QuizData = {
