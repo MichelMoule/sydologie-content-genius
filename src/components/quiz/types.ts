@@ -11,6 +11,9 @@ export interface QuizData {
 export interface QuizFormData {
   quizName: string;
   courseContent: string;
+  courseFile: File | null;
+  quizType: string;
+  learningObjectives: string;
   difficultyLevel: string;
   numberOfQuestions: number;
 }

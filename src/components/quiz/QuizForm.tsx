@@ -27,6 +27,11 @@ export const formSchema = z.object({
   courseContent: z.string().min(50, {
     message: "Le contenu du cours doit faire au moins 50 caractères.",
   }),
+  courseFile: z.any().optional(),
+  quizType: z.string(),
+  learningObjectives: z.string().min(10, {
+    message: "Les objectifs pédagogiques doivent faire au moins 10 caractères.",
+  }),
   difficultyLevel: z.string(),
   numberOfQuestions: z.number().min(1).max(20),
 });
@@ -42,10 +47,20 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
     defaultValues: {
       quizName: "",
       courseContent: "",
+      courseFile: null,
+      quizType: "memorisation",
+      learningObjectives: "",
       difficultyLevel: "intermediaire",
       numberOfQuestions: 10,
     },
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("courseFile", file);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-12 min-h-[600px]">
@@ -75,6 +90,59 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
                   <Textarea 
                     placeholder="Copiez-collez ici le contenu de votre cours..."
                     className="min-h-[200px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormItem>
+            <FormLabel>Fichier du cours (PDF/Word)</FormLabel>
+            <FormControl>
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+
+          <FormField
+            control={form.control}
+            name="quizType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Type de quiz</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionnez un type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="memorisation">Mémorisation</SelectItem>
+                    <SelectItem value="comprehension">Compréhension</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="learningObjectives"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Objectifs pédagogiques</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Décrivez les objectifs pédagogiques de ce quiz..."
+                    className="min-h-[100px]"
                     {...field}
                   />
                 </FormControl>
