@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Rotate3D } from "lucide-react";
+import { Rotate3D, Wand2 } from "lucide-react";
 
 interface Flashcard {
   id: string;
@@ -19,8 +20,10 @@ const Flashcards = () => {
   const [cards, setCards] = useState<Flashcard[]>([]);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
+  const [content, setContent] = useState("");
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleAddCard = () => {
     if (!front || !back) {
@@ -46,6 +49,50 @@ const Flashcards = () => {
       title: "Succès",
       description: "La carte a été ajoutée",
     });
+  };
+
+  const handleGenerateCards = async () => {
+    if (!content) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez fournir du contenu pour générer les flashcards",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-flashcards', {
+        body: { content },
+      });
+
+      if (error) throw error;
+
+      const generatedCards = data.flashcards.map((card: { front: string; back: string }) => ({
+        id: crypto.randomUUID(),
+        front: card.front,
+        back: card.back,
+      }));
+
+      setCards(generatedCards);
+      setContent("");
+      
+      toast({
+        title: "Succès",
+        description: `${generatedCards.length} flashcards ont été générées`,
+      });
+    } catch (error) {
+      console.error('Error generating flashcards:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la génération des flashcards",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleNext = () => {
@@ -84,19 +131,40 @@ const Flashcards = () => {
 
           <div className="space-y-4">
             <div className="space-y-4">
-              <Input
-                placeholder="Recto de la carte"
-                value={front}
-                onChange={(e) => setFront(e.target.value)}
-              />
-              <Textarea
-                placeholder="Verso de la carte"
-                value={back}
-                onChange={(e) => setBack(e.target.value)}
-              />
-              <Button onClick={handleAddCard} className="w-full">
-                Ajouter une carte
-              </Button>
+              <div className="p-4 border rounded-lg space-y-4">
+                <h3 className="text-xl font-semibold mb-4">Génération par IA</h3>
+                <Textarea
+                  placeholder="Collez votre contenu ici pour générer automatiquement des flashcards..."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="min-h-[150px]"
+                />
+                <Button 
+                  onClick={handleGenerateCards} 
+                  className="w-full"
+                  disabled={isGenerating}
+                >
+                  <Wand2 className="mr-2" />
+                  {isGenerating ? "Génération en cours..." : "Générer des flashcards"}
+                </Button>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-4">
+                <h3 className="text-xl font-semibold mb-4">Création manuelle</h3>
+                <Input
+                  placeholder="Recto de la carte"
+                  value={front}
+                  onChange={(e) => setFront(e.target.value)}
+                />
+                <Textarea
+                  placeholder="Verso de la carte"
+                  value={back}
+                  onChange={(e) => setBack(e.target.value)}
+                />
+                <Button onClick={handleAddCard} className="w-full">
+                  Ajouter une carte
+                </Button>
+              </div>
             </div>
 
             {cards.length > 0 && (
