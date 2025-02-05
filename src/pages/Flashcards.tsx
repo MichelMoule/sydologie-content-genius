@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Rotate3D, Wand2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface Flashcard {
   id: string;
@@ -21,6 +22,7 @@ const Flashcards = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [numberOfCards, setNumberOfCards] = useState(5);
 
   const handleGenerateCards = async () => {
     if (!content) {
@@ -36,7 +38,10 @@ const Flashcards = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-flashcards', {
-        body: { content },
+        body: { 
+          content,
+          numberOfCards: Math.min(Math.max(1, numberOfCards), 20) // Limite entre 1 et 20 cartes
+        },
       });
 
       if (error) throw error;
@@ -103,6 +108,20 @@ const Flashcards = () => {
           <div className="space-y-4">
             <div className="p-4 border rounded-lg space-y-4">
               <h3 className="text-xl font-semibold mb-4">Génération par IA</h3>
+              <div className="space-y-2">
+                <label htmlFor="numberOfCards" className="text-sm font-medium">
+                  Nombre de flashcards à générer (1-20)
+                </label>
+                <Input
+                  id="numberOfCards"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={numberOfCards}
+                  onChange={(e) => setNumberOfCards(Math.min(Math.max(1, parseInt(e.target.value) || 1), 20))}
+                  className="w-full"
+                />
+              </div>
               <Textarea
                 placeholder="Collez votre contenu ici pour générer automatiquement des flashcards..."
                 value={content}

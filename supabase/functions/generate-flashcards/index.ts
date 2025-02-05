@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { content } = await req.json();
+    const { content, numberOfCards = 5 } = await req.json();
 
     if (!content) {
       throw new Error('Content is required');
@@ -32,11 +32,10 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are an expert at creating flashcards for learning purposes. 
-            Create flashcards based on the provided content.
+            Create exactly ${numberOfCards} flashcards based on the provided content.
             Each flashcard should have a front (question/concept) and back (answer/explanation).
             Return ONLY a JSON array of objects with 'front' and 'back' properties.
             Keep explanations concise but informative.
-            Generate between 5-10 flashcards depending on the content length.
             DO NOT include any markdown formatting or backticks in your response.
             Example of expected format:
             [{"front": "Question 1", "back": "Answer 1"}, {"front": "Question 2", "back": "Answer 2"}]`
