@@ -34,10 +34,12 @@ serve(async (req) => {
             content: `You are an expert at creating flashcards for learning purposes. 
             Create flashcards based on the provided content.
             Each flashcard should have a front (question/concept) and back (answer/explanation).
-            Return the flashcards in a JSON array format.
+            Return ONLY a JSON array of objects with 'front' and 'back' properties.
             Keep explanations concise but informative.
             Generate between 5-10 flashcards depending on the content length.
-            Format the response as a JSON array of objects with 'front' and 'back' properties.`
+            DO NOT include any markdown formatting or backticks in your response.
+            Example of expected format:
+            [{"front": "Question 1", "back": "Answer 1"}, {"front": "Question 2", "back": "Answer 2"}]`
           },
           {
             role: "user",
@@ -52,14 +54,32 @@ serve(async (req) => {
     const data = await response.json();
     console.log('Azure OpenAI Response:', data);
 
-    const generatedText = data.choices[0].message.content;
-    let flashcards;
+    let generatedText = data.choices[0].message.content;
     
+    // Clean up the response by removing any markdown formatting
+    generatedText = generatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    console.log('Cleaned response:', generatedText);
+    
+    let flashcards;
     try {
       flashcards = JSON.parse(generatedText);
     } catch (error) {
       console.error('Error parsing flashcards JSON:', error);
+      console.error('Raw text that failed to parse:', generatedText);
       throw new Error('Invalid response format from AI');
+    }
+
+    // Validate the structure of the flashcards
+    if (!Array.isArray(flashcards) || !flashcards.every(card => 
+      typeof card === 'object' && 
+      card !== null && 
+      'front' in card && 
+      'back' in card &&
+      typeof card.front === 'string' &&
+      typeof card.back === 'string'
+    )) {
+      throw new Error('Invalid flashcards structure received from AI');
     }
 
     return new Response(JSON.stringify({ flashcards }), {
