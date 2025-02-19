@@ -33,6 +33,51 @@ export type Database = {
         }
         Relationships: []
       }
+      tools: {
+        Row: {
+          category: string
+          created_at: string
+          favorite: boolean
+          gdpr: boolean
+          gdpr_source: string | null
+          id: string
+          name: string
+          pricing: string
+          pricing_source: string | null
+          updated_at: string
+          usage: string
+          website: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          favorite?: boolean
+          gdpr?: boolean
+          gdpr_source?: string | null
+          id?: string
+          name: string
+          pricing: string
+          pricing_source?: string | null
+          updated_at?: string
+          usage: string
+          website: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          favorite?: boolean
+          gdpr?: boolean
+          gdpr_source?: string | null
+          id?: string
+          name?: string
+          pricing?: string
+          pricing_source?: string | null
+          updated_at?: string
+          usage?: string
+          website?: string
+        }
+        Relationships: []
+      }
       training_feedback: {
         Row: {
           ai_analysis: string | null
