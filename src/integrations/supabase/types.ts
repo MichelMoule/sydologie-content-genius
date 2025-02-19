@@ -45,7 +45,6 @@ export type Database = {
           pricing: string
           pricing_source: string | null
           updated_at: string
-          usage: string
           website: string
         }
         Insert: {
@@ -59,7 +58,6 @@ export type Database = {
           pricing: string
           pricing_source?: string | null
           updated_at?: string
-          usage: string
           website: string
         }
         Update: {
@@ -73,7 +71,6 @@ export type Database = {
           pricing?: string
           pricing_source?: string | null
           updated_at?: string
-          usage?: string
           website?: string
         }
         Relationships: []
