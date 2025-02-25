@@ -68,22 +68,35 @@ const Glossaire = () => {
       formData.append("file", file);
       formData.append("subject", subject);
 
+      console.log("Envoi de la requête à l'API...");
       const { data, error } = await supabase.functions.invoke<GlossaryResponse>("generate-glossary", {
         body: formData,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur API:", error);
+        throw error;
+      }
+
+      console.log("Réponse API:", data);
+      
+      if (!data?.glossary?.terms) {
+        console.error("Format de réponse invalide:", data);
+        throw new Error("Format de réponse invalide");
+      }
 
       setGlossary(data.glossary.terms);
+      console.log("Glossaire mis à jour:", data.glossary.terms);
       
       toast({
         title: "Glossaire généré avec succès",
-        description: "Votre glossaire est prêt à être utilisé",
+        description: `${data.glossary.terms.length} termes ont été identifiés`,
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Erreur complète:", error);
       toast({
         title: "Erreur lors de la génération",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: error.message || "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
@@ -92,6 +105,15 @@ const Glossaire = () => {
   };
 
   const downloadGlossary = () => {
+    if (!glossary.length) {
+      toast({
+        title: "Aucun glossaire à télécharger",
+        description: "Veuillez d'abord générer un glossaire",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const content = glossary
       .map(({ term, definition }) => `${term}\n${definition}\n\n`)
       .join('');
@@ -191,7 +213,7 @@ const Glossaire = () => {
             </CardContent>
           </Card>
 
-          {glossary.length > 0 && (
+          {glossary && glossary.length > 0 && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
