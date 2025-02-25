@@ -37,6 +37,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          essai_gratuit: boolean | null
           favorite: boolean
           gdpr: boolean
           gdpr_source: string | null
@@ -45,11 +46,13 @@ export type Database = {
           pricing: string
           pricing_source: string | null
           updated_at: string
+          usages: string | null
           website: string
         }
         Insert: {
           category: string
           created_at?: string
+          essai_gratuit?: boolean | null
           favorite?: boolean
           gdpr?: boolean
           gdpr_source?: string | null
@@ -58,11 +61,13 @@ export type Database = {
           pricing: string
           pricing_source?: string | null
           updated_at?: string
+          usages?: string | null
           website: string
         }
         Update: {
           category?: string
           created_at?: string
+          essai_gratuit?: boolean | null
           favorite?: boolean
           gdpr?: boolean
           gdpr_source?: string | null
@@ -71,6 +76,7 @@ export type Database = {
           pricing?: string
           pricing_source?: string | null
           updated_at?: string
+          usages?: string | null
           website?: string
         }
         Relationships: []
