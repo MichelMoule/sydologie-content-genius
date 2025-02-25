@@ -10,7 +10,7 @@ const corsHeaders = {
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
 const endpoint = "https://sydologie.openai.azure.com";
-const deploymentName = "gpt4";
+const deploymentName = "gpt-4";  // Correction du nom du modèle
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -29,15 +29,17 @@ serve(async (req) => {
       );
     }
 
-    // Convert file to base64 string
+    // Récupérer le contenu du fichier
     const arrayBuffer = await file.arrayBuffer();
-    const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const pdfContent = new TextDecoder().decode(arrayBuffer);
     
-    // Pour le moment, nous allons envoyer directement le contenu à Azure OpenAI
-    // sans parser le PDF, car le modèle peut gérer le texte brut
     console.log('Processing file:', file.name, 'size:', file.size);
+    console.log('First 100 chars of content:', pdfContent.substring(0, 100));
 
-    const response = await fetch(`${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2023-05-15`, {
+    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2023-07-01-preview`;
+    console.log('Calling Azure OpenAI at:', url);
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,13 +64,11 @@ serve(async (req) => {
                   "definition": "définition claire et concise"
                 }
               ]
-            }
-            
-            Même si le texte fourni est encodé ou contient des caractères spéciaux, essaie d'en extraire le maximum d'information possible.`
+            }`
           },
           {
             role: 'user',
-            content: `Sujet: ${subject}\n\nContenu du document: ${base64String}\n\nCrée un glossaire des termes techniques importants.`
+            content: `Sujet: ${subject}\n\nContenu du document:\n${pdfContent.substring(0, 4000)}\n\nCrée un glossaire des termes techniques importants.`
           }
         ],
         temperature: 0.7,
@@ -77,8 +77,9 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      console.error('Azure OpenAI API error:', await response.text());
-      throw new Error('Erreur lors de la génération du glossaire');
+      const errorText = await response.text();
+      console.error('Azure OpenAI API error:', errorText);
+      throw new Error(`Erreur lors de la génération du glossaire: ${errorText}`);
     }
 
     const openAIResponse = await response.json();
@@ -90,7 +91,6 @@ serve(async (req) => {
       console.log('Raw content:', content);
       glossaryContent = JSON.parse(content);
       
-      // Validate response format
       if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
         throw new Error('Format de réponse invalide');
       }
@@ -106,7 +106,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Erreur dans la fonction generate-glossary:', error);
     return new Response(
-      JSON.stringify({ error: 'Une erreur est survenue lors de la génération du glossaire' }),
+      JSON.stringify({ error: error.message || 'Une erreur est survenue lors de la génération du glossaire' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
