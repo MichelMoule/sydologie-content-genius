@@ -14,6 +14,7 @@ import Quiz from "./pages/Quiz";
 import Flashcards from "./pages/Flashcards";
 import NotFound from "./pages/NotFound";
 import Annuaire from "./pages/Annuaire";
+import Glossaire from "./pages/Glossaire";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/outils/feedbaick" element={<FeedbaIck />} />
           <Route path="/outils/quiz" element={<Quiz />} />
           <Route path="/outils/flashcards" element={<Flashcards />} />
+          <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
