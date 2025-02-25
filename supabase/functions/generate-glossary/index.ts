@@ -30,15 +30,23 @@ serve(async (req) => {
       );
     }
 
-    // Convert file to ArrayBuffer and extract text
+    // Extraire le texte du PDF
     const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
-    const pages = pdfDoc.getPages();
+    const pdf = await PDFDocument.load(arrayBuffer);
+    const pages = pdf.getPages();
     let pdfContent = '';
 
-    for (const page of pages) {
-      const text = await page.getTextContent();
-      pdfContent += text + '\n';
+    for (let i = 0; i < pages.length; i++) {
+      const page = pages[i];
+      const { width, height } = page.getSize();
+      const textObjects = await page.doc.getPage(i + 1).getTextObjects();
+      
+      for (const textObj of textObjects) {
+        if (typeof textObj.text === 'string') {
+          pdfContent += textObj.text + ' ';
+        }
+      }
+      pdfContent += '\n';
     }
 
     console.log('PDF content extracted:', pdfContent.substring(0, 200) + '...');
