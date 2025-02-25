@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload, BookOpen, Loader2, Download } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -198,14 +206,22 @@ const Glossaire = () => {
                 </Button>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {glossary.map(({ term, definition }, index) => (
-                    <div key={index} className="border-b border-gray-200 pb-4">
-                      <h3 className="font-semibold text-lg mb-1">{term}</h3>
-                      <p className="text-zinc-600">{definition}</p>
-                    </div>
-                  ))}
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Terme</TableHead>
+                      <TableHead>Définition</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {glossary.map((term, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-semibold">{term.term}</TableCell>
+                        <TableCell>{term.definition}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           )}
