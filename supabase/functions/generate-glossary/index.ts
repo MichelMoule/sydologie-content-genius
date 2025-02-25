@@ -31,7 +31,14 @@ serve(async (req) => {
 
     // Récupérer le contenu du fichier
     const arrayBuffer = await file.arrayBuffer();
-    const pdfContent = new TextDecoder().decode(arrayBuffer);
+    let pdfContent;
+    try {
+      pdfContent = new TextDecoder().decode(arrayBuffer);
+    } catch (error) {
+      console.error('Error decoding file:', error);
+      // Si le décodage échoue, on utilise une conversion en base64
+      pdfContent = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    }
     
     console.log('Processing file:', file.name, 'size:', file.size);
     console.log('First 100 chars of content:', pdfContent.substring(0, 100));
@@ -51,12 +58,9 @@ serve(async (req) => {
             role: 'system',
             content: `Tu es un expert en création de glossaires.
             Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
-            Tu dois :
-            1. Identifier uniquement les termes techniques et spécifiques au domaine
-            2. Fournir des définitions précises et faciles à comprendre
-            3. Retourner un JSON valide avec une propriété "terms" qui est un tableau d'objets contenant "term" et "definition"
             
-            Format de sortie attendu :
+            IMPORTANT: Ta réponse DOIT être un JSON valide SANS texte additionnel avant ou après.
+            Le format attendu est STRICTEMENT :
             {
               "terms": [
                 {
@@ -64,14 +68,17 @@ serve(async (req) => {
                   "definition": "définition claire et concise"
                 }
               ]
-            }`
+            }
+            
+            Si tu ne trouves pas de termes techniques, retourne un tableau vide : { "terms": [] }
+            N'ajoute AUCUN texte avant ou après le JSON.`
           },
           {
             role: 'user',
             content: `Sujet: ${subject}\n\nContenu du document:\n${pdfContent.substring(0, 4000)}\n\nCrée un glossaire des termes techniques importants.`
           }
         ],
-        temperature: 0.7,
+        temperature: 0.3, // Réduit pour plus de cohérence
         max_tokens: 2000,
       }),
     });
@@ -87,16 +94,31 @@ serve(async (req) => {
 
     let glossaryContent;
     try {
-      const content = openAIResponse.choices[0].message.content;
+      const content = openAIResponse.choices[0].message.content.trim();
       console.log('Raw content:', content);
-      glossaryContent = JSON.parse(content);
+      
+      // Tentative de nettoyage du JSON si nécessaire
+      const jsonStart = content.indexOf('{');
+      const jsonEnd = content.lastIndexOf('}') + 1;
+      const jsonContent = content.slice(jsonStart, jsonEnd);
+      
+      glossaryContent = JSON.parse(jsonContent);
       
       if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
-        throw new Error('Format de réponse invalide');
+        console.error('Invalid response format:', glossaryContent);
+        throw new Error('Format de réponse invalide: pas de tableau terms');
+      }
+
+      // Valider chaque terme
+      for (const term of glossaryContent.terms) {
+        if (!term.term || !term.definition) {
+          console.error('Invalid term format:', term);
+          throw new Error('Format de terme invalide');
+        }
       }
     } catch (error) {
       console.error('Error parsing OpenAI response:', error);
-      throw new Error('Format de réponse invalide de l\'API');
+      throw new Error(`Format de réponse invalide de l'API: ${error.message}`);
     }
 
     return new Response(
