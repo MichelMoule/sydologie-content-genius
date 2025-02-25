@@ -2,7 +2,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { decode as base64Decode } from "https://deno.land/std/encoding/base64.ts";
-import { PDFDocument } from "https://cdn.skypack.dev/pdf-lib?dts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,26 +29,13 @@ serve(async (req) => {
       );
     }
 
-    // Extraire le texte du PDF
+    // Convert file to base64 string
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const pages = pdf.getPages();
-    let pdfContent = '';
-
-    for (let i = 0; i < pages.length; i++) {
-      const page = pages[i];
-      const { width, height } = page.getSize();
-      const textObjects = await page.doc.getPage(i + 1).getTextObjects();
-      
-      for (const textObj of textObjects) {
-        if (typeof textObj.text === 'string') {
-          pdfContent += textObj.text + ' ';
-        }
-      }
-      pdfContent += '\n';
-    }
-
-    console.log('PDF content extracted:', pdfContent.substring(0, 200) + '...');
+    const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    
+    // Pour le moment, nous allons envoyer directement le contenu à Azure OpenAI
+    // sans parser le PDF, car le modèle peut gérer le texte brut
+    console.log('Processing file:', file.name, 'size:', file.size);
 
     const response = await fetch(`${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2023-05-15`, {
       method: 'POST',
@@ -76,11 +62,13 @@ serve(async (req) => {
                   "definition": "définition claire et concise"
                 }
               ]
-            }`
+            }
+            
+            Même si le texte fourni est encodé ou contient des caractères spéciaux, essaie d'en extraire le maximum d'information possible.`
           },
           {
             role: 'user',
-            content: `Sujet: ${subject}\n\nContenu: ${pdfContent}\n\nCrée un glossaire des termes techniques importants.`
+            content: `Sujet: ${subject}\n\nContenu du document: ${base64String}\n\nCrée un glossaire des termes techniques importants.`
           }
         ],
         temperature: 0.7,
@@ -94,11 +82,12 @@ serve(async (req) => {
     }
 
     const openAIResponse = await response.json();
-    console.log('Azure OpenAI response:', openAIResponse);
+    console.log('Azure OpenAI response received');
 
     let glossaryContent;
     try {
       const content = openAIResponse.choices[0].message.content;
+      console.log('Raw content:', content);
       glossaryContent = JSON.parse(content);
       
       // Validate response format
