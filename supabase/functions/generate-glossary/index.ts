@@ -2,6 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { decode as base64Decode } from "https://deno.land/std/encoding/base64.ts";
+import { PDFDocument } from "https://cdn.skypack.dev/pdf-lib?dts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,14 +30,19 @@ serve(async (req) => {
       );
     }
 
-    // Convert file to ArrayBuffer
+    // Convert file to ArrayBuffer and extract text
     const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    
-    // Convert PDF content to text
-    const pdfContent = await extractTextFromPdf(uint8Array);
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const pages = pdfDoc.getPages();
+    let pdfContent = '';
 
-    // Generate glossary using Azure OpenAI
+    for (const page of pages) {
+      const text = await page.getTextContent();
+      pdfContent += text + '\n';
+    }
+
+    console.log('PDF content extracted:', pdfContent.substring(0, 200) + '...');
+
     const response = await fetch(`${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2023-05-15`, {
       method: 'POST',
       headers: {
@@ -47,11 +53,26 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en création de glossaires. Tu dois identifier les termes techniques importants dans le texte fourni et générer des définitions claires et concises. Retourne toujours un JSON avec une propriété terms qui est un tableau d\'objets ayant un term et une definition.'
+            content: `Tu es un expert en création de glossaires.
+            Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
+            Tu dois :
+            1. Identifier uniquement les termes techniques et spécifiques au domaine
+            2. Fournir des définitions précises et faciles à comprendre
+            3. Retourner un JSON valide avec une propriété "terms" qui est un tableau d'objets contenant "term" et "definition"
+            
+            Format de sortie attendu :
+            {
+              "terms": [
+                {
+                  "term": "terme technique",
+                  "definition": "définition claire et concise"
+                }
+              ]
+            }`
           },
           {
             role: 'user',
-            content: `Sujet: ${subject}\n\nContenu: ${pdfContent}\n\nCrée un glossaire au format JSON avec les termes techniques et leurs définitions. Assure-toi que la sortie est un JSON valide avec une propriété "terms" qui est un tableau d'objets contenant "term" et "definition".`
+            content: `Sujet: ${subject}\n\nContenu: ${pdfContent}\n\nCrée un glossaire des termes techniques importants.`
           }
         ],
         temperature: 0.7,
@@ -59,8 +80,27 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      console.error('Azure OpenAI API error:', await response.text());
+      throw new Error('Erreur lors de la génération du glossaire');
+    }
+
     const openAIResponse = await response.json();
-    const glossaryContent = JSON.parse(openAIResponse.choices[0].message.content);
+    console.log('Azure OpenAI response:', openAIResponse);
+
+    let glossaryContent;
+    try {
+      const content = openAIResponse.choices[0].message.content;
+      glossaryContent = JSON.parse(content);
+      
+      // Validate response format
+      if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
+        throw new Error('Format de réponse invalide');
+      }
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      throw new Error('Format de réponse invalide de l\'API');
+    }
 
     return new Response(
       JSON.stringify({ glossary: glossaryContent }),
@@ -74,9 +114,3 @@ serve(async (req) => {
     );
   }
 });
-
-async function extractTextFromPdf(pdfBuffer: Uint8Array): Promise<string> {
-  // Use pdf.js to extract text from PDF
-  // For now, return a placeholder text - we'll implement the actual PDF parsing later
-  return "Contenu du PDF (à implémenter)";
-}
