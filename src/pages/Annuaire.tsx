@@ -24,7 +24,8 @@ interface Tool {
   gdpr_source: string | null;
   favorite: boolean;
   usage: string | null;
-  usages: string | null;
+  created_at: string;
+  updated_at: string;
   essai_gratuit: boolean | null;
 }
 
@@ -35,7 +36,11 @@ const fetchTools = async () => {
     .order('category');
   
   if (error) throw error;
-  return data as Tool[];
+  const tools = data.map(tool => ({
+    ...tool,
+    usage: tool.usages, // Map usages field to usage
+  }));
+  return tools as Tool[];
 };
 
 const Annuaire = () => {
