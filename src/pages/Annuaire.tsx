@@ -24,6 +24,8 @@ interface Tool {
   gdpr_source: string | null;
   favorite: boolean;
   usage: string | null;
+  usages: string | null;
+  essai_gratuit: boolean | null;
 }
 
 const fetchTools = async () => {
