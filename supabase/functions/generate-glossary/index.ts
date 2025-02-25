@@ -9,8 +9,8 @@ const corsHeaders = {
 };
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
-const endpoint = "https://sydologie.openai.azure.com";
-const deploymentName = "gpt-4";  // Correction du nom du modèle
+const endpoint = "https://sydo-chatgpt.openai.azure.com";
+const deploymentName = "gpt-4o-mini-2";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -36,7 +36,7 @@ serve(async (req) => {
     console.log('Processing file:', file.name, 'size:', file.size);
     console.log('First 100 chars of content:', pdfContent.substring(0, 100));
 
-    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2023-07-01-preview`;
+    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
     console.log('Calling Azure OpenAI at:', url);
 
     const response = await fetch(url, {
