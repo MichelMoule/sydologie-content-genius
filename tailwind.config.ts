@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,7 @@ export default {
       fontFamily: {
         serif: ["Georgia", "serif"],
         sans: ["Unbounded", "system-ui", "sans-serif"],
+        dmsans: ["DM Sans", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

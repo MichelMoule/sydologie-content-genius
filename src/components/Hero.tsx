@@ -1,3 +1,4 @@
+
 import { Button } from "./ui/button";
 
 const Hero = () => {
@@ -16,18 +17,18 @@ const Hero = () => {
         </div>
         
         <div className="md:w-1/2 flex flex-col justify-end" style={{ paddingTop: "180px" }}>
-          <p className="text-gray-600 mb-8 font-unbounded">
+          <p className="text-gray-600 mb-8 font-dmsans">
             Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est <strong>RGPD</strong> !
           </p>
           <div className="space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
             <Button 
-              className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90 px-8 py-6 text-lg font-unbounded"
+              className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90 px-8 py-6 text-lg font-dmsans"
             >
               M'inscrire gratuitement
             </Button>
             <Button 
               variant="outline" 
-              className="border-[#00FF00] text-[#00FF00] hover:bg-[#00FF00]/10 px-8 py-6 text-lg font-unbounded"
+              className="border-[#00FF00] text-[#00FF00] hover:bg-[#00FF00]/10 px-8 py-6 text-lg font-dmsans"
             >
               Me connecter
             </Button>
