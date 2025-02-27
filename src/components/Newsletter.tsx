@@ -1,9 +1,10 @@
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 const Newsletter = () => {
   return (
-    <section className="w-full bg-[#1EFF02] py-24">
+    <section className="w-full bg-[#0EA5E9] py-24">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
