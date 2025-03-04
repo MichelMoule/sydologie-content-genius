@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
@@ -7,7 +8,8 @@ const tools = {
       id: 1,
       name: "ProgrAImme",
       description: "Créez des programmes de formation personnalisés",
-      image: "/lovable-uploads/2c950e55-b356-4720-84ea-a6231962e14d.png"
+      image: "/lovable-uploads/2c950e55-b356-4720-84ea-a6231962e14d.png",
+      path: "/outils/program"
     },
     {
       id: 2,
@@ -64,7 +66,7 @@ const Outils = () => {
       <section className="container mx-auto px-4 py-24">
         <div className="flex gap-8">
           <div className="w-1/6">
-            <h1 className="text-[#1EFF02] text-6xl font-bold rotate-[-90deg] translate-y-20 whitespace-nowrap">
+            <h1 className="text-[#0EA5E9] text-6xl font-bold rotate-[-90deg] translate-y-20 whitespace-nowrap">
               OUTILS
             </h1>
           </div>
@@ -73,7 +75,7 @@ const Outils = () => {
               Nous développons des outils pour vous aidez dans la conception, la réalisation et l'analyse de vos formations.
             </h2>
             <p className="text-2xl mb-4">
-              <Link to="/contact" className="text-[#1EFF02] hover:underline">
+              <Link to="/contact" className="text-[#0EA5E9] hover:underline">
                 Contactez-nous
               </Link>{" "}
               pour toute demande d'outil sur mesure.
@@ -87,22 +89,26 @@ const Outils = () => {
         {/* Conception Tools */}
         <section className="mb-16">
           <h3 className="text-2xl font-bold mb-8">
-            <span className="text-[#1EFF02]">_</span>Nos outils de conception
+            <span className="text-[#0EA5E9]">_</span>Nos outils de conception
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.conception.map((tool) => (
-              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
+              <Link 
+                key={tool.id} 
+                to={tool.path || "#"} 
+                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              >
                 <img
                   src={tool.image}
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <h4 className="text-xl font-bold mb-2">
-                  <span className="text-[#1EFF02]">_</span>
+                  <span className="text-[#0EA5E9]">_</span>
                   {tool.name}
                 </h4>
                 <p className="text-gray-700">{tool.description}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -110,22 +116,26 @@ const Outils = () => {
         {/* Realisation Tools */}
         <section className="mb-16">
           <h3 className="text-2xl font-bold mb-8">
-            <span className="text-[#1EFF02]">_</span>Nos outils pour la réalisation
+            <span className="text-[#0EA5E9]">_</span>Nos outils pour la réalisation
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.realisation.map((tool) => (
-              <div key={tool.id} className="bg-white rounded-lg p-6 shadow-lg">
+              <Link 
+                key={tool.id} 
+                to={tool.path || "#"} 
+                className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              >
                 <img
                   src={tool.image}
                   alt={tool.name}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <h4 className="text-xl font-bold mb-2">
-                  <span className="text-[#1EFF02]">_</span>
+                  <span className="text-[#0EA5E9]">_</span>
                   {tool.name}
                 </h4>
                 <p className="text-gray-700">{tool.description}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -133,7 +143,7 @@ const Outils = () => {
         {/* Analysis Tools */}
         <section>
           <h3 className="text-2xl font-bold mb-8">
-            <span className="text-[#1EFF02]">_</span>Nos outils d'analyse
+            <span className="text-[#0EA5E9]">_</span>Nos outils d'analyse
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.analyse.map((tool) => (
@@ -148,7 +158,7 @@ const Outils = () => {
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <h4 className="text-xl font-bold mb-2">
-                  <span className="text-[#1EFF02]">_</span>
+                  <span className="text-[#0EA5E9]">_</span>
                   {tool.name}
                 </h4>
                 <p className="text-gray-700">{tool.description}</p>

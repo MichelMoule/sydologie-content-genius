@@ -11,6 +11,7 @@ import Formations from "./pages/Formations";
 import Outils from "./pages/Outils";
 import FeedbaIck from "./pages/FeedbaIck";
 import Quiz from "./pages/Quiz";
+import Program from "./pages/Program";
 import Flashcards from "./pages/Flashcards";
 import NotFound from "./pages/NotFound";
 import Annuaire from "./pages/Annuaire";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/annuaire" element={<Annuaire />} />
           <Route path="/outils/feedbaick" element={<FeedbaIck />} />
           <Route path="/outils/quiz" element={<Quiz />} />
+          <Route path="/outils/program" element={<Program />} />
           <Route path="/outils/flashcards" element={<Flashcards />} />
           <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="*" element={<NotFound />} />
