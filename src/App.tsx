@@ -17,6 +17,7 @@ import VideoScript from "./pages/VideoScript";
 import NotFound from "./pages/NotFound";
 import Annuaire from "./pages/Annuaire";
 import Glossaire from "./pages/Glossaire";
+import Suggestions from "./pages/Suggestions";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/outils/flashcards" element={<Flashcards />} />
           <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="/outils/videoscript" element={<VideoScript />} />
+          <Route path="/outils/suggestions" element={<Suggestions />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

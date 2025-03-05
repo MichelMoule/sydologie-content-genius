@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { LightbulbIcon } from "lucide-react";
 
 const tools = {
   conception: [
@@ -81,6 +82,15 @@ const Outils = () => {
               </Link>{" "}
               pour toute demande d'outil sur mesure.
             </p>
+            <div className="mt-6">
+              <Link 
+                to="/outils/suggestions" 
+                className="flex items-center text-[#0EA5E9] hover:underline"
+              >
+                <LightbulbIcon className="mr-2 h-5 w-5" />
+                <span className="text-lg">Suggérer un nouvel outil</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

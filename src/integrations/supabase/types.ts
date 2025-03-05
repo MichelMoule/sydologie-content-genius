@@ -33,6 +33,71 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_suggestions: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          status: string
+          submitted_by: string
+          website: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          status?: string
+          submitted_by: string
+          website: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          status?: string
+          submitted_by?: string
+          website?: string
+        }
+        Relationships: []
+      }
+      tool_votes: {
+        Row: {
+          created_at: string
+          id: string
+          tool_suggestion_id: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tool_suggestion_id: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tool_suggestion_id?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_votes_tool_suggestion_id_fkey"
+            columns: ["tool_suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "tool_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tools: {
         Row: {
           category: string

@@ -1,6 +1,6 @@
 
 import { Button } from "./ui/button";
-import { User, LogOut, Library } from "lucide-react";
+import { User, LogOut, Library, LightbulbIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +53,10 @@ const Navbar = () => {
             <Link to="/annuaire" className="hover:text-[#00FF00] transition-colors flex items-center">
               <Library className="mr-2 h-4 w-4" />
               Annuaire
+            </Link>
+            <Link to="/outils/suggestions" className="hover:text-[#00FF00] transition-colors flex items-center">
+              <LightbulbIcon className="mr-2 h-4 w-4" />
+              Suggestions
             </Link>
             <Link to="/contact" className="hover:text-[#00FF00] transition-colors">
               Nous contacter
