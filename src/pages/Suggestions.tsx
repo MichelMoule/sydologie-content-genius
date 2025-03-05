@@ -1,49 +1,30 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-// Définition du schéma de validation pour le formulaire
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Le nom doit contenir au moins 2 caractères.",
-  }),
-  description: z.string().min(10, {
-    message: "La description doit contenir au moins 10 caractères.",
-  }),
-  website: z.string().url({
-    message: "Veuillez entrer une URL valide.",
-  }),
-  category: z.string({
-    required_error: "Veuillez sélectionner une catégorie.",
-  }),
-});
+import SuggestionForm from "@/components/suggestions/SuggestionForm";
 
 type ToolSuggestion = {
   id: string;
@@ -65,17 +46,6 @@ const Suggestions = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
   
-  // Initialiser le formulaire avec le schéma de validation
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      website: "",
-      category: "",
-    },
-  });
-
   // Vérifier si l'utilisateur est connecté
   useEffect(() => {
     const checkUser = async () => {
@@ -137,7 +107,12 @@ const Suggestions = () => {
           };
         });
         
-        setSuggestions(finalSuggestions);
+        // Trier par nombre de votes (popularité)
+        const sortedSuggestions = finalSuggestions.sort(
+          (a, b) => (b.upvotes_count - b.downvotes_count) - (a.upvotes_count - a.downvotes_count)
+        );
+        
+        setSuggestions(sortedSuggestions);
       } catch (error) {
         console.error('Erreur lors du chargement des suggestions:', error);
         toast.error('Erreur lors du chargement des suggestions');
@@ -148,47 +123,6 @@ const Suggestions = () => {
     
     fetchSuggestions();
   }, [user]);
-
-  // Soumettre une nouvelle suggestion
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) {
-      toast.error('Vous devez être connecté pour proposer un outil');
-      navigate('/auth');
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase
-        .from('tool_suggestions')
-        .insert([
-          {
-            name: values.name,
-            description: values.description,
-            website: values.website,
-            category: values.category,
-            submitted_by: user.id
-          }
-        ])
-        .select();
-      
-      if (error) throw error;
-      
-      form.reset();
-      toast.success('Votre suggestion a été soumise avec succès!');
-      
-      // Ajouter la nouvelle suggestion à la liste
-      if (data && data[0]) {
-        setSuggestions(prev => [...prev, {
-          ...data[0],
-          upvotes_count: 0,
-          downvotes_count: 0
-        }]);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
-      toast.error('Erreur lors de la soumission de votre suggestion');
-    }
-  };
 
   // Gérer les votes
   const handleVote = async (suggestionId: string, voteType: 'up' | 'down') => {
@@ -281,175 +215,169 @@ const Suggestions = () => {
     }
   };
 
+  // Calculer le score de chaque suggestion
+  const getScore = (suggestion: ToolSuggestion) => {
+    return suggestion.upvotes_count - suggestion.downvotes_count;
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">
-        <div className="flex flex-col md:flex-row gap-12">
-          {/* Formulaire de suggestion */}
-          <div className="md:w-1/3">
-            <h1 className="text-4xl font-bold mb-8">
-              <span className="text-[#00FF00]">_</span>Proposer un outil
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <h1 className="text-4xl font-bold">
+              <span className="text-[#00FF00]">_</span>Propositions d'outils
             </h1>
-            
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom de l'outil</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ex: Canva, Figma, etc." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Décrivez brièvement l'outil et son utilité..." 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="website"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Site web</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Catégorie</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sélectionner une catégorie" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="conception">Conception</SelectItem>
-                          <SelectItem value="realisation">Réalisation</SelectItem>
-                          <SelectItem value="analyse">Analyse</SelectItem>
-                          <SelectItem value="autre">Autre</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button type="submit" className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90">
-                  Soumettre
-                </Button>
-                
-                {!user && (
-                  <FormDescription className="text-yellow-600">
-                    Vous devez être connecté pour proposer un outil.
-                  </FormDescription>
-                )}
-              </form>
-            </Form>
+            <p className="text-lg mt-2 text-gray-600">
+              Découvrez les outils les plus demandés par notre communauté et participez au vote !
+            </p>
           </div>
           
-          {/* Liste des suggestions */}
-          <div className="md:w-2/3">
-            <h2 className="text-3xl font-bold mb-8">
-              <span className="text-[#00FF00]">_</span>Les propositions
-            </h2>
-            
-            {loading ? (
-              <p>Chargement des suggestions...</p>
-            ) : suggestions.length === 0 ? (
-              <p>Aucune suggestion pour le moment. Soyez le premier à proposer un outil!</p>
-            ) : (
-              <div className="space-y-6">
-                {suggestions.map((suggestion) => (
-                  <div key={suggestion.id} className="bg-white rounded-lg shadow-lg p-6">
-                    <div className="flex justify-between">
-                      <h3 className="text-xl font-bold mb-2">
-                        <span className="text-[#00FF00]">_</span>{suggestion.name}
-                      </h3>
-                      <Badge className={`
-                        ${suggestion.category === 'conception' ? 'bg-blue-500' : ''}
-                        ${suggestion.category === 'realisation' ? 'bg-green-500' : ''}
-                        ${suggestion.category === 'analyse' ? 'bg-purple-500' : ''}
-                        ${suggestion.category === 'autre' ? 'bg-gray-500' : ''}
-                      `}>
-                        {suggestion.category}
-                      </Badge>
-                    </div>
-                    
-                    <p className="mb-4">{suggestion.description}</p>
-                    
-                    <a 
-                      href={suggestion.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline mb-4 inline-block"
-                    >
-                      {suggestion.website}
-                    </a>
-                    
-                    <div className="flex items-center space-x-4 mt-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`flex items-center space-x-1 ${
-                          suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
-                        }`}
-                        onClick={() => handleVote(suggestion.id, 'up')}
-                      >
-                        <ThumbsUp size={16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
-                        <span>{suggestion.upvotes_count}</span>
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`flex items-center space-x-1 ${
-                          suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
-                        }`}
-                        onClick={() => handleVote(suggestion.id, 'down')}
-                      >
-                        <ThumbsDown size={16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
-                        <span>{suggestion.downvotes_count}</span>
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-[#00FF00] text-black font-medium hover:bg-[#00FF00]/90 flex items-center gap-2">
+                <Plus size={18} />
+                Proposer un outil
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[550px]">
+              <DialogHeader>
+                <DialogTitle className="text-2xl">
+                  <span className="text-[#00FF00]">_</span>Proposer un outil
+                </DialogTitle>
+                <DialogDescription>
+                  Suggérez un outil qui pourrait être développé sur sydologie.ai
+                </DialogDescription>
+              </DialogHeader>
+              <SuggestionForm 
+                setSuggestions={setSuggestions} 
+                user={user}
+                navigate={navigate}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
+        
+        {loading ? (
+          <div className="text-center py-12">
+            <p>Chargement des propositions...</p>
+          </div>
+        ) : suggestions.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+            <LightbulbIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-xl font-medium mb-2">Aucune proposition pour le moment</h3>
+            <p className="text-gray-600 mb-6">Soyez le premier à proposer un outil !</p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90">
+                  Proposer un outil
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl">
+                    <span className="text-[#00FF00]">_</span>Proposer un outil
+                  </DialogTitle>
+                  <DialogDescription>
+                    Suggérez un outil qui pourrait être développé sur sydologie.ai
+                  </DialogDescription>
+                </DialogHeader>
+                <SuggestionForm 
+                  setSuggestions={setSuggestions} 
+                  user={user}
+                  navigate={navigate}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+        ) : (
+          <Table>
+            <TableCaption>Liste des propositions d'outils classées par popularité</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]">Rang</TableHead>
+                <TableHead>Outil</TableHead>
+                <TableHead>Catégorie</TableHead>
+                <TableHead className="text-center">Score</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {suggestions.map((suggestion, index) => (
+                <TableRow key={suggestion.id} className={index < 3 ? "bg-green-50/50" : ""}>
+                  <TableCell className="font-medium">
+                    {index + 1}
+                    {index < 3 && (
+                      <span className="ml-1 text-xs font-bold text-green-600">
+                        {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-semibold text-lg">{suggestion.name}</div>
+                      <div className="text-sm text-gray-500 mt-1">{suggestion.description}</div>
+                      <a 
+                        href={suggestion.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 text-xs hover:underline mt-1 inline-block"
+                      >
+                        {suggestion.website}
+                      </a>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={`
+                      ${suggestion.category === 'conception' ? 'bg-blue-500' : ''}
+                      ${suggestion.category === 'realisation' ? 'bg-green-500' : ''}
+                      ${suggestion.category === 'analyse' ? 'bg-purple-500' : ''}
+                      ${suggestion.category === 'autre' ? 'bg-gray-500' : ''}
+                    `}>
+                      {suggestion.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center font-medium">
+                    <span className={`
+                      ${getScore(suggestion) > 0 ? 'text-green-600' : ''}
+                      ${getScore(suggestion) < 0 ? 'text-red-600' : ''}
+                      ${getScore(suggestion) === 0 ? 'text-gray-600' : ''}
+                    `}>
+                      {getScore(suggestion)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`flex items-center space-x-1 ${
+                        suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
+                      }`}
+                      onClick={() => handleVote(suggestion.id, 'up')}
+                    >
+                      <ThumbsUp size={16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
+                      <span>{suggestion.upvotes_count}</span>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`flex items-center space-x-1 ${
+                        suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
+                      }`}
+                      onClick={() => handleVote(suggestion.id, 'down')}
+                    >
+                      <ThumbsDown size={16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
+                      <span>{suggestion.downvotes_count}</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

@@ -82,13 +82,19 @@ const Outils = () => {
               </Link>{" "}
               pour toute demande d'outil sur mesure.
             </p>
-            <div className="mt-6">
+            <div className="mt-6 flex items-center bg-gray-100 p-4 rounded-lg">
+              <div className="mr-4 bg-[#00FF00]/20 p-3 rounded-full">
+                <LightbulbIcon className="h-6 w-6 text-[#00FF00]" />
+              </div>
+              <div>
+                <p className="font-bold">Une idée d'outil ?</p>
+                <p className="text-gray-600">Contribuez au développement de sydologie.ai en proposant de nouvelles fonctionnalités</p>
+              </div>
               <Link 
                 to="/outils/suggestions" 
-                className="flex items-center text-[#0EA5E9] hover:underline"
+                className="ml-auto bg-[#00FF00] text-black px-4 py-2 rounded-md hover:bg-[#00FF00]/90 whitespace-nowrap"
               >
-                <LightbulbIcon className="mr-2 h-5 w-5" />
-                <span className="text-lg">Suggérer un nouvel outil</span>
+                Voir les propositions
               </Link>
             </div>
           </div>

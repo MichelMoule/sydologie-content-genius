@@ -56,7 +56,7 @@ const Navbar = () => {
             </Link>
             <Link to="/outils/suggestions" className="hover:text-[#00FF00] transition-colors flex items-center">
               <LightbulbIcon className="mr-2 h-4 w-4" />
-              Suggestions
+              Propositions
             </Link>
             <Link to="/contact" className="hover:text-[#00FF00] transition-colors">
               Nous contacter
