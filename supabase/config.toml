@@ -1,3 +1,4 @@
+
 project_id = "tijdikovauumiduljnrm"
 
 [api]
@@ -13,4 +14,7 @@ port = 54322
 verify_jwt = false
 
 [functions.analyze-feedback]
+verify_jwt = false
+
+[functions.generate-glossary]
 verify_jwt = false
