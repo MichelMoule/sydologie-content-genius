@@ -13,6 +13,7 @@ import FeedbaIck from "./pages/FeedbaIck";
 import Quiz from "./pages/Quiz";
 import Program from "./pages/Program";
 import Flashcards from "./pages/Flashcards";
+import VideoScript from "./pages/VideoScript";
 import NotFound from "./pages/NotFound";
 import Annuaire from "./pages/Annuaire";
 import Glossaire from "./pages/Glossaire";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/outils/program" element={<Program />} />
           <Route path="/outils/flashcards" element={<Flashcards />} />
           <Route path="/outils/glossaire" element={<Glossaire />} />
+          <Route path="/outils/videoscript" element={<VideoScript />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

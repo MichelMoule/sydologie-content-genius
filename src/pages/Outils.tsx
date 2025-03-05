@@ -22,7 +22,8 @@ const tools = {
       id: 3,
       name: "Scrypto-vidéo",
       description: "Créez des scripts pour vos vidéos de formation",
-      image: "/lovable-uploads/59464221-fdcc-4f6c-a58f-c27fcd17a54e.png"
+      image: "/lovable-uploads/59464221-fdcc-4f6c-a58f-c27fcd17a54e.png",
+      path: "/outils/videoscript"
     }
   ],
   realisation: [
