@@ -73,15 +73,14 @@ serve(async (req) => {
       }
     `;
 
-    // Call OpenAI API using the standard endpoint instead of Azure
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call Azure OpenAI API with the updated endpoint
+    const response = await fetch('https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini-2/chat/completions?api-version=2024-08-01-preview', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'api-key': apiKey,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
         messages: [
           { role: 'system', content: 'Tu es un expert en ingénierie pédagogique et en formation professionnelle. Tu es capable de créer des programmes pédagogiques complets et cohérents adaptés aux besoins spécifiques.' },
           { role: 'user', content: prompt }
@@ -92,10 +91,10 @@ serve(async (req) => {
     });
 
     const result = await response.json();
-    console.log('Received response from OpenAI');
+    console.log('Received response from Azure OpenAI');
 
     if (!result.choices || result.choices.length === 0) {
-      console.error('Invalid response from OpenAI:', result);
+      console.error('Invalid response from Azure OpenAI:', result);
       throw new Error('Invalid response from the AI service');
     }
 
