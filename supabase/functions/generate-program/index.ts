@@ -73,14 +73,15 @@ serve(async (req) => {
       }
     `;
 
-    // Call OpenAI API
-    const response = await fetch('https://sydologie-ai.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2023-07-01-preview', {
+    // Call OpenAI API using the standard endpoint instead of Azure
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'api-key': apiKey,
       },
       body: JSON.stringify({
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: 'Tu es un expert en ingénierie pédagogique et en formation professionnelle. Tu es capable de créer des programmes pédagogiques complets et cohérents adaptés aux besoins spécifiques.' },
           { role: 'user', content: prompt }
