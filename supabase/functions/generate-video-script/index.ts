@@ -23,6 +23,7 @@ serve(async (req) => {
       topic, 
       targetAudience, 
       duration, 
+      format,
       learningObjectives, 
       tone, 
       visualStyle, 
@@ -45,6 +46,7 @@ Instructions spécifiques :
 3. Adapte le contenu pour un public de type: ${targetAudience || "adultes en formation professionnelle"}
 4. Le ton doit être ${tone || "professionnel mais accessible"}
 5. Inclus des suggestions de visuels qui suivent un style ${visualStyle || "simple et épuré"}
+6. Le format de la vidéo est: ${format || "Présentation explicative"}
 
 Format de sortie STRICT en JSON dans le Markdown :
 
@@ -53,6 +55,7 @@ Format de sortie STRICT en JSON dans le Markdown :
   "title": "Titre accrocheur pour la vidéo",
   "targetAudience": "Public cible",
   "duration": "Durée estimée",
+  "format": "${format || "Présentation explicative"}",
   "learningObjectives": ["Objectif 1", "Objectif 2", "..."],
   "overview": "Résumé du contenu de la vidéo",
   "script": [
@@ -96,6 +99,7 @@ Assure-toi que :
         {
           role: "user",
           content: `Je souhaite créer une vidéo pédagogique sur ${topic}. 
+          ${format ? `Le format de la vidéo est: ${format}` : ''}
           ${learningObjectives ? `Les objectifs d'apprentissage sont: ${learningObjectives}` : ''}
           ${additionalInstructions ? `Instructions supplémentaires: ${additionalInstructions}` : ''}`
         }

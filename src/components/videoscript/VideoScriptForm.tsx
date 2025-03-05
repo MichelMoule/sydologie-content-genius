@@ -16,11 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const formSchema = z.object({
   topic: z.string().min(2, { message: "Le sujet est requis" }),
   targetAudience: z.string().optional(),
   duration: z.string().optional(),
+  format: z.string().optional(),
   learningObjectives: z.string().optional(),
   tone: z.string().optional(),
   visualStyle: z.string().optional(),
@@ -39,6 +47,7 @@ export const VideoScriptForm = ({ onSubmit, isGenerating }: VideoScriptFormProps
       topic: "",
       targetAudience: "Adultes en formation professionnelle",
       duration: "5-7 minutes",
+      format: "Présentation explicative",
       learningObjectives: "",
       tone: "Professionnel mais accessible",
       visualStyle: "Simple et épuré",
@@ -86,19 +95,53 @@ export const VideoScriptForm = ({ onSubmit, isGenerating }: VideoScriptFormProps
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Durée approximative</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ex: 5-7 minutes" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Durée approximative</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: 5-7 minutes" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="format"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Format de la vidéo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un format" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Présentation explicative">Présentation explicative</SelectItem>
+                      <SelectItem value="Tutoriel étape par étape">Tutoriel étape par étape</SelectItem>
+                      <SelectItem value="Interview avec expert">Interview avec expert</SelectItem>
+                      <SelectItem value="Débat / Discussion">Débat / Discussion</SelectItem>
+                      <SelectItem value="Démonstration pratique">Démonstration pratique</SelectItem>
+                      <SelectItem value="Narration avec animations">Narration avec animations</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Le style de présentation de votre vidéo
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
