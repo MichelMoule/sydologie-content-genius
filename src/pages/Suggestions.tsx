@@ -248,7 +248,9 @@ const Suggestions = () => {
               <span className="text-[#00FF00]">_</span>Propositions d'outils
             </h1>
             <p className="text-lg mt-2 text-gray-600">
-              Découvrez les outils les plus demandés par notre communauté et participez au vote !
+              Découvrez les outils les plus demandés par notre communauté et participez au vote ! 
+              Nous développerons l'outil le plus voté (sans engagement sur les délais, notre développeur 
+              a une tendance à la procrastination).
             </p>
           </div>
           
