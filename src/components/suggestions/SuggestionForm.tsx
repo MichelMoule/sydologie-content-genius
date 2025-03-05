@@ -37,6 +37,9 @@ const formSchema = z.object({
   category: z.string({
     required_error: "Veuillez sélectionner une catégorie.",
   }),
+  username: z.string().min(2, {
+    message: "Le pseudo doit contenir au moins 2 caractères.",
+  }),
 });
 
 type ToolSuggestion = {
@@ -69,6 +72,7 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
       name: "",
       description: "",
       category: "",
+      username: "",
     },
   });
 
@@ -82,6 +86,17 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
     
     setSubmitting(true);
     try {
+      // Mettre à jour le profil de l'utilisateur avec le pseudo choisi
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ username: values.username })
+        .eq('id', user.id);
+        
+      if (profileError) {
+        console.error('Erreur lors de la mise à jour du profil:', profileError);
+      }
+      
+      // Insérer la nouvelle suggestion d'outil
       const { data, error } = await supabase
         .from('tool_suggestions')
         .insert([
@@ -105,7 +120,8 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
         setSuggestions(prev => [...prev, {
           ...data[0],
           upvotes_count: 0,
-          downvotes_count: 0
+          downvotes_count: 0,
+          username: values.username
         }]);
       }
     } catch (error) {
@@ -119,6 +135,23 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Votre pseudo</FormLabel>
+              <FormControl>
+                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} />
+              </FormControl>
+              <FormDescription>
+                Ce pseudo sera affiché publiquement avec votre suggestion
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <FormField
           control={form.control}
           name="name"
