@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon, User } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import SuggestionForm from "@/components/suggestions/SuggestionForm";
@@ -38,6 +38,7 @@ type ToolSuggestion = {
   upvotes_count: number;
   downvotes_count: number;
   user_vote?: string | null;
+  username?: string | null;
 };
 
 const Suggestions = () => {
@@ -94,6 +95,21 @@ const Suggestions = () => {
           .select('tool_suggestion_id, vote_type');
         
         if (countError) throw countError;
+
+        // Récupérer les profils des utilisateurs qui ont soumis les suggestions
+        const userIds = [...new Set(suggestionsWithVotes.map(s => s.submitted_by))];
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', userIds);
+
+        if (profilesError) throw profilesError;
+
+        const profilesMap = profiles ? 
+          profiles.reduce((acc, profile) => {
+            acc[profile.id] = profile.username || "Utilisateur";
+            return acc;
+          }, {} as Record<string, string>) : {};
         
         const finalSuggestions = suggestionsWithVotes.map(suggestion => {
           const suggestionVotes = votesCounts?.filter(vote => vote.tool_suggestion_id === suggestion.id) || [];
@@ -103,7 +119,8 @@ const Suggestions = () => {
           return {
             ...suggestion,
             upvotes_count: upvotes,
-            downvotes_count: downvotes
+            downvotes_count: downvotes,
+            username: profilesMap[suggestion.submitted_by] || "Utilisateur"
           };
         });
         
@@ -299,6 +316,7 @@ const Suggestions = () => {
               <TableRow>
                 <TableHead className="w-[50px]">Rang</TableHead>
                 <TableHead>Outil</TableHead>
+                <TableHead>Proposé par</TableHead>
                 <TableHead>Catégorie</TableHead>
                 <TableHead className="text-center">Score</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -319,14 +337,12 @@ const Suggestions = () => {
                     <div>
                       <div className="font-semibold text-lg">{suggestion.name}</div>
                       <div className="text-sm text-gray-500 mt-1">{suggestion.description}</div>
-                      <a 
-                        href={suggestion.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-600 text-xs hover:underline mt-1 inline-block"
-                      >
-                        {suggestion.website}
-                      </a>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <User size={14} />
+                      {suggestion.username || "Utilisateur"}
                     </div>
                   </TableCell>
                   <TableCell>

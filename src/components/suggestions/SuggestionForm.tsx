@@ -34,9 +34,6 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "La description doit contenir au moins 10 caractères.",
   }),
-  website: z.string().url({
-    message: "Veuillez entrer une URL valide.",
-  }),
   category: z.string({
     required_error: "Veuillez sélectionner une catégorie.",
   }),
@@ -71,7 +68,6 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
     defaultValues: {
       name: "",
       description: "",
-      website: "",
       category: "",
     },
   });
@@ -92,7 +88,7 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           {
             name: values.name,
             description: values.description,
-            website: values.website,
+            website: "", // Empty string since we removed the field
             category: values.category,
             submitted_by: user.id
           }
@@ -149,23 +145,6 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
                   {...field} 
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="website"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Site web de référence (optionnel)</FormLabel>
-              <FormControl>
-                <Input placeholder="https://..." {...field} />
-              </FormControl>
-              <FormDescription>
-                Un site web existant qui illustre l'idée ou offre une fonctionnalité similaire
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
