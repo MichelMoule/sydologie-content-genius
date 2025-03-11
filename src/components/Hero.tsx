@@ -3,15 +3,15 @@ import { Button } from "./ui/button";
 
 const Hero = () => {
   return (
-    <div className="container mx-auto px-4 py-32">
+    <div className="container mx-auto px-4 py-32 bg-[#EDE8E0]">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-8">
         <div className="md:w-1/2">
-          <div className="text-[#00FF00] mb-4 text-lg font-unbounded">
+          <div className="text-[#82C8A0] mb-4 text-lg font-unbounded">
             BIENVENUE SUR SYDOLOGIE.AI
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-8 leading-tight font-unbounded">
             Découvrez nos outils utilisant{" "}
-            <span className="text-[#00FF00]">l'intelligence artificielle</span>{" "}
+            <span className="text-[#82C8A0]">l'intelligence artificielle</span>{" "}
             au service de vos formations
           </h1>
         </div>
@@ -22,13 +22,13 @@ const Hero = () => {
           </p>
           <div className="space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
             <Button 
-              className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90 px-8 py-6 text-lg font-dmsans"
+              className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 px-8 py-6 text-lg font-dmsans"
             >
               M'inscrire gratuitement
             </Button>
             <Button 
               variant="outline" 
-              className="border-[#00FF00] text-[#00FF00] hover:bg-[#00FF00]/10 px-8 py-6 text-lg font-dmsans"
+              className="border-[#82C8A0] text-[#82C8A0] hover:bg-[#82C8A0]/10 px-8 py-6 text-lg font-dmsans"
             >
               Me connecter
             </Button>

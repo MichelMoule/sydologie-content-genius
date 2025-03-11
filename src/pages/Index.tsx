@@ -7,7 +7,7 @@ import Newsletter from "@/components/Newsletter";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-white font-dmsans">
+    <div className="min-h-screen bg-[#EDE8E0] font-dmsans">
       <Navbar />
       <Hero />
       <FeaturedTools />
