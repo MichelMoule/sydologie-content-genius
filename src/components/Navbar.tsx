@@ -32,43 +32,43 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-black text-white">
+    <nav className="bg-[#82C8A0] text-[#EDE8E0]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-sans flex items-center">
-              Sydologie<span className="text-[#00FF00]">.ai</span>
+              Sydologie<span className="text-white">.ai</span>
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex space-x-8">
-            <Link to="/outils" className="hover:text-[#00FF00] transition-colors">
+          <div className="hidden md:flex space-x-8 font-dmsans">
+            <Link to="/outils" className="hover:text-white transition-colors">
               _Outils
             </Link>
-            <Link to="/formations" className="hover:text-[#00FF00] transition-colors">
+            <Link to="/formations" className="hover:text-white transition-colors">
               _Formations
             </Link>
-            <Link to="/annuaire" className="hover:text-[#00FF00] transition-colors flex items-center">
+            <Link to="/annuaire" className="hover:text-white transition-colors flex items-center">
               <Library className="mr-2 h-4 w-4" />
               Annuaire
             </Link>
-            <Link to="/outils/suggestions" className="hover:text-[#00FF00] transition-colors flex items-center">
+            <Link to="/outils/suggestions" className="hover:text-white transition-colors flex items-center">
               <LightbulbIcon className="mr-2 h-4 w-4" />
               Propositions
             </Link>
-            <Link to="/contact" className="hover:text-[#00FF00] transition-colors">
+            <Link to="/contact" className="hover:text-white transition-colors">
               Nous contacter
             </Link>
           </div>
 
           {/* Auth Buttons */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 font-dmsans">
             {user ? (
               <Button
                 variant="ghost"
-                className="text-[#00FF00] hover:text-white hover:bg-[#00FF00]/20"
+                className="text-white hover:text-[#82C8A0] hover:bg-white/20"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -78,7 +78,7 @@ const Navbar = () => {
               <Link to="/auth">
                 <Button
                   variant="ghost"
-                  className="text-[#00FF00] hover:text-white hover:bg-[#00FF00]/20"
+                  className="text-white hover:text-[#82C8A0] hover:bg-white/20"
                 >
                   <User className="mr-2 h-4 w-4" />
                   Me connecter
