@@ -14,7 +14,7 @@ const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
     <Link 
       key={id} 
       to={path || "#"} 
-      className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+      className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"
     >
       <img
         src={image}
