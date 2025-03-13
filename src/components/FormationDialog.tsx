@@ -47,7 +47,8 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
     
     if (hasInter && hasIntra) return "INTER et INTRA";
     if (hasIntra) return "INTRA uniquement";
-    return "ALTERNANCE";
+    if (hasInter) return "INTER uniquement";
+    return "Formation"; // Default fallback if no recognized cost types
   };
 
   return (
