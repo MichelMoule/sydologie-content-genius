@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
@@ -94,14 +93,8 @@ const Formations = () => {
             </div>
             <div className="bg-[#72BB8E]/10 p-8 rounded-lg">
               <p className="text-lg">
-                Nous organisons des formations intra-entreprise dans vos locaux et des formations inter-entreprises à Lyon et à Paris. Nous sommes référencés au DATADOCK. Découvrez le rapport d'activité de nos formations sur ce{" "}
-                <a 
-                  href="#" 
-                  className="text-[#72BB8E] hover:underline font-semibold"
-                >
-                  lien
-                </a>
-                .
+                Nous organisons des formations intra-entreprise dans vos locaux et des formations inter-entreprises à distance.
+                Découvrez nos formations ci-dessous 👇
               </p>
             </div>
           </div>
