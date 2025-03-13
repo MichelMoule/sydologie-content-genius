@@ -15,7 +15,7 @@ const Hero = () => {
           <div className="text-[#82C8A0] mb-4 text-sm uppercase tracking-wide font-medium">
             BIENVENUE SUR SYDOLOGIE.AI
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight font-unbounded">
+          <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold mb-4 leading-tight font-unbounded">
             Découvrez nos outils utilisant{" "}
             <span className="text-[#82C8A0]">l'intelligence artificielle</span>{" "}
             au service de vos formations
