@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -239,12 +240,12 @@ const Suggestions = () => {
           
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-[#00FF00] text-black font-medium hover:bg-[#00FF00]/90 flex items-center gap-2 font-dmsans">
+              <Button className="bg-[#9b87f5] text-white font-medium hover:bg-[#8B5CF6] flex items-center gap-2 font-dmsans">
                 <Plus size={18} />
                 Proposer un outil
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[550px]">
+            <DialogContent className="sm:max-w-[550px] font-dmsans">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-dmsans">
                   <span className="text-[#00FF00]">_</span>Proposer un outil
@@ -273,11 +274,11 @@ const Suggestions = () => {
             <p className="text-gray-600 mb-6">Soyez le premier à proposer un outil !</p>
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="bg-[#00FF00] text-black hover:bg-[#00FF00]/90 font-dmsans">
+                <Button className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans">
                   Proposer un outil
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="font-dmsans">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-dmsans">
                     <span className="text-[#00FF00]">_</span>Proposer un outil
@@ -386,4 +387,3 @@ const Suggestions = () => {
 };
 
 export default Suggestions;
-

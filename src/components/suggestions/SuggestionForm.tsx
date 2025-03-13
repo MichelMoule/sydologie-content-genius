@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +25,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { NavigateFunction } from "react-router-dom";
 
-// Définition du schéma de validation pour le formulaire
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Le nom doit contenir au moins 2 caractères.",
@@ -65,7 +63,6 @@ type SuggestionFormProps = {
 const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps) => {
   const [submitting, setSubmitting] = useState(false);
   
-  // Initialiser le formulaire avec le schéma de validation
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,7 +73,6 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
     },
   });
 
-  // Soumettre une nouvelle suggestion
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error('Vous devez être connecté pour proposer un outil');
@@ -86,7 +82,6 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
     
     setSubmitting(true);
     try {
-      // Mettre à jour le profil de l'utilisateur avec le pseudo choisi
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ username: values.username })
@@ -96,14 +91,13 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
         console.error('Erreur lors de la mise à jour du profil:', profileError);
       }
       
-      // Insérer la nouvelle suggestion d'outil
       const { data, error } = await supabase
         .from('tool_suggestions')
         .insert([
           {
             name: values.name,
             description: values.description,
-            website: "", // Empty string since we removed the field
+            website: "",
             category: values.category,
             submitted_by: user.id
           }
@@ -115,7 +109,6 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
       form.reset();
       toast.success('Votre suggestion a été soumise avec succès!');
       
-      // Ajouter la nouvelle suggestion à la liste
       if (data && data[0]) {
         setSuggestions(prev => [...prev, {
           ...data[0],
@@ -134,20 +127,20 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4 font-dmsans">
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Votre pseudo</FormLabel>
+              <FormLabel className="font-dmsans">Votre pseudo</FormLabel>
               <FormControl>
-                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} />
+                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} className="font-dmsans" />
               </FormControl>
-              <FormDescription>
+              <FormDescription className="font-dmsans">
                 Ce pseudo sera affiché publiquement avec votre suggestion
               </FormDescription>
-              <FormMessage />
+              <FormMessage className="font-dmsans" />
             </FormItem>
           )}
         />
@@ -157,11 +150,11 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom de l'outil</FormLabel>
+              <FormLabel className="font-dmsans">Nom de l'outil</FormLabel>
               <FormControl>
-                <Input placeholder="ex: Générateur de scénarios pédagogiques" {...field} />
+                <Input placeholder="ex: Générateur de scénarios pédagogiques" {...field} className="font-dmsans" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="font-dmsans" />
             </FormItem>
           )}
         />
@@ -171,14 +164,15 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel className="font-dmsans">Description</FormLabel>
               <FormControl>
                 <Textarea 
                   placeholder="Décrivez brièvement l'outil et son utilité..." 
                   {...field} 
+                  className="font-dmsans"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="font-dmsans" />
             </FormItem>
           )}
         />
@@ -188,38 +182,38 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Catégorie</FormLabel>
+              <FormLabel className="font-dmsans">Catégorie</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  <SelectTrigger className="font-dmsans">
+                    <SelectValue placeholder="Sélectionner une catégorie" className="font-dmsans" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="conception">Conception</SelectItem>
-                  <SelectItem value="realisation">Réalisation</SelectItem>
-                  <SelectItem value="analyse">Analyse</SelectItem>
-                  <SelectItem value="autre">Autre</SelectItem>
+                <SelectContent className="font-dmsans">
+                  <SelectItem value="conception" className="font-dmsans">Conception</SelectItem>
+                  <SelectItem value="realisation" className="font-dmsans">Réalisation</SelectItem>
+                  <SelectItem value="analyse" className="font-dmsans">Analyse</SelectItem>
+                  <SelectItem value="autre" className="font-dmsans">Autre</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
+              <FormMessage className="font-dmsans" />
             </FormItem>
           )}
         />
         
         <Button 
           type="submit" 
-          className="w-full bg-[#00FF00] text-black hover:bg-[#00FF00]/90"
+          className="w-full bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans"
           disabled={submitting}
         >
           {submitting ? 'Envoi en cours...' : 'Soumettre ma proposition'}
         </Button>
         
         {!user && (
-          <FormDescription className="text-yellow-600">
+          <FormDescription className="text-yellow-600 font-dmsans">
             Vous devez être connecté pour proposer un outil.
           </FormDescription>
         )}
