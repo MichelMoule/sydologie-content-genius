@@ -53,11 +53,11 @@ const Annuaire = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-50">
+      <div className="min-h-screen bg-zinc-50 font-dmsans">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent font-dmsans">
               Annuaire des outils
             </h1>
             <div className="animate-pulse space-y-4">
@@ -74,25 +74,25 @@ const Annuaire = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zinc-50">
+      <div className="min-h-screen bg-zinc-50 font-dmsans">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-red-500 text-center">Une erreur est survenue lors du chargement des outils.</div>
+          <div className="text-red-500 text-center font-dmsans">Une erreur est survenue lors du chargement des outils.</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-zinc-50 font-dmsans">
       <Navbar />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent font-dmsans">
               Annuaire des outils
             </h1>
-            <p className="text-xl text-zinc-600">
+            <p className="text-xl text-zinc-600 font-dmsans">
               Une sélection d'outils externes pour enrichir vos formations.
             </p>
           </div>
@@ -101,7 +101,7 @@ const Annuaire = () => {
             {categories.map((category) => (
               <div key={category} className="scroll-m-20">
                 <div className="sticky top-20 bg-zinc-50/80 backdrop-blur-sm z-10 py-4">
-                  <h2 className="text-3xl font-bold mb-8 text-zinc-800">
+                  <h2 className="text-3xl font-bold mb-8 text-zinc-800 font-dmsans">
                     {category}
                   </h2>
                 </div>
@@ -109,11 +109,11 @@ const Annuaire = () => {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-zinc-50/50">
-                        <TableHead className="w-[250px]">Nom</TableHead>
-                        <TableHead className="w-[300px]">Usage</TableHead>
-                        <TableHead>Prix</TableHead>
-                        <TableHead className="text-center">RGPD</TableHead>
-                        <TableHead className="text-right">Lien</TableHead>
+                        <TableHead className="w-[250px] font-dmsans">Nom</TableHead>
+                        <TableHead className="w-[300px] font-dmsans">Usage</TableHead>
+                        <TableHead className="font-dmsans">Prix</TableHead>
+                        <TableHead className="text-center font-dmsans">RGPD</TableHead>
+                        <TableHead className="text-right font-dmsans">Lien</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -122,9 +122,9 @@ const Annuaire = () => {
                         .map((tool) => (
                           <TableRow 
                             key={tool.id}
-                            className="transition-colors hover:bg-zinc-50/50"
+                            className="transition-colors hover:bg-zinc-50/50 font-dmsans"
                           >
-                            <TableCell className="font-medium">
+                            <TableCell className="font-medium font-dmsans">
                               <div className="flex items-center gap-2">
                                 {tool.name}
                                 {tool.favorite && (
@@ -132,35 +132,35 @@ const Annuaire = () => {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell className="text-zinc-600">
+                            <TableCell className="text-zinc-600 font-dmsans">
                               {tool.usage}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="font-dmsans">
                               {tool.pricing_source ? (
                                 <a
                                   href={tool.pricing_source}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors group"
+                                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors group font-dmsans"
                                 >
                                   {tool.pricing}
                                   <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                                 </a>
                               ) : (
-                                <span className="text-zinc-600">{tool.pricing}</span>
+                                <span className="text-zinc-600 font-dmsans">{tool.pricing}</span>
                               )}
                             </TableCell>
                             <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                 {tool.gdpr ? (
-                                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-2 py-1 rounded-full font-dmsans">
                                     <Check className="h-4 w-4" />
-                                    <span className="text-sm font-medium">Compatible</span>
+                                    <span className="text-sm font-medium font-dmsans">Compatible</span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center gap-2 text-red-600 bg-red-50 px-2 py-1 rounded-full">
+                                  <div className="flex items-center gap-2 text-red-600 bg-red-50 px-2 py-1 rounded-full font-dmsans">
                                     <X className="h-4 w-4" />
-                                    <span className="text-sm font-medium">Non compatible</span>
+                                    <span className="text-sm font-medium font-dmsans">Non compatible</span>
                                   </div>
                                 )}
                                 {tool.gdpr_source && (
@@ -175,12 +175,12 @@ const Annuaire = () => {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right font-dmsans">
                               <a
                                 href={tool.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors group"
+                                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors group font-dmsans"
                               >
                                 <span className="group-hover:underline">Visiter</span>
                                 <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100" />
