@@ -80,28 +80,28 @@ const Program = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
-        <Link to="/outils" className="text-blue-500 hover:underline mb-8 inline-block">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
           &lt; Outils
         </Link>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
           <div className="space-y-8">
-            <h1 className="text-6xl font-bold">ProgrAImme</h1>
+            <h1 className="text-6xl font-bold font-dmsans">ProgrAImme</h1>
             
-            <h2 className="text-3xl font-bold leading-tight">
+            <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Créez rapidement des programmes pédagogiques pour vos formations
             </h2>
             
-            <p className="text-lg">
+            <p className="text-lg font-dmsans">
               Utilisez notre outil pour générer automatiquement des programmes pédagogiques 
               adaptés à vos besoins spécifiques.
             </p>
             
-            <p className="text-lg">
+            <p className="text-lg font-dmsans">
               Notre système d'IA vous aide à structurer vos formations avec des modules, 
               des objectifs d'apprentissage et des activités pédagogiques pertinentes.
             </p>
@@ -116,18 +116,18 @@ const Program = () => {
           modal={true}
         >
           <DialogContent 
-            className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto"
+            className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto font-dmsans"
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
           >
             <DialogHeader>
-              <DialogTitle className="flex justify-between items-center">
+              <DialogTitle className="flex justify-between items-center font-dmsans">
                 <span>📚 {programName}</span>
                 {programData && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="ml-4"
+                    className="ml-4 font-dmsans"
                     onClick={handleDownloadPDF}
                   >
                     <Download className="mr-2 h-4 w-4" />

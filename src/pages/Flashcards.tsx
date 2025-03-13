@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,32 +85,32 @@ const Flashcards = () => {
   const currentCard = cards[currentCardIndex];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
-        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
           &lt; Outils
         </Link>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
           <div className="space-y-8">
-            <h1 className="text-6xl font-bold">FLASHCARDS</h1>
+            <h1 className="text-6xl font-bold font-dmsans">FLASHCARDS</h1>
             
-            <h2 className="text-3xl font-bold leading-tight">
+            <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Générez des cartes pour mémoriser vos contenus
             </h2>
             
-            <p className="text-lg">
+            <p className="text-lg font-dmsans">
               Utilisez l'IA pour générer des flashcards à partir de vos contenus de formation.
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="p-4 border rounded-lg space-y-4">
-              <h3 className="text-xl font-semibold mb-4">Génération par IA</h3>
+              <h3 className="text-xl font-semibold mb-4 font-dmsans">Génération par IA</h3>
               <div className="space-y-2">
-                <label htmlFor="numberOfCards" className="text-sm font-medium">
+                <label htmlFor="numberOfCards" className="text-sm font-medium font-dmsans">
                   Nombre de flashcards à générer (1-20)
                 </label>
                 <Input
@@ -119,18 +120,18 @@ const Flashcards = () => {
                   max="20"
                   value={numberOfCards}
                   onChange={(e) => setNumberOfCards(Math.min(Math.max(1, parseInt(e.target.value) || 1), 20))}
-                  className="w-full"
+                  className="w-full font-dmsans"
                 />
               </div>
               <Textarea
                 placeholder="Collez votre contenu ici pour générer automatiquement des flashcards..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="min-h-[150px]"
+                className="min-h-[150px] font-dmsans"
               />
               <Button 
                 onClick={handleGenerateCards} 
-                className="w-full"
+                className="w-full font-dmsans"
                 disabled={isGenerating}
               >
                 <Wand2 className="mr-2" />
@@ -140,7 +141,7 @@ const Flashcards = () => {
 
             {cards.length > 0 && (
               <div className="mt-8 space-y-4">
-                <Card className="relative p-6 min-h-[200px] flex items-center justify-center cursor-pointer"
+                <Card className="relative p-6 min-h-[200px] flex items-center justify-center cursor-pointer font-dmsans"
                       onClick={() => setIsFlipped(!isFlipped)}>
                   <Button
                     variant="ghost"
@@ -154,20 +155,20 @@ const Flashcards = () => {
                     <Rotate3D className="h-4 w-4" />
                   </Button>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">
+                    <p className="text-sm text-muted-foreground mb-2 font-dmsans">
                       Carte {currentCardIndex + 1} sur {cards.length}
                     </p>
-                    <p className="text-xl">
+                    <p className="text-xl font-dmsans">
                       {isFlipped ? currentCard.back : currentCard.front}
                     </p>
                   </div>
                 </Card>
 
                 <div className="flex justify-between">
-                  <Button onClick={handlePrevious} disabled={cards.length <= 1}>
+                  <Button onClick={handlePrevious} disabled={cards.length <= 1} className="font-dmsans">
                     Précédent
                   </Button>
-                  <Button onClick={handleNext} disabled={cards.length <= 1}>
+                  <Button onClick={handleNext} disabled={cards.length <= 1} className="font-dmsans">
                     Suivant
                   </Button>
                 </div>

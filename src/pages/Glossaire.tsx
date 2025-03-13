@@ -130,39 +130,40 @@ const Glossaire = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-zinc-50 font-dmsans">
       <Navbar />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">GlossAIre</h1>
-            <p className="text-xl text-zinc-600">
+            <h1 className="text-4xl font-bold mb-4 font-dmsans">GlossAIre</h1>
+            <p className="text-xl text-zinc-600 font-dmsans">
               Générez automatiquement des glossaires à partir de vos supports de formation PDF
             </p>
           </div>
 
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle>Créer un nouveau glossaire</CardTitle>
-              <CardDescription>
+              <CardTitle className="font-dmsans">Créer un nouveau glossaire</CardTitle>
+              <CardDescription className="font-dmsans">
                 Importez votre PDF et précisez le sujet pour obtenir un glossaire pertinent
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Sujet de la formation</Label>
+                  <Label htmlFor="subject" className="font-dmsans">Sujet de la formation</Label>
                   <Input
                     id="subject"
                     placeholder="Ex: Intelligence Artificielle, Management..."
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     required
+                    className="font-dmsans"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="file">Document PDF</Label>
+                  <Label htmlFor="file" className="font-dmsans">Document PDF</Label>
                   <div className="flex items-center justify-center w-full">
                     <label
                       htmlFor="file"
@@ -170,10 +171,10 @@ const Glossaire = () => {
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="h-8 w-8 mb-2 text-zinc-500" />
-                        <p className="mb-2 text-sm text-zinc-600">
-                          <span className="font-bold">Cliquez pour charger</span> ou glissez-déposez
+                        <p className="mb-2 text-sm text-zinc-600 font-dmsans">
+                          <span className="font-bold font-dmsans">Cliquez pour charger</span> ou glissez-déposez
                         </p>
-                        <p className="text-xs text-zinc-500">PDF (MAX. 10MB)</p>
+                        <p className="text-xs text-zinc-500 font-dmsans">PDF (MAX. 10MB)</p>
                       </div>
                       <input
                         id="file"
@@ -186,7 +187,7 @@ const Glossaire = () => {
                     </label>
                   </div>
                   {file && (
-                    <p className="text-sm text-zinc-600">
+                    <p className="text-sm text-zinc-600 font-dmsans">
                       Fichier sélectionné : {file.name}
                     </p>
                   )}
@@ -194,18 +195,18 @@ const Glossaire = () => {
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full font-dmsans"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Génération en cours...
+                      <span className="font-dmsans">Génération en cours...</span>
                     </>
                   ) : (
                     <>
                       <BookOpen className="mr-2 h-4 w-4" />
-                      Générer le glossaire
+                      <span className="font-dmsans">Générer le glossaire</span>
                     </>
                   )}
                 </Button>
@@ -217,12 +218,12 @@ const Glossaire = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
-                  <CardTitle>Glossaire généré</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="font-dmsans">Glossaire généré</CardTitle>
+                  <CardDescription className="font-dmsans">
                     {glossary.length} termes identifiés
                   </CardDescription>
                 </div>
-                <Button onClick={downloadGlossary} variant="outline">
+                <Button onClick={downloadGlossary} variant="outline" className="font-dmsans">
                   <Download className="mr-2 h-4 w-4" />
                   Télécharger
                 </Button>
@@ -231,15 +232,15 @@ const Glossaire = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Terme</TableHead>
-                      <TableHead>Définition</TableHead>
+                      <TableHead className="font-dmsans">Terme</TableHead>
+                      <TableHead className="font-dmsans">Définition</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {glossary.map((term, index) => (
                       <TableRow key={index}>
-                        <TableCell className="font-semibold">{term.term}</TableCell>
-                        <TableCell>{term.definition}</TableCell>
+                        <TableCell className="font-semibold font-dmsans">{term.term}</TableCell>
+                        <TableCell className="font-dmsans">{term.definition}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
