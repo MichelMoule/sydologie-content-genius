@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 const Hero = () => {
   return (
     <div className="container mx-auto px-4 py-32 bg-[#EDE8E0]">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-8">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-8 relative">
         <div className="md:w-1/2">
           <div className="text-[#82C8A0] mb-4 text-lg font-unbounded">
             BIENVENUE SUR SYDOLOGIE.AI
@@ -33,6 +33,15 @@ const Hero = () => {
               Me connecter
             </Button>
           </div>
+        </div>
+
+        {/* Robot image positioned to the right */}
+        <div className="hidden lg:block absolute -right-28 top-0 h-full">
+          <img 
+            src="/lovable-uploads/103c8caa-73e8-467a-a9f0-8489673a57ff.png" 
+            alt="Robot assistant" 
+            className="h-full max-h-[600px] object-contain"
+          />
         </div>
       </div>
     </div>
