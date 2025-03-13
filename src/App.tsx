@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import Annuaire from "./pages/Annuaire";
 import Glossaire from "./pages/Glossaire";
 import Suggestions from "./pages/Suggestions";
+import Legal from "./pages/Legal";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="/outils/videoscript" element={<VideoScript />} />
           <Route path="/outils/suggestions" element={<Suggestions />} />
+          <Route path="/legal" element={<Legal />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
