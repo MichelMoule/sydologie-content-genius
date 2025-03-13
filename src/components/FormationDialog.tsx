@@ -58,22 +58,22 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
             )}
             
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-4 text-lg">Informations clés</h3>
+              <h3 className="font-semibold mb-4 text-lg font-dmsans">Informations clés</h3>
               <div className="space-y-4">
-                <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
                   <MapPin className="w-5 h-5" />
                   <span>{getTrainingModality(formation.trainingModality)}</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
                   <Clock className="w-5 h-5" />
                   <span>Durée : {formation.durationInHours}h</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
                   <User className="w-5 h-5" />
                   <span>Accessible</span>
                 </div>
                 {mainCost && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
+                  <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
                     <Euro className="w-5 h-5" />
                     <span>{mainCost.cost}€</span>
                   </div>
@@ -89,8 +89,8 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
             </DialogHeader>
 
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-4 text-lg">Description</h3>
-              <p className="text-muted-foreground whitespace-pre-wrap">{formation.description}</p>
+              <h3 className="font-semibold mb-4 text-lg font-dmsans">Description</h3>
+              <p className="text-muted-foreground whitespace-pre-wrap font-dmsans">{formation.description}</p>
             </div>
 
             {formation.publicRegistrationUrl && (
