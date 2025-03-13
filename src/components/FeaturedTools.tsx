@@ -1,3 +1,4 @@
+
 import {
   Carousel,
   CarouselContent,
@@ -7,6 +8,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const tools = [
   {
@@ -19,6 +21,7 @@ const tools = [
       "/lovable-uploads/17bf500e-81e6-4c34-8eab-a9c6f4f2a016.png"
     ],
     cta: "TESTEZ CET OUTIL",
+    path: "/outils/feedbaick",
     rating: 4
   },
   {
@@ -31,6 +34,7 @@ const tools = [
       "/lovable-uploads/110b3fe4-f43c-40d1-8151-cdd98945d58f.png"
     ],
     cta: "TESTEZ CET OUTIL",
+    path: "/outils/videoscript",
     rating: 4
   },
   {
@@ -50,8 +54,8 @@ const tools = [
 const FeaturedTools = () => {
   return (
     <div className="w-full max-w-none py-16">
-      <h2 className="text-3xl font-bold mb-12 font-unbounded container mx-auto">
-        <span className="text-[#00FF00]">_</span>Nos outils à la une
+      <h2 className="text-3xl font-bold mb-12 font-sans container mx-auto">
+        <span className="text-[#1F5E40]">_</span>Nos outils à la une
       </h2>
       <div className="space-y-0">
         {tools.map((tool, index) => (
@@ -67,12 +71,14 @@ const FeaturedTools = () => {
                         className="w-full h-auto"
                       />
                       <div className="absolute bottom-0 left-0 w-full p-4 flex justify-center">
-                        <Button 
-                          variant="ghost" 
-                          className="text-[#00FF00] hover:text-[#00FF00]/90 font-unbounded"
-                        >
-                          {tool.cta}
-                        </Button>
+                        <Link to={tool.path || "#"}>
+                          <Button 
+                            variant="ghost" 
+                            className="text-[#1F5E40] hover:text-[#1F5E40]/90 font-sans"
+                          >
+                            {tool.cta}
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </CarouselItem>
