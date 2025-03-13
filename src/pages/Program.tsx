@@ -44,8 +44,33 @@ const Program = () => {
         return;
       }
 
+      // Handle file upload if present
+      let fileContent = "";
+      if (values.courseFile) {
+        const file = values.courseFile as File;
+        
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Le fichier est trop volumineux. Limite: 5MB.",
+          });
+          setIsGenerating(false);
+          return;
+        }
+
+        // Read file content
+        fileContent = await readFileContent(file);
+      }
+
+      // Prepare request body
+      const requestBody = {
+        ...values,
+        fileContent: fileContent,
+      };
+
       const { data: programResult, error: programError } = await supabase.functions.invoke('generate-program', {
-        body: values,
+        body: requestBody,
       });
 
       if (programError) throw programError;
@@ -68,6 +93,33 @@ const Program = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Helper function to read file content
+  const readFileContent = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        if (event.target && typeof event.target.result === 'string') {
+          resolve(event.target.result);
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+      
+      reader.onerror = () => {
+        reject(new Error("File reading error"));
+      };
+      
+      if (file.type === "application/pdf") {
+        // For PDFs, we can only read as ArrayBuffer
+        reader.readAsArrayBuffer(file);
+      } else {
+        // For text files, read as text
+        reader.readAsText(file);
+      }
+    });
   };
 
   const handleDownloadPDF = () => {

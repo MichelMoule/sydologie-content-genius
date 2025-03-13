@@ -42,6 +42,7 @@ export const formSchema = z.object({
     message: "Veuillez sélectionner un format préféré.",
   }),
   additionalRequirements: z.string().optional(),
+  courseFile: z.any().optional(),
 });
 
 interface ProgramFormProps {
@@ -61,8 +62,16 @@ export const ProgramForm = ({ onSubmit, isGenerating }: ProgramFormProps) => {
       prerequisites: "",
       preferredFormat: "modules",
       additionalRequirements: "",
+      courseFile: null,
     },
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("courseFile", file);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-12 min-h-[600px]">
@@ -208,6 +217,19 @@ export const ProgramForm = ({ onSubmit, isGenerating }: ProgramFormProps) => {
               </FormItem>
             )}
           />
+
+          <FormItem>
+            <FormLabel>Document du cours (PDF/Word/TXT)</FormLabel>
+            <FormControl>
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
 
           <Button 
             type="submit" 

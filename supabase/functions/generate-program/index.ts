@@ -15,9 +15,10 @@ serve(async (req) => {
   }
 
   try {
-    const { programName, subjectMatter, targetAudience, duration, learningObjectives, prerequisites, preferredFormat, additionalRequirements } = await req.json();
+    const { programName, subjectMatter, targetAudience, duration, learningObjectives, prerequisites, preferredFormat, additionalRequirements, fileContent } = await req.json();
 
     console.log('Generating program for:', programName);
+    console.log('File content received:', fileContent ? 'Yes' : 'No');
     
     const apiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
     if (!apiKey) {
@@ -25,7 +26,7 @@ serve(async (req) => {
     }
 
     // Build the prompt
-    const prompt = `
+    let prompt = `
       Génère un programme pédagogique complet et détaillé sur le sujet suivant: "${subjectMatter}".
       
       Nom du programme: ${programName}
@@ -35,7 +36,19 @@ serve(async (req) => {
       Prérequis: ${prerequisites || "Aucun prérequis spécifique"}
       Format préféré: ${preferredFormat}
       Exigences supplémentaires: ${additionalRequirements || "N/A"}
+    `;
+
+    // Add file content to prompt if available
+    if (fileContent) {
+      prompt += `
       
+      Voici le contenu du document fourni que tu dois utiliser pour enrichir le programme:
+      ${fileContent.substring(0, 10000)} // We limit to first 10K chars to avoid token limits
+      
+      `;
+    }
+
+    prompt += `
       Le programme doit inclure:
       1. Un aperçu général du programme
       2. Des objectifs globaux d'apprentissage (liste)
