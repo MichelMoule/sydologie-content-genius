@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, MapPin, User } from "lucide-react";
@@ -59,7 +60,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           </div>
         </div>
         <Button 
-          className="w-full bg-[#1EFF02] hover:bg-[#1EFF02]/90 text-black"
+          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px]"
           onClick={(e) => {
             e.stopPropagation();
             onClick();

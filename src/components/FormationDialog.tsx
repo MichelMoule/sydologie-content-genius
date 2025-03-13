@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -98,7 +99,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
                   href={formation.publicRegistrationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#1EFF02] hover:bg-[#1EFF02]/90 text-black py-3 px-4 rounded text-center inline-block transition-colors"
+                  className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white py-3 px-4 rounded-[40px] h-[40px] inline-block text-center"
                 >
                   S'inscrire à la formation
                 </a>

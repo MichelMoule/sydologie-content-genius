@@ -66,22 +66,19 @@ const Formations = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* New Hero Section with Background Text */}
       <section className="relative overflow-hidden py-16 lg:py-24">
-        {/* Background Text */}
         <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-          <span className="text-[12vw] font-bold text-[#1EFF02] whitespace-nowrap">
+          <span className="text-[12vw] font-bold text-[#72BB8E] whitespace-nowrap">
             FORMATIONS
           </span>
         </div>
         
-        {/* Content */}
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold">
                 Nous proposons des formations{" "}
-                <span className="text-[#1EFF02]">
+                <span className="text-[#72BB8E]">
                   interactives et innovantes.
                 </span>
               </h1>
@@ -94,12 +91,12 @@ const Formations = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-[#1EFF02]/10 p-8 rounded-lg">
+            <div className="bg-[#72BB8E]/10 p-8 rounded-lg">
               <p className="text-lg">
                 Nous organisons des formations intra-entreprise dans vos locaux et des formations inter-entreprises à Lyon et à Paris. Nous sommes référencés au DATADOCK. Découvrez le rapport d'activité de nos formations sur ce{" "}
                 <a 
                   href="#" 
-                  className="text-[#1EFF02] hover:underline font-semibold"
+                  className="text-[#72BB8E] hover:underline font-semibold"
                 >
                   lien
                 </a>
@@ -110,7 +107,6 @@ const Formations = () => {
         </div>
       </section>
 
-      {/* Search Section */}
       <section className="container mx-auto px-4 mb-8">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="w-full md:w-[300px]">
@@ -123,7 +119,6 @@ const Formations = () => {
         </div>
       </section>
 
-      {/* Formations list */}
       <section className="container mx-auto px-4">
         {error ? (
           <div className="text-sydologie-red text-center py-8">
@@ -132,7 +127,6 @@ const Formations = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {isLoading ? (
-              // Loading skeletons
               Array.from({ length: 6 }).map((_, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                   <div className="w-full h-48 bg-muted rounded-t-lg">
@@ -168,7 +162,6 @@ const Formations = () => {
         )}
       </section>
 
-      {/* Custom Training Section */}
       <section className="container mx-auto px-4 py-16 mt-8">
         <div className="bg-muted/50 rounded-lg p-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
@@ -180,7 +173,7 @@ const Formations = () => {
           </p>
           <Button 
             onClick={() => navigate('/contact')}
-            className="bg-sydologie-green hover:bg-sydologie-green/90"
+            className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8"
           >
             Demander une formation sur mesure
           </Button>
