@@ -17,7 +17,7 @@ const tools = [
     description: "ANALYSEZ LES RETOURS RÉCOLTÉS APRÈS VOS FORMATION",
     quote: '"An amazing tool" - John from Paris',
     images: [
-      "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",
+      "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
       "/lovable-uploads/17bf500e-81e6-4c34-8eab-a9c6f4f2a016.png"
     ],
     cta: "TESTEZ CET OUTIL",

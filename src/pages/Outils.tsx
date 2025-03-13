@@ -62,7 +62,7 @@ const tools = {
       id: 8,
       name: "FeedbaIck",
       description: "Analysez les retours récoltés après vos formations",
-      image: "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",
+      image: "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
       path: "/outils/feedbaick"
     }
   ]
