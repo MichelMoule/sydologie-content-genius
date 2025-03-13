@@ -9,7 +9,6 @@ import FormationDialog from "@/components/FormationDialog";
 import FormationCard from "@/components/FormationCard";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
 interface Formation {
   id: string;
   name: string;
@@ -31,39 +30,35 @@ interface Formation {
     type: string;
   }[];
 }
-
 const fetchFormations = async (): Promise<Formation[]> => {
-  const { data, error } = await supabase.functions.invoke('get-formations');
-  
+  const {
+    data,
+    error
+  } = await supabase.functions.invoke('get-formations');
   if (error) throw error;
   if (!data?.data?.programs) throw new Error('No formations found');
-  
   return data.data.programs;
 };
-
 const Formations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const navigate = useNavigate();
-  
-  const { data: formations, isLoading, error } = useQuery({
+  const {
+    data: formations,
+    isLoading,
+    error
+  } = useQuery({
     queryKey: ['formations'],
-    queryFn: fetchFormations,
+    queryFn: fetchFormations
   });
-
   const filteredFormations = useMemo(() => {
     if (!formations) return [];
-
     return formations.filter(formation => {
-      const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          formation.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
+      const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) || formation.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesSearch;
     });
   }, [formations, searchQuery]);
-
-  return (
-    <div className="min-h-screen bg-background font-dmsans">
+  return <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
       <section className="relative overflow-hidden py-16 lg:py-24">
@@ -104,25 +99,18 @@ const Formations = () => {
       <section className="container mx-auto px-4 mb-8">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="w-full md:w-[300px]">
-            <SearchBar 
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Rechercher une formation..."
-            />
+            <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Rechercher une formation..." />
           </div>
         </div>
       </section>
 
       <section className="container mx-auto px-4">
-        {error ? (
-          <div className="text-sydologie-red text-center py-8">
+        {error ? <div className="text-sydologie-red text-center py-8">
             Une erreur est survenue lors du chargement des formations.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? (
-              Array.from({ length: 6 }).map((_, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+          </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoading ? Array.from({
+          length: 6
+        }).map((_, index) => <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                   <div className="w-full h-48 bg-muted rounded-t-lg">
                     <Skeleton className="h-full w-full" />
                   </div>
@@ -135,25 +123,12 @@ const Formations = () => {
                     </div>
                     <Skeleton className="h-10 w-full" />
                   </div>
-                </Card>
-              ))
-            ) : (
-              filteredFormations.map((formation) => (
-                <FormationCard 
-                  key={formation.id} 
-                  formation={formation}
-                  onClick={() => setSelectedFormation(formation)}
-                />
-              ))
-            )}
-          </div>
-        )}
+                </Card>) : filteredFormations.map(formation => <FormationCard key={formation.id} formation={formation} onClick={() => setSelectedFormation(formation)} />)}
+          </div>}
         
-        {!isLoading && filteredFormations.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
+        {!isLoading && filteredFormations.length === 0 && <div className="text-center py-8 text-muted-foreground">
             Aucune formation ne correspond à vos critères de recherche.
-          </div>
-        )}
+          </div>}
       </section>
 
       <section className="container mx-auto px-4 py-16 mt-8">
@@ -165,22 +140,11 @@ const Formations = () => {
             Nous pouvons créer une formation sur mesure adaptée à vos besoins spécifiques. 
             Contactez-nous pour discuter de votre projet.
           </p>
-          <Button 
-            onClick={() => navigate('/contact')}
-            className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8 font-dmsans"
-          >
-            Demander une formation sur mesure
-          </Button>
+          <Button onClick={() => navigate('/contact')} className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8 font-dmsans">Je souhaiterais demander une formation sur mesure</Button>
         </div>
       </section>
 
-      <FormationDialog
-        formation={selectedFormation}
-        open={!!selectedFormation}
-        onOpenChange={(open) => !open && setSelectedFormation(null)}
-      />
-    </div>
-  );
+      <FormationDialog formation={selectedFormation} open={!!selectedFormation} onOpenChange={open => !open && setSelectedFormation(null)} />
+    </div>;
 };
-
 export default Formations;
