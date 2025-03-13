@@ -13,7 +13,7 @@ const Outils = () => {
       <ToolsHero />
 
       {/* Tools Sections */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 pb-16">
         {/* Conception Tools */}
         <ToolSection title="Nos outils de conception" tools={tools.conception} />
 
