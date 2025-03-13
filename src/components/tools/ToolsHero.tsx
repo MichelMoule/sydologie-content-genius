@@ -1,15 +1,10 @@
-
 import { Link } from "react-router-dom";
 import { LightbulbIcon } from "lucide-react";
-
 const ToolsHero = () => {
-  return (
-    <section className="container mx-auto px-4 py-24">
+  return <section className="container mx-auto px-4 py-24">
       <div className="flex gap-8">
         <div className="w-1/6">
-          <h1 className="text-[#1F5E40] text-6xl font-bold rotate-[-90deg] translate-y-20 whitespace-nowrap font-sans">
-            OUTILS
-          </h1>
+          <h1 className="text-[#1F5E40] text-6xl font-bold translate-y-20 whitespace-nowrap font-sans">_OUTILS</h1>
         </div>
         <div className="w-5/6">
           <h2 className="text-4xl font-bold mb-8 font-dmsans">
@@ -29,17 +24,12 @@ const ToolsHero = () => {
               <p className="font-bold">Une idée d'outil ?</p>
               <p className="text-gray-600">Contribuez au développement de sydologie.ai en proposant de nouvelles fonctionnalités</p>
             </div>
-            <Link 
-              to="/outils/suggestions" 
-              className="ml-auto bg-[#1F5E40] text-white px-4 py-2 rounded-md hover:bg-[#1F5E40]/90 whitespace-nowrap font-dmsans"
-            >
+            <Link to="/outils/suggestions" className="ml-auto bg-[#1F5E40] text-white px-4 py-2 rounded-md hover:bg-[#1F5E40]/90 whitespace-nowrap font-dmsans">
               Voir les propositions
             </Link>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ToolsHero;
