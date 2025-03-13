@@ -1,9 +1,6 @@
-
 import { Button } from "./ui/button";
-
 const Hero = () => {
-  return (
-    <div className="container mx-auto px-4 py-20 pb-32 bg-[#EDE8E0]">
+  return <div className="container mx-auto px-4 py-20 pb-32 bg-[#EDE8E0]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-8 relative">
         <div className="md:w-3/5 pt-20">
           <div className="text-[#82C8A0] mb-4 text-sm uppercase tracking-wide font-medium">
@@ -35,10 +32,8 @@ const Hero = () => {
         </div>
         
         <div className="md:w-2/5 hidden md:block">
-          <div className="pt-28">
-            <p className="text-gray-500 mb-6 text-base">
-              Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est <strong>RGPD</strong> !
-            </p>
+          <div className="pt-28 py-[159px]">
+            
             <div className="space-y-3 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
               <Button className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2">
                 M'inscrire gratuitement
@@ -56,13 +51,11 @@ const Hero = () => {
 
         {/* Robot image positioned to the right */}
         <div className="hidden lg:block absolute right-0 top-0 h-full" style={{
-          transform: 'translateX(70%)'
-        }}>
+        transform: 'translateX(70%)'
+      }}>
           <img src="/lovable-uploads/103c8caa-73e8-467a-a9f0-8489673a57ff.png" alt="Robot assistant" className="h-full max-h-[600px] object-contain" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Hero;
