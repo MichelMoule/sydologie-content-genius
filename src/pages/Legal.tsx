@@ -3,13 +3,14 @@ import { BookText, Shield, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Legal = () => {
   return (
-    <div className="min-h-screen bg-background font-dmsans">
+    <div className="min-h-screen bg-background font-dmsans flex flex-col">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 flex-grow">
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Mentions Légales et Conditions d'Utilisation</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -174,6 +175,8 @@ const Legal = () => {
           </Card>
         </section>
       </div>
+      
+      <Footer />
     </div>
   );
 };

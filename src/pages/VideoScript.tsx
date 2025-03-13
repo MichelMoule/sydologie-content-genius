@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useState } from "react";
 import {
   Dialog,
@@ -80,10 +81,10 @@ const VideoScript = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background font-dmsans">
+    <div className="min-h-screen bg-background font-dmsans flex flex-col">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
           &lt; Outils
         </Link>
@@ -140,6 +141,8 @@ const VideoScript = () => {
           </DialogContent>
         </Dialog>
       </div>
+      
+      <Footer />
     </div>
   );
 };

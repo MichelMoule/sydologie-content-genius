@@ -1,6 +1,6 @@
 
 import { Button } from "./ui/button";
-import { User, LogOut, Library, LightbulbIcon, FileText } from "lucide-react";
+import { User, LogOut, Library, LightbulbIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,11 +85,6 @@ const Navbar = () => {
                 </Button>
               </Link>
             )}
-            
-            <Link to="/legal" className="ml-2 text-xs text-white/70 hover:text-white flex items-center">
-              <FileText className="h-3 w-3 mr-1" />
-              Mentions légales
-            </Link>
           </div>
         </div>
       </div>
