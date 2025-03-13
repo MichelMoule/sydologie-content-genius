@@ -134,10 +134,7 @@ const Program = () => {
               Créez rapidement des programmes pédagogiques pour vos formations
             </h2>
             
-            <p className="text-lg font-dmsans">
-              Utilisez notre outil pour générer automatiquement des programmes pédagogiques 
-              adaptés à vos besoins spécifiques.
-            </p>
+            
             
             
           </div>
