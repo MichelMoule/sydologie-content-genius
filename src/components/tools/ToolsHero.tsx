@@ -4,7 +4,7 @@ const ToolsHero = () => {
   return <section className="container mx-auto px-4 py-24">
       <div className="flex gap-8">
         <div className="w-1/6">
-          <h1 className="text-[#1F5E40] text-6xl font-bold translate-y-20 whitespace-nowrap font-sans">_OUTILS</h1>
+          <h1 className="text-[#1F5E40] font-bold translate-y-20 whitespace-nowrap font-sans text-4xl">_Outils</h1>
         </div>
         <div className="w-5/6">
           <h2 className="text-4xl font-bold mb-8 font-dmsans">
