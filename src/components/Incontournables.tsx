@@ -1,4 +1,3 @@
-
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
@@ -9,13 +8,6 @@ const tools = [
     image: "/lovable-uploads/11f4232d-1b7a-4f8d-b618-46ab72d881b5.png",
     description: "Créez des programmes de formation personnalisés",
     path: "/outils/program"
-  },
-  {
-    id: 2,
-    name: "RésumA.I.",
-    image: "/lovable-uploads/bca4e58f-deae-4e0d-b948-e4424fe1821e.png",
-    description: "Générez des résumés de vos contenus de formation",
-    path: "/outils/resume"
   },
   {
     id: 3,
@@ -30,6 +22,13 @@ const tools = [
     image: "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
     description: "Créez des cartes pour mémoriser vos contenus",
     path: "/outils/flashcards"
+  },
+  {
+    id: 8,
+    name: "FeedbaIck",
+    image: "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
+    description: "Analysez les retours récoltés après vos formations",
+    path: "/outils/feedbaick"
   }
 ];
 

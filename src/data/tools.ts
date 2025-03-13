@@ -28,15 +28,6 @@ export const tools = {
       description: "Créez des cartes pour mémoriser vos contenus",
       image: "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
       path: "/outils/flashcards"
-    }
-  ],
-  realisation: [
-    {
-      id: 6,
-      name: "RésumA.I.",
-      description: "Générez des résumés de vos contenus de formation",
-      image: "/lovable-uploads/bca4e58f-deae-4e0d-b948-e4424fe1821e.png",
-      path: "/outils/resume"
     },
     {
       id: 7,
