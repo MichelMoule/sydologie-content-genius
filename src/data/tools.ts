@@ -32,13 +32,6 @@ export const tools = {
   ],
   realisation: [
     {
-      id: 5,
-      name: "VulgArIsation",
-      description: "Clarifiez vos contenus de formation complexes",
-      image: "/lovable-uploads/5746b7f3-ddfa-46a9-adfe-93ea42150077.png",
-      path: "/outils/vulgarisation"
-    },
-    {
       id: 6,
       name: "RésumA.I.",
       description: "Générez des résumés de vos contenus de formation",

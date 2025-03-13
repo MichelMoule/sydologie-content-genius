@@ -12,10 +12,10 @@ const tools = [
   },
   {
     id: 2,
-    name: "VulgArIsation",
-    image: "/lovable-uploads/5746b7f3-ddfa-46a9-adfe-93ea42150077.png",
-    description: "Clarifiez vos contenus de formation complexes.",
-    path: "/outils/vulgarisation"
+    name: "RésumA.I.",
+    image: "/lovable-uploads/bca4e58f-deae-4e0d-b948-e4424fe1821e.png",
+    description: "Générez des résumés de vos contenus de formation",
+    path: "/outils/resume"
   },
   {
     id: 3,
