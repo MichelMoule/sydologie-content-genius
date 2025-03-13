@@ -39,13 +39,15 @@ const tools = {
       id: 5,
       name: "VulgArIsation",
       description: "Clarifiez vos contenus de formation complexes",
-      image: "/lovable-uploads/d21e80f7-bd87-4b90-9276-ad35db75f87a.png"
+      image: "/lovable-uploads/d21e80f7-bd87-4b90-9276-ad35db75f87a.png",
+      path: "/outils/vulgarisation"
     },
     {
       id: 6,
       name: "RésumA.I.",
       description: "Générez des résumés de vos contenus de formation",
-      image: "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png"
+      image: "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png",
+      path: "/outils/resume"
     }
   ],
   analyse: [
