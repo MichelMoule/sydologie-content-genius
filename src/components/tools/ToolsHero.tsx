@@ -7,9 +7,7 @@ const ToolsHero = () => {
           <h1 className="text-[#1F5E40] font-bold translate-y-20 whitespace-nowrap font-sans text-4xl"></h1>
         </div>
         <div className="w-5/6">
-          <h2 className="text-4xl font-bold mb-8 font-dmsans">
-            Nous développons des outils pour vous aidez dans la conception, la réalisation et l'analyse de vos formations.
-          </h2>
+          <h2 className="text-4xl font-bold mb-8 font-dmsans">Nous développons des outils pour vous aider dans la conception, la réalisation et l'analyse de vos formations.</h2>
           <p className="text-2xl mb-4 font-dmsans">
             <Link to="/contact" className="text-[#1F5E40] hover:underline">
               Contactez-nous
