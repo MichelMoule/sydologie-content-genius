@@ -43,7 +43,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] lg:max-w-[1200px]">
+      <DialogContent className="max-w-[90vw] lg:max-w-[1200px] font-dmsans">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left column with image and key information */}
           <div className="space-y-6">
@@ -85,7 +85,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
           {/* Right column with title and description */}
           <div className="space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-bold">{formation.name}</DialogTitle>
+              <DialogTitle className="text-3xl font-bold font-dmsans">{formation.name}</DialogTitle>
             </DialogHeader>
 
             <div className="bg-muted/50 p-6 rounded-lg">
@@ -99,7 +99,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
                   href={formation.publicRegistrationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white py-3 px-4 rounded-[40px] h-[40px] inline-block text-center"
+                  className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white py-3 px-4 rounded-[40px] h-[40px] inline-block text-center font-dmsans"
                 >
                   S'inscrire à la formation
                 </a>

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
@@ -63,12 +64,12 @@ const Formations = () => {
   }, [formations, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
       <section className="relative overflow-hidden py-16 lg:py-24">
         <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-          <span className="text-[12vw] font-bold text-[#72BB8E] whitespace-nowrap">
+          <span className="text-[12vw] font-bold text-[#72BB8E] whitespace-nowrap font-dmsans">
             FORMATIONS
           </span>
         </div>
@@ -76,7 +77,7 @@ const Formations = () => {
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold">
+              <h1 className="text-4xl md:text-5xl font-bold font-dmsans">
                 Nous proposons des formations{" "}
                 <span className="text-[#72BB8E]">
                   interactives et innovantes.
@@ -164,7 +165,7 @@ const Formations = () => {
 
       <section className="container mx-auto px-4 py-16 mt-8">
         <div className="bg-muted/50 rounded-lg p-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 font-dmsans">
             Vous ne trouvez pas la formation adaptée ?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
@@ -173,7 +174,7 @@ const Formations = () => {
           </p>
           <Button 
             onClick={() => navigate('/contact')}
-            className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8"
+            className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8 font-dmsans"
           >
             Demander une formation sur mesure
           </Button>

@@ -31,7 +31,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
   };
 
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group" onClick={onClick}>
+    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group font-dmsans" onClick={onClick}>
       {formation.image?.url && (
         <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
           <img
@@ -42,7 +42,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
         </div>
       )}
       <CardHeader>
-        <CardTitle className="text-xl line-clamp-2 mb-4">{formation.name}</CardTitle>
+        <CardTitle className="text-xl line-clamp-2 mb-4 font-dmsans">{formation.name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
         <div className="space-y-3 flex-grow">
@@ -60,7 +60,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           </div>
         </div>
         <Button 
-          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px]"
+          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] font-dmsans"
           onClick={(e) => {
             e.stopPropagation();
             onClick();
