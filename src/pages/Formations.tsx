@@ -140,7 +140,7 @@ const Formations = () => {
             Nous pouvons créer une formation sur mesure adaptée à vos besoins spécifiques. 
             Contactez-nous pour discuter de votre projet.
           </p>
-          <Button onClick={() => navigate('/contact')} className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8 font-dmsans">Je souhaiterais demander une formation sur mesure</Button>
+          <Button onClick={() => navigate('/contact')} className="bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] px-8 font-dmsans">Je souhaiterais une formation sur mesure</Button>
         </div>
       </section>
 
