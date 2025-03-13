@@ -37,13 +37,13 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link to="/" className="text-2xl font-sans flex items-center">
-              Sydologie<span className="text-white">.ai</span>
+            <Link to="/" className="text-2xl font-sans flex items-center font-bold">
+              Sydologie<span className="text-[#1F5E40] font-bold">.</span><span className="text-white font-bold">ai</span>
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex space-x-8 font-dmsans">
+          <div className="hidden md:flex space-x-8 font-dmsans text-lg font-medium">
             <Link to="/outils" className="hover:text-white transition-colors">
               _Outils
             </Link>
@@ -68,7 +68,7 @@ const Navbar = () => {
             {user ? (
               <Button
                 variant="ghost"
-                className="text-white hover:text-[#82C8A0] hover:bg-white/20"
+                className="text-white hover:text-[#82C8A0] hover:bg-white/20 font-medium"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -78,7 +78,7 @@ const Navbar = () => {
               <Link to="/auth">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-[#82C8A0] hover:bg-white/20"
+                  className="text-white hover:text-[#82C8A0] hover:bg-white/20 font-medium"
                 >
                   <User className="mr-2 h-4 w-4" />
                   Me connecter
