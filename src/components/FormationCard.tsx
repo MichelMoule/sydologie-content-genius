@@ -30,14 +30,25 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
     return `Formation ${modality.toLowerCase()}`;
   };
 
-  const getFormationType = (costs: any[]) => {
-    const hasInter = costs.some(cost => cost.type === "INTER");
-    const hasIntra = costs.some(cost => cost.type === "INTRA");
+  const getFormationType = (formation: FormationCardProps['formation']) => {
+    // If formation name starts with "Le Bahut", return "Alternance"
+    if (formation.name.startsWith('Le Bahut')) {
+      return "Alternance";
+    }
     
-    if (hasInter && hasIntra) return "INTER et INTRA";
-    if (hasIntra) return "INTRA uniquement";
-    if (hasInter) return "INTER uniquement";
-    return "Formation"; // Default fallback if no recognized cost types
+    // Specific formations that should be "INTER et INTRA"
+    const interIntraFormations = [
+      "Automatisation, IA et développement assisté",
+      "Concevoir et produire des ressources e-learning",
+      "IA et pédagogie (2 jours)"
+    ];
+    
+    if (interIntraFormations.some(title => formation.name.includes(title))) {
+      return "INTER et INTRA";
+    }
+    
+    // All other formations are "INTRA uniquement"
+    return "INTRA uniquement";
   };
 
   return (
@@ -66,7 +77,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <User className="w-4 h-4" />
-            <span>{getFormationType(formation.costs)}</span>
+            <span>{getFormationType(formation)}</span>
           </div>
         </div>
         <Button 
