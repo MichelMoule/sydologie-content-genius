@@ -1,4 +1,3 @@
-
 import { Button } from "./ui/button";
 const Hero = () => {
   return <div className="container mx-auto px-4 py-20 pb-32 bg-[#EDE8E0]">
@@ -59,6 +58,13 @@ const Hero = () => {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Robot image positioned to the right */}
+        <div className="hidden lg:block absolute right-0 top-0 h-full" style={{
+        transform: 'translateX(70%)'
+      }}>
+          <img src="/lovable-uploads/103c8caa-73e8-467a-a9f0-8489673a57ff.png" alt="Robot assistant" className="h-full max-h-[600px] object-contain" />
         </div>
       </div>
     </div>;
