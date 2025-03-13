@@ -39,20 +39,27 @@ const tools = {
       id: 5,
       name: "VulgArIsation",
       description: "Clarifiez vos contenus de formation complexes",
-      image: "/lovable-uploads/d21e80f7-bd87-4b90-9276-ad35db75f87a.png",
+      image: "/lovable-uploads/5746b7f3-ddfa-46a9-adfe-93ea42150077.png",
       path: "/outils/vulgarisation"
     },
     {
       id: 6,
       name: "RésumA.I.",
       description: "Générez des résumés de vos contenus de formation",
-      image: "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png",
+      image: "/lovable-uploads/bca4e58f-deae-4e0d-b948-e4424fe1821e.png",
       path: "/outils/resume"
+    },
+    {
+      id: 7,
+      name: "Glossaire",
+      description: "Créez des glossaires pour définir les termes clés",
+      image: "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
+      path: "/outils/glossaire"
     }
   ],
   analyse: [
     {
-      id: 7,
+      id: 8,
       name: "FeedbaIck",
       description: "Analysez les retours récoltés après vos formations",
       image: "/lovable-uploads/fbe2b17e-21b8-415a-92ef-8187313ff78d.png",

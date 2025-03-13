@@ -26,15 +26,15 @@ const tools = [
   },
   {
     id: 2,
-    name: "SCRYPTO-VIDÉO",
-    description: "CRÉEZ DES SCRIPTS POUR VOS VIDÉOS DE FORMATION",
-    quote: "NFT-free",
+    name: "GLOSSAIRE",
+    description: "CRÉEZ DES GLOSSAIRES POUR DÉFINIR LES TERMES CLÉS",
+    quote: "Terminologie claire",
     images: [
-      "/lovable-uploads/b7521456-bfcc-47d0-837b-5652b28664aa.png",
-      "/lovable-uploads/110b3fe4-f43c-40d1-8151-cdd98945d58f.png"
+      "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
+      "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png"
     ],
     cta: "TESTEZ CET OUTIL",
-    path: "/outils/videoscript",
+    path: "/outils/glossaire",
     rating: 4
   },
   {

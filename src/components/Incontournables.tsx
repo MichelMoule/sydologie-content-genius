@@ -13,15 +13,16 @@ const tools = [
   {
     id: 2,
     name: "VulgArIsation",
-    image: "/lovable-uploads/d21e80f7-bd87-4b90-9276-ad35db75f87a.png",
-    description: "Clarifiez vos contenus de formation complexes."
+    image: "/lovable-uploads/5746b7f3-ddfa-46a9-adfe-93ea42150077.png",
+    description: "Clarifiez vos contenus de formation complexes.",
+    path: "/outils/vulgarisation"
   },
   {
     id: 3,
-    name: "Quiiiiiz?",
-    image: "/lovable-uploads/dca74049-15ef-475b-8004-d0e8846712c3.png",
-    description: "Créez des quiz personnalisés pour vos apprenants.",
-    path: "/outils/quiz"
+    name: "Glossaire",
+    image: "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
+    description: "Créez des glossaires pour définir les termes clés",
+    path: "/outils/glossaire"
   },
   {
     id: 4,
