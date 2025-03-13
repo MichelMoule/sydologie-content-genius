@@ -30,6 +30,15 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
     return `Formation ${modality.toLowerCase()}`;
   };
 
+  const getFormationType = (costs: any[]) => {
+    const hasInter = costs.some(cost => cost.type === "INTER");
+    const hasIntra = costs.some(cost => cost.type === "INTRA");
+    
+    if (hasInter && hasIntra) return "INTER et INTRA";
+    if (hasIntra) return "INTRA uniquement";
+    return "ALTERNANCE";
+  };
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group font-dmsans" onClick={onClick}>
       {formation.image?.url && (
@@ -56,7 +65,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <User className="w-4 h-4" />
-            <span>Accessible</span>
+            <span>{getFormationType(formation.costs)}</span>
           </div>
         </div>
         <Button 

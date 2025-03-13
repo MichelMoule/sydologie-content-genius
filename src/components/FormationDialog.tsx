@@ -41,6 +41,15 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
     return `Formation ${modality.toLowerCase()}`;
   };
 
+  const getFormationType = (costs: any[]) => {
+    const hasInter = costs.some(cost => cost.type === "INTER");
+    const hasIntra = costs.some(cost => cost.type === "INTRA");
+    
+    if (hasInter && hasIntra) return "INTER et INTRA";
+    if (hasIntra) return "INTRA uniquement";
+    return "ALTERNANCE";
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[90vw] lg:max-w-[1200px] font-dmsans">
@@ -70,7 +79,7 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
                   <User className="w-5 h-5" />
-                  <span>Accessible</span>
+                  <span>{getFormationType(formation.costs)}</span>
                 </div>
                 {mainCost && (
                   <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
