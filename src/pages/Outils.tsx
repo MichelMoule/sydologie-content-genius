@@ -9,43 +9,43 @@ const tools = {
       id: 1,
       name: "ProgrAImme",
       description: "Créez des programmes de formation personnalisés",
-      image: "/lovable-uploads/2c950e55-b356-4720-84ea-a6231962e14d.png",
+      image: "/lovable-uploads/11f4232d-1b7a-4f8d-b618-46ab72d881b5.png",
       path: "/outils/program"
     },
     {
       id: 2,
       name: "Quiiiiiz?",
       description: "Créez des quiz personnalisés pour vos apprenants",
-      image: "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png",
+      image: "/lovable-uploads/dca74049-15ef-475b-8004-d0e8846712c3.png",
       path: "/outils/quiz"
     },
     {
       id: 3,
       name: "Scrypto-vidéo",
       description: "Créez des scripts pour vos vidéos de formation",
-      image: "/lovable-uploads/59464221-fdcc-4f6c-a58f-c27fcd17a54e.png",
+      image: "/lovable-uploads/b7521456-bfcc-47d0-837b-5652b28664aa.png",
       path: "/outils/videoscript"
+    },
+    {
+      id: 4,
+      name: "Flashcards",
+      description: "Créez des cartes pour mémoriser vos contenus",
+      image: "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
+      path: "/outils/flashcards"
     }
   ],
   realisation: [
     {
-      id: 4,
+      id: 5,
       name: "VulgArIsation",
       description: "Clarifiez vos contenus de formation complexes",
       image: "/lovable-uploads/d21e80f7-bd87-4b90-9276-ad35db75f87a.png"
     },
     {
-      id: 5,
+      id: 6,
       name: "RésumA.I.",
       description: "Générez des résumés de vos contenus de formation",
       image: "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png"
-    },
-    {
-      id: 6,
-      name: "Flashcards",
-      description: "Créez des cartes pour mémoriser vos contenus",
-      image: "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png",
-      path: "/outils/flashcards"
     }
   ],
   analyse: [

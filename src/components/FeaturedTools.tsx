@@ -30,7 +30,7 @@ const tools = [
     description: "CRÉEZ DES SCRIPTS POUR VOS VIDÉOS DE FORMATION",
     quote: "NFT-free",
     images: [
-      "/lovable-uploads/59464221-fdcc-4f6c-a58f-c27fcd17a54e.png",
+      "/lovable-uploads/b7521456-bfcc-47d0-837b-5652b28664aa.png",
       "/lovable-uploads/110b3fe4-f43c-40d1-8151-cdd98945d58f.png"
     ],
     cta: "TESTEZ CET OUTIL",
@@ -39,14 +39,15 @@ const tools = [
   },
   {
     id: 3,
-    name: "RÉSUM A.I.",
-    description: "GÉNÉREZ DES RÉSUMÉS DE VOS CONTENUS DE FORMATION",
+    name: "FLASHCARDS",
+    description: "CRÉEZ DES CARTES POUR MÉMORISER VOS CONTENUS",
     quote: "Premium qualiA.I.",
     images: [
-      "/lovable-uploads/0e8c9ea4-a2c6-457b-8ef0-e77b8572ec93.png",
+      "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
       "/lovable-uploads/f36a7d7c-eae6-49b4-a128-6d31511bacd9.png"
     ],
     cta: "TESTEZ CET OUTIL",
+    path: "/outils/flashcards",
     rating: 4
   }
 ];
