@@ -38,7 +38,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-sans flex items-center font-bold">
-              Sydologie<span className="text-[#1F5E40] font-bold">.</span><span className="text-white font-bold">ai</span>
+              Sydologie<span className="text-[#1F5E40] font-bold">.ai</span>
             </Link>
           </div>
 
