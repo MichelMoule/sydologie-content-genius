@@ -34,14 +34,18 @@ serve(async (req) => {
     const chunkSize = 8192; // Use smaller chunks to avoid stack overflow
     for (let i = 0; i < pdfBytes.length; i += chunkSize) {
       const chunk = pdfBytes.slice(i, i + chunkSize);
-      base64Pdf += btoa(String.fromCharCode.apply(null, chunk));
+      base64Pdf += btoa(String.fromCharCode.apply(null, [...chunk]));
     }
     
     console.log(`PDF converted to base64, length: ${base64Pdf.length}`);
 
+    // Ensure proper formatting of the data URL for Azure OpenAI
+    const dataUrl = `data:application/pdf;base64,${base64Pdf}`;
+
     // 2. Call Azure OpenAI with vision capabilities to extract text from PDF
     const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
     
+    console.log('Calling Azure OpenAI for PDF extraction...');
     const pdfExtractResponse = await fetch(url, {
       method: 'POST',
       headers: {
@@ -57,7 +61,7 @@ serve(async (req) => {
               {
                 type: 'image_url',
                 image_url: {
-                  url: `data:application/pdf;base64,${base64Pdf}`,
+                  url: dataUrl,
                 }
               }
             ],
