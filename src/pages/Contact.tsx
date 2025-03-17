@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +17,7 @@ const Contact = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col font-dmsans">
         <Navbar />
         <div className="flex-1 bg-[#1EFF02] flex flex-col items-center justify-center px-4">
           <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl text-white">
@@ -41,7 +42,7 @@ const Contact = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 font-dmsans">
         <div className="flex flex-col md:flex-row gap-12 min-h-[600px]">
           {/* Left side - Form */}
           <div className="flex-1">
@@ -109,13 +110,13 @@ const Contact = () => {
               <div className="space-y-2">
                 <Textarea 
                   placeholder="Tapez votre demande ici" 
-                  className="min-h-[200px] border rounded-md" 
+                  className="min-h-[200px] border rounded-md font-dmsans" 
                 />
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full md:w-auto px-8 py-2 bg-[#1EFF02] text-black hover:bg-[#1EFF02]/90"
+                className="w-full md:w-auto px-8 py-2 bg-[#1EFF02] text-black hover:bg-[#1EFF02]/90 font-dmsans"
               >
                 Envoyer
               </Button>
@@ -127,7 +128,7 @@ const Contact = () => {
           </div>
 
           {/* Right side - Contact Info */}
-          <div className="md:w-[400px] bg-[#1EFF02] p-8 h-full">
+          <div className="md:w-[400px] bg-[#1EFF02] p-8 h-full font-dmsans">
             <div className="space-y-4">
               <p className="font-bold">SYDO</p>
               <p>31 rue Burdeau</p>
