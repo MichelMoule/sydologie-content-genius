@@ -15,7 +15,6 @@ import Program from "./pages/Program";
 import Flashcards from "./pages/Flashcards";
 import VideoScript from "./pages/VideoScript";
 import NotFound from "./pages/NotFound";
-import Annuaire from "./pages/Annuaire";
 import Glossaire from "./pages/Glossaire";
 import Suggestions from "./pages/Suggestions";
 import Legal from "./pages/Legal";
@@ -37,7 +36,6 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/formations" element={<Formations />} />
           <Route path="/outils" element={<Outils />} />
-          <Route path="/annuaire" element={<Annuaire />} />
           <Route path="/outils/feedbaick" element={<FeedbaIck />} />
           <Route path="/outils/quiz" element={<Quiz />} />
           <Route path="/outils/program" element={<Program />} />
