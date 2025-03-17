@@ -39,15 +39,16 @@ serve(async (req) => {
     
     console.log(`PDF converted to base64, length: ${base64Pdf.length}`);
 
-    // 2. Call OpenAI to extract text from PDF
-    const pdfExtractResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    // 2. Call Azure OpenAI with vision capabilities to extract text from PDF
+    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
+    
+    const pdfExtractResponse = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'api-key': azureApiKey!,
       },
       body: JSON.stringify({
-        model: 'gpt-4-vision-preview',
         messages: [
           {
             role: 'user',
@@ -68,7 +69,7 @@ serve(async (req) => {
 
     if (!pdfExtractResponse.ok) {
       const error = await pdfExtractResponse.text();
-      console.error('OpenAI PDF extraction error:', error);
+      console.error('Azure OpenAI PDF extraction error:', error);
       throw new Error('Erreur lors de l\'extraction du texte du PDF');
     }
 
@@ -77,14 +78,14 @@ serve(async (req) => {
     console.log('Extracted text preview:', extractedText.substring(0, 500));
 
     // 3. Generate glossary from extracted text using Azure OpenAI
-    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
+    const url2 = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
     
     // Adding a timeout for the Azure OpenAI request
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60000); // 60 second timeout
     
     try {
-      const response = await fetch(url, {
+      const response = await fetch(url2, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
