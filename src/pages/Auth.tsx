@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +13,7 @@ const Auth = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,7 +25,19 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+          redirectTo: `${window.location.origin}/settings`,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Email de récupération envoyé !",
+          description: "Veuillez vérifier votre email pour réinitialiser votre mot de passe.",
+        });
+        setIsForgotPassword(false);
+      } else if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -65,6 +79,114 @@ const Auth = () => {
     }
   };
 
+  const renderForm = () => {
+    if (isForgotPassword) {
+      return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+            disabled={isLoading}
+          >
+            {isLoading ? "Envoi en cours..." : "Envoyer le lien de récupération"}
+          </Button>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setIsForgotPassword(false)}
+              className="text-sm text-[#00FF00] hover:underline"
+            >
+              Retour à la connexion
+            </button>
+          </div>
+        </form>
+      );
+    }
+
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {isSignUp && (
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Nom complet</Label>
+            <Input
+              id="fullName"
+              type="text"
+              value={formData.fullName}
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
+              required
+            />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input
+            id="password"
+            type="password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            required
+          />
+        </div>
+
+        {!isSignUp && (
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => setIsForgotPassword(true)}
+              className="text-xs text-[#00FF00] hover:underline"
+            >
+              Mot de passe oublié ?
+            </button>
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+          disabled={isLoading}
+        >
+          {isLoading
+            ? "Chargement..."
+            : isSignUp
+            ? "S'inscrire"
+            : "Se connecter"}
+        </Button>
+      </form>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -72,81 +194,36 @@ const Auth = () => {
         <div className="max-w-md mx-auto space-y-6">
           <div className="text-center">
             <h1 className="text-3xl font-bold">
-              {isSignUp ? "Créer un compte" : "Se connecter"}
+              {isForgotPassword
+                ? "Récupération de mot de passe"
+                : isSignUp
+                ? "Créer un compte"
+                : "Se connecter"}
             </h1>
             <p className="text-muted-foreground mt-2">
-              {isSignUp
+              {isForgotPassword
+                ? "Entrez votre email pour recevoir un lien de réinitialisation"
+                : isSignUp
                 ? "Rejoignez la communauté Sydologie.ai"
                 : "Connectez-vous à votre compte"}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nom complet</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullName: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            )}
+          {renderForm()}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
-              />
+          {!isForgotPassword && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm text-[#00FF00] hover:underline"
+              >
+                {isSignUp
+                  ? "Déjà un compte ? Se connecter"
+                  : "Pas encore de compte ? S'inscrire"}
+              </button>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
-              disabled={isLoading}
-            >
-              {isLoading
-                ? "Chargement..."
-                : isSignUp
-                ? "S'inscrire"
-                : "Se connecter"}
-            </Button>
-          </form>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-[#00FF00] hover:underline"
-            >
-              {isSignUp
-                ? "Déjà un compte ? Se connecter"
-                : "Pas encore de compte ? S'inscrire"}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>
