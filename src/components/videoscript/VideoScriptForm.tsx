@@ -45,12 +45,12 @@ export const VideoScriptForm = ({ onSubmit, isGenerating }: VideoScriptFormProps
     resolver: zodResolver(formSchema),
     defaultValues: {
       topic: "",
-      targetAudience: "Adultes en formation professionnelle",
-      duration: "5-7 minutes",
-      format: "Présentation explicative",
+      targetAudience: "",
+      duration: "",
+      format: "",
       learningObjectives: "",
-      tone: "Professionnel mais accessible",
-      visualStyle: "Simple et épuré",
+      tone: "",
+      visualStyle: "",
       additionalInstructions: "",
     },
   });

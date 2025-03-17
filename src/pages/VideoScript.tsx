@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -43,8 +44,18 @@ const VideoScript = () => {
         return;
       }
 
+      // Set default values for empty fields
+      const enhancedValues = {
+        ...values,
+        targetAudience: values.targetAudience || "Adultes en formation professionnelle",
+        duration: values.duration || "5-7 minutes",
+        format: values.format || "Présentation explicative",
+        tone: values.tone || "Professionnel mais accessible",
+        visualStyle: values.visualStyle || "Simple et épuré"
+      };
+
       const { data: scriptResult, error: scriptError } = await supabase.functions.invoke('generate-video-script', {
-        body: values,
+        body: enhancedValues,
       });
 
       if (scriptError) throw scriptError;
