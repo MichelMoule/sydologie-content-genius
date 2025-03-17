@@ -45,10 +45,10 @@ const Navbar = () => {
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8 font-dmsans text-lg font-medium">
             <Link to="/outils" className="hover:text-white transition-colors">
-              _Outils
+              Outils
             </Link>
             <Link to="/formations" className="hover:text-white transition-colors">
-              _Formations
+              Formations
             </Link>
             <Link to="/outils/suggestions" className="hover:text-white transition-colors flex items-center">
               <LightbulbIcon className="mr-2 h-4 w-4" />
