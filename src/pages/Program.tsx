@@ -12,14 +12,14 @@ import { ProgramAnalysis } from "@/components/program/ProgramAnalysis";
 import { ProgramData } from "@/components/program/types";
 import { generateProgramPDF } from "@/components/program/ProgramPDF";
 import { supabase } from "@/integrations/supabase/client";
+
 const Program = () => {
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [programData, setProgramData] = useState<ProgramData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [programName, setProgramName] = useState("");
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsGenerating(true);
@@ -38,12 +38,10 @@ const Program = () => {
         return;
       }
 
-      // Handle file upload if present
       let fileContent = "";
       if (values.courseFile) {
         const file = values.courseFile as File;
         if (file.size > 5 * 1024 * 1024) {
-          // 5MB limit
           toast({
             variant: "destructive",
             title: "Erreur",
@@ -53,11 +51,9 @@ const Program = () => {
           return;
         }
 
-        // Read file content
         fileContent = await readFileContent(file);
       }
 
-      // Prepare request body
       const requestBody = {
         ...values,
         fileContent: fileContent
@@ -87,7 +83,6 @@ const Program = () => {
     }
   };
 
-  // Helper function to read file content
   const readFileContent = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -102,14 +97,13 @@ const Program = () => {
         reject(new Error("File reading error"));
       };
       if (file.type === "application/pdf") {
-        // For PDFs, we can only read as ArrayBuffer
         reader.readAsArrayBuffer(file);
       } else {
-        // For text files, read as text
         reader.readAsText(file);
       }
     });
   };
+
   const handleDownloadPDF = () => {
     if (!programData) return;
     generateProgramPDF(programData, programName);
@@ -118,7 +112,9 @@ const Program = () => {
       description: "Le téléchargement devrait commencer automatiquement."
     });
   };
-  return <div className="min-h-screen bg-background font-dmsans flex flex-col">
+
+  return (
+    <div className="min-h-screen bg-background font-dmsans flex flex-col">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow">
@@ -126,20 +122,17 @@ const Program = () => {
           &lt; Outils
         </Link>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          <div className="space-y-8">
+        <div className="flex flex-col space-y-8 mt-8">
+          <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">ProgrAImme</h1>
-            
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Créez rapidement des programmes pédagogiques pour vos formations
             </h2>
-            
-            
-            
-            
           </div>
           
-          <ProgramForm onSubmit={onSubmit} isGenerating={isGenerating} />
+          <div className="w-full max-w-4xl mx-auto">
+            <ProgramForm onSubmit={onSubmit} isGenerating={isGenerating} />
+          </div>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal={true}>
@@ -147,10 +140,12 @@ const Program = () => {
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center font-dmsans">
                 <span>📚 {programName}</span>
-                {programData && <Button variant="outline" size="sm" className="ml-4 font-dmsans" onClick={handleDownloadPDF}>
+                {programData && (
+                  <Button variant="outline" size="sm" className="ml-4 font-dmsans" onClick={handleDownloadPDF}>
                     <Download className="mr-2 h-4 w-4" />
                     Télécharger PDF
-                  </Button>}
+                  </Button>
+                )}
               </DialogTitle>
             </DialogHeader>
             {programData && <ProgramAnalysis program={programData} />}
@@ -159,6 +154,8 @@ const Program = () => {
       </div>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Program;
