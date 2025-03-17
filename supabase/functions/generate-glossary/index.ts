@@ -25,10 +25,19 @@ serve(async (req) => {
       );
     }
 
-    // 1. Convert PDF file to text
+    // 1. Convert PDF file to text - using a chunk-based approach to avoid stack overflow
     const pdfArrayBuffer = await pdfFile.arrayBuffer();
     const pdfBytes = new Uint8Array(pdfArrayBuffer);
-    const base64Pdf = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfArrayBuffer)));
+    
+    // Convert Uint8Array to base64 in chunks to avoid stack overflow
+    let base64Pdf = '';
+    const chunkSize = 8192; // Use smaller chunks to avoid stack overflow
+    for (let i = 0; i < pdfBytes.length; i += chunkSize) {
+      const chunk = pdfBytes.slice(i, i + chunkSize);
+      base64Pdf += btoa(String.fromCharCode.apply(null, chunk));
+    }
+    
+    console.log(`PDF converted to base64, length: ${base64Pdf.length}`);
 
     // 2. Call OpenAI to extract text from PDF
     const pdfExtractResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -131,26 +140,33 @@ serve(async (req) => {
         const content = openAIResponse.choices[0].message.content.trim();
         console.log('Raw content length:', content.length);
         
-        // Parse JSON safely
-        // First, handle potential markdown code blocks
-        let jsonStr = content;
-        if (content.includes('```json')) {
-          const match = content.match(/```json\n([\s\S]*?)\n```/);
-          if (match && match[1]) {
-            jsonStr = match[1].trim();
+        // Safe JSON parsing
+        try {
+          // Simple approach first - direct parsing
+          glossaryContent = JSON.parse(content);
+        } catch (e) {
+          console.log('Direct parsing failed, trying to extract JSON from content');
+          
+          // Try to handle markdown code blocks
+          let jsonStr = content;
+          if (content.includes('```json')) {
+            const match = content.match(/```json\n([\s\S]*?)\n```/);
+            if (match && match[1]) {
+              jsonStr = match[1].trim();
+            }
           }
-        }
-        
-        // Try to find the JSON object between the first { and the last }
-        const startIndex = jsonStr.indexOf('{');
-        const endIndex = jsonStr.lastIndexOf('}');
-        
-        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-          jsonStr = jsonStr.substring(startIndex, endIndex + 1);
-          console.log('Cleaned JSON string length:', jsonStr.length);
-          glossaryContent = JSON.parse(jsonStr);
-        } else {
-          throw new Error('No valid JSON object found in response');
+          
+          // Find JSON between curly braces
+          const startIndex = jsonStr.indexOf('{');
+          const endIndex = jsonStr.lastIndexOf('}');
+          
+          if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+            jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+            console.log('Extracted JSON string length:', jsonStr.length);
+            glossaryContent = JSON.parse(jsonStr);
+          } else {
+            throw new Error('No valid JSON object found in response');
+          }
         }
         
         // Validate the expected format
