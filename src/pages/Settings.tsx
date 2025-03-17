@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -141,9 +140,9 @@ const Settings = () => {
   const handleDeleteAccount = async () => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.admin.deleteUser(user.id);
+      const { error: deleteError } = await supabase.rpc('delete_user');
       
-      if (error) throw error;
+      if (deleteError) throw deleteError;
       
       await supabase.auth.signOut();
       
@@ -156,27 +155,11 @@ const Settings = () => {
     } catch (error: any) {
       console.error("Error deleting account:", error);
       
-      // Fallback method using client-side deletion if admin API fails
-      try {
-        // This will work for most cases where user is authenticated
-        const { error: deleteError } = await supabase.rpc('delete_user');
-        
-        if (deleteError) throw deleteError;
-        
-        await supabase.auth.signOut();
-        toast({
-          title: "Compte supprimé",
-          description: "Votre compte a été supprimé avec succès.",
-        });
-        
-        navigate("/");
-      } catch (fallbackError: any) {
-        toast({
-          variant: "destructive",
-          title: "Erreur lors de la suppression",
-          description: "Une erreur est survenue lors de la suppression de votre compte. Veuillez contacter le support.",
-        });
-      }
+      toast({
+        variant: "destructive",
+        title: "Erreur lors de la suppression",
+        description: "Une erreur est survenue lors de la suppression de votre compte. Veuillez contacter le support.",
+      });
     } finally {
       setIsLoading(false);
       setDeleteDialogOpen(false);
