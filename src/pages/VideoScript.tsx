@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -89,26 +88,25 @@ const VideoScript = () => {
           &lt; Outils
         </Link>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          <div className="space-y-8">
+        <div className="flex flex-col space-y-8 mt-8">
+          <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">Scrypto-vidéo</h1>
-            
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Créez facilement des scripts pour vos vidéos pédagogiques
             </h2>
-            
             <p className="text-lg font-dmsans">
               Utilisez notre outil pour générer automatiquement des scripts de vidéos éducatives 
               basés sur vos besoins spécifiques.
             </p>
-            
             <p className="text-lg font-dmsans">
               Notre système d'IA vous aide à structurer votre contenu avec des sections claires, 
               du texte de narration et des suggestions visuelles.
             </p>
           </div>
           
-          <VideoScriptForm onSubmit={onSubmit} isGenerating={isGenerating} />
+          <div className="w-full max-w-4xl mx-auto">
+            <VideoScriptForm onSubmit={onSubmit} isGenerating={isGenerating} />
+          </div>
         </div>
 
         <Dialog 
