@@ -10,11 +10,21 @@ import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Footer from "@/components/Footer";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profileData, setProfileData] = useState({
     fullName: "",
@@ -128,6 +138,51 @@ const Settings = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (error) throw error;
+      
+      await supabase.auth.signOut();
+      
+      toast({
+        title: "Compte supprimé",
+        description: "Votre compte a été supprimé avec succès.",
+      });
+      
+      navigate("/");
+    } catch (error: any) {
+      console.error("Error deleting account:", error);
+      
+      // Fallback method using client-side deletion if admin API fails
+      try {
+        // This will work for most cases where user is authenticated
+        const { error: deleteError } = await supabase.rpc('delete_user');
+        
+        if (deleteError) throw deleteError;
+        
+        await supabase.auth.signOut();
+        toast({
+          title: "Compte supprimé",
+          description: "Votre compte a été supprimé avec succès.",
+        });
+        
+        navigate("/");
+      } catch (fallbackError: any) {
+        toast({
+          variant: "destructive",
+          title: "Erreur lors de la suppression",
+          description: "Une erreur est survenue lors de la suppression de votre compte. Veuillez contacter le support.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+      setDeleteDialogOpen(false);
+    }
+  };
+
   if (!user) {
     return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
   }
@@ -238,6 +293,52 @@ const Settings = () => {
                       {isLoading ? "Mise à jour..." : "Mettre à jour le mot de passe"}
                     </Button>
                   </form>
+                </CardContent>
+              </Card>
+
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Supprimer le compte</CardTitle>
+                  <CardDescription>
+                    Cette action est irréversible et supprimera définitivement votre compte et toutes vos données.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="destructive"
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Supprimer mon compte
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
+                        <DialogDescription>
+                          Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setDeleteDialogOpen(false)}
+                          disabled={isLoading}
+                        >
+                          Annuler
+                        </Button>
+                        <Button 
+                          variant="destructive"
+                          onClick={handleDeleteAccount}
+                          disabled={isLoading}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          {isLoading ? "Suppression..." : "Confirmer la suppression"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
 
