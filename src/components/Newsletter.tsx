@@ -4,7 +4,7 @@ import { Input } from "./ui/input";
 
 const Newsletter = () => {
   return (
-    <section className="w-full bg-[#0EA5E9] py-24">
+    <section className="w-full bg-[#72BB8E] py-24 font-dmsans">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
