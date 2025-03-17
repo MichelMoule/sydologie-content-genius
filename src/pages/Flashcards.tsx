@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -93,20 +92,18 @@ const Flashcards = () => {
           &lt; Outils
         </Link>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          <div className="space-y-8">
+        <div className="flex flex-col space-y-8 mt-8">
+          <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">FLASHCARDS</h1>
-            
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Générez des cartes pour mémoriser vos contenus
             </h2>
-            
             <p className="text-lg font-dmsans">
               Utilisez l'IA pour générer des flashcards à partir de vos contenus de formation.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="w-full max-w-4xl mx-auto space-y-4">
             <div className="p-4 border rounded-lg space-y-4">
               <h3 className="text-xl font-semibold mb-4 font-dmsans">Génération par IA</h3>
               <div className="space-y-2">

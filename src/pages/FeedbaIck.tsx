@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -98,32 +99,31 @@ const FeedbaIck = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans flex flex-col">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
-        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">
+      <div className="container mx-auto px-4 py-8 flex-grow">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
           &lt; Outils
         </Link>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          <div className="space-y-8">
-            <h1 className="text-6xl font-bold">FEEDBAICK</h1>
-            
-            <h2 className="text-3xl font-bold leading-tight">
+        <div className="flex flex-col space-y-8 mt-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-6xl font-bold font-dmsans">FEEDBAICK</h1>
+            <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Vous avez reçu des centaines de retours suite à votre dernière formation et ne savez pas comment les traiter rapidement ?
             </h2>
-            
-            <p className="text-lg">
+            <p className="text-lg font-dmsans">
               Utilisez notre outil pour analyser rapidement les retours de vos apprenants et obtenir une synthèse claire et actionnable.
             </p>
-            
-            <p className="text-lg">
+            <p className="text-lg font-dmsans">
               Notre système d'IA vous aide à identifier les points clés et les tendances dans les retours qualitatifs de vos formations.
             </p>
           </div>
           
-          <FeedbackForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
+          <div className="w-full max-w-4xl mx-auto">
+            <FeedbackForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
+          </div>
         </div>
 
         <Dialog 
@@ -132,18 +132,18 @@ const FeedbaIck = () => {
           modal={true}
         >
           <DialogContent 
-            className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto"
+            className="max-w-[90vw] w-[1200px] max-h-[90vh] overflow-y-auto font-dmsans"
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
           >
             <DialogHeader>
-              <DialogTitle className="flex justify-between items-center">
+              <DialogTitle className="flex justify-between items-center font-dmsans">
                 <span>📊 {trainingName}</span>
                 {analysis && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="ml-4"
+                    className="ml-4 font-dmsans"
                     onClick={handleDownloadPDF}
                   >
                     <Download className="mr-2 h-4 w-4" />
