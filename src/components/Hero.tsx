@@ -1,5 +1,18 @@
+
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleSignUp = () => {
+    navigate("/auth", { state: { isSignUp: true } });
+  };
+
+  const handleSignIn = () => {
+    navigate("/auth");
+  };
+
   return <div className="container mx-auto px-4 py-20 pb-32 bg-[#EDE8E0]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-8 relative">
         <div className="md:w-3/5 pt-20">
@@ -17,14 +30,21 @@ const Hero = () => {
               Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est <strong>RGPD</strong> !
             </p>
             <div className="space-y-4 flex flex-col">
-              <Button className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2 w-full md:w-auto">
+              <Button 
+                className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2 w-full md:w-auto"
+                onClick={handleSignUp}
+              >
                 M'inscrire gratuitement
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13.75 6.75L19.25 12L13.75 17.25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M19 12H4.75" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Button>
-              <Button variant="outline" className="border-[#82C8A0] text-[#82C8A0] hover:bg-[#82C8A0]/10 py-3 px-5 rounded-full text-base w-full md:w-auto">
+              <Button 
+                variant="outline" 
+                className="border-[#82C8A0] text-[#82C8A0] hover:bg-[#82C8A0]/10 py-3 px-5 rounded-full text-base w-full md:w-auto"
+                onClick={handleSignIn}
+              >
                 Me connecter
               </Button>
             </div>
@@ -35,14 +55,21 @@ const Hero = () => {
           <div className="pt-28 py-[159px]">
             
             <div className="space-y-3 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
-              <Button className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2">
+              <Button 
+                className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2"
+                onClick={handleSignUp}
+              >
                 M'inscrire gratuitement
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13.75 6.75L19.25 12L13.75 17.25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M19 12H4.75" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Button>
-              <Button variant="outline" className="border-[#82C8A0] text-[#82C8A0] hover:bg-[#82C8A0]/10 py-3 px-5 rounded-full text-base">
+              <Button 
+                variant="outline" 
+                className="border-[#82C8A0] text-[#82C8A0] hover:bg-[#82C8A0]/10 py-3 px-5 rounded-full text-base"
+                onClick={handleSignIn}
+              >
                 Me connecter
               </Button>
             </div>
