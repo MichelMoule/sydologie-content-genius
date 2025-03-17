@@ -28,7 +28,7 @@ serve(async (req) => {
     // 1. Convert PDF file to text
     const pdfArrayBuffer = await pdfFile.arrayBuffer();
     const pdfBytes = new Uint8Array(pdfArrayBuffer);
-    const base64Pdf = btoa(String.fromCharCode(...pdfBytes));
+    const base64Pdf = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfArrayBuffer)));
 
     // 2. Call OpenAI to extract text from PDF
     const pdfExtractResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -70,9 +70,9 @@ serve(async (req) => {
     // 3. Generate glossary from extracted text using Azure OpenAI
     const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
     
-    // Adding a timeout for the Azure OpenAI request to avoid hanging
+    // Adding a timeout for the Azure OpenAI request
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60 second timeout
     
     try {
       const response = await fetch(url, {
@@ -113,7 +113,7 @@ serve(async (req) => {
         signal: controller.signal,
       });
       
-      clearTimeout(timeoutId);
+      clearTimeout(timeout);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -127,11 +127,12 @@ serve(async (req) => {
       // Safely extract and validate JSON
       let glossaryContent;
       try {
-        // Get the raw content
+        // Get the raw content as string
         const content = openAIResponse.choices[0].message.content.trim();
         console.log('Raw content length:', content.length);
         
-        // Handle potential markdown code blocks
+        // Parse JSON safely
+        // First, handle potential markdown code blocks
         let jsonStr = content;
         if (content.includes('```json')) {
           const match = content.match(/```json\n([\s\S]*?)\n```/);
@@ -140,8 +141,7 @@ serve(async (req) => {
           }
         }
         
-        // Remove any non-JSON text before or after the JSON object
-        // Find the first { and last }
+        // Try to find the JSON object between the first { and the last }
         const startIndex = jsonStr.indexOf('{');
         const endIndex = jsonStr.lastIndexOf('}');
         
@@ -176,7 +176,7 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } finally {
-      clearTimeout(timeoutId);
+      clearTimeout(timeout);
     }
 
   } catch (error) {
