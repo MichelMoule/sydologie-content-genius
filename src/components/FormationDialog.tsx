@@ -1,4 +1,5 @@
 
+
 import {
   Dialog,
   DialogContent,
@@ -79,23 +80,23 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
             )}
             
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-4 text-lg font-dmsans">Informations clés</h3>
+              <h3 className="font-semibold mb-4 text-lg text-[#1F5E40] font-dmsans">Informations clés</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
-                  <MapPin className="w-5 h-5" />
+                  <MapPin className="w-5 h-5 text-[#1F5E40]" />
                   <span>{getTrainingModality(formation.trainingModality)}</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
-                  <Clock className="w-5 h-5" />
+                  <Clock className="w-5 h-5 text-[#1F5E40]" />
                   <span>Durée : {formation.durationInHours}h</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
-                  <User className="w-5 h-5" />
+                  <User className="w-5 h-5 text-[#1F5E40]" />
                   <span>{getFormationType(formation)}</span>
                 </div>
                 {mainCost && (
                   <div className="flex items-center gap-3 text-muted-foreground font-dmsans">
-                    <Euro className="w-5 h-5" />
+                    <Euro className="w-5 h-5 text-[#1F5E40]" />
                     <span>{mainCost.cost}€</span>
                   </div>
                 )}
@@ -106,11 +107,11 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
           {/* Right column with title and description */}
           <div className="space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-bold font-dmsans">{formation.name}</DialogTitle>
+              <DialogTitle className="text-3xl font-bold text-[#1F5E40] font-dmsans">{formation.name}</DialogTitle>
             </DialogHeader>
 
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h3 className="font-semibold mb-4 text-lg font-dmsans">Description</h3>
+              <h3 className="font-semibold mb-4 text-lg text-[#1F5E40] font-dmsans">Description</h3>
               <p className="text-muted-foreground whitespace-pre-wrap font-dmsans">{formation.description}</p>
             </div>
 
@@ -134,3 +135,4 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
 };
 
 export default FormationDialog;
+

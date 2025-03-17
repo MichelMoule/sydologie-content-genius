@@ -303,8 +303,8 @@ const Settings = () => {
                     </DialogTrigger>
                     <DialogContent className="font-dmsans">
                       <DialogHeader>
-                        <DialogTitle className="text-[#1F5E40]">Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-[#1F5E40] font-dmsans">Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
+                        <DialogDescription className="font-dmsans">
                           Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.
                         </DialogDescription>
                       </DialogHeader>
@@ -313,7 +313,7 @@ const Settings = () => {
                           variant="outline" 
                           onClick={() => setDeleteDialogOpen(false)}
                           disabled={isLoading}
-                          className="border-[#82C8A0] text-[#1F5E40]"
+                          className="border-[#82C8A0] text-[#1F5E40] font-dmsans"
                         >
                           Annuler
                         </Button>
@@ -321,7 +321,7 @@ const Settings = () => {
                           variant="destructive"
                           onClick={handleDeleteAccount}
                           disabled={isLoading}
-                          className="bg-sydologie-red hover:bg-sydologie-red/90"
+                          className="bg-sydologie-red hover:bg-sydologie-red/90 font-dmsans"
                         >
                           {isLoading ? "Suppression..." : "Confirmer la suppression"}
                         </Button>

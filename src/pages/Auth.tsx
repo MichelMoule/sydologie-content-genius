@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,9 +83,9 @@ const Auth = () => {
   const renderForm = () => {
     if (isForgotPassword) {
       return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 font-dmsans">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-[#1F5E40]">Email</Label>
             <Input
               id="email"
               type="email"
@@ -93,12 +94,13 @@ const Auth = () => {
                 setFormData({ ...formData, email: e.target.value })
               }
               required
+              className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
+            className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black font-dmsans"
             disabled={isLoading}
           >
             {isLoading ? "Envoi en cours..." : "Envoyer le lien de récupération"}
@@ -108,7 +110,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsForgotPassword(false)}
-              className="text-sm text-[#72BB8E] hover:underline"
+              className="text-sm text-[#72BB8E] hover:underline font-dmsans"
             >
               Retour à la connexion
             </button>
@@ -118,10 +120,10 @@ const Auth = () => {
     }
 
     return (
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-dmsans">
         {isSignUp && (
           <div className="space-y-2">
-            <Label htmlFor="fullName">Nom complet</Label>
+            <Label htmlFor="fullName" className="text-[#1F5E40]">Nom complet</Label>
             <Input
               id="fullName"
               type="text"
@@ -130,12 +132,13 @@ const Auth = () => {
                 setFormData({ ...formData, fullName: e.target.value })
               }
               required
+              className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
             />
           </div>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-[#1F5E40]">Email</Label>
           <Input
             id="email"
             type="email"
@@ -144,11 +147,12 @@ const Auth = () => {
               setFormData({ ...formData, email: e.target.value })
             }
             required
+            className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Mot de passe</Label>
+          <Label htmlFor="password" className="text-[#1F5E40]">Mot de passe</Label>
           <Input
             id="password"
             type="password"
@@ -157,6 +161,7 @@ const Auth = () => {
               setFormData({ ...formData, password: e.target.value })
             }
             required
+            className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
           />
         </div>
 
@@ -165,7 +170,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsForgotPassword(true)}
-              className="text-xs text-[#72BB8E] hover:underline"
+              className="text-xs text-[#72BB8E] hover:underline font-dmsans"
             >
               Mot de passe oublié ?
             </button>
@@ -174,7 +179,7 @@ const Auth = () => {
 
         <Button
           type="submit"
-          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
+          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black font-dmsans"
           disabled={isLoading}
         >
           {isLoading
@@ -193,14 +198,14 @@ const Auth = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl font-bold text-[#1F5E40]">
               {isForgotPassword
                 ? "Récupération de mot de passe"
                 : isSignUp
                 ? "Créer un compte"
                 : "Se connecter"}
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-2 font-dmsans">
               {isForgotPassword
                 ? "Entrez votre email pour recevoir un lien de réinitialisation"
                 : isSignUp
@@ -216,7 +221,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-[#72BB8E] hover:underline"
+                className="text-sm text-[#72BB8E] hover:underline font-dmsans"
               >
                 {isSignUp
                   ? "Déjà un compte ? Se connecter"
@@ -231,3 +236,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
