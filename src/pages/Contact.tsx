@@ -64,7 +64,7 @@ const Contact = () => {
     return (
       <div className="min-h-screen flex flex-col font-dmsans">
         <Navbar />
-        <div className="flex-1 bg-[#1EFF02] flex flex-col items-center justify-center px-4">
+        <div className="flex-1 bg-[#72BB8E] flex flex-col items-center justify-center px-4">
           <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl text-white">
             VOTRE MESSAGE
             <br />
@@ -98,7 +98,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#1EFF02]">_</span>Nom*
+                    <span className="text-[#72BB8E]">_</span>Nom*
                   </label>
                   <Input 
                     type="text" 
@@ -111,7 +111,7 @@ const Contact = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#1EFF02]">_</span>Prénom*
+                    <span className="text-[#72BB8E]">_</span>Prénom*
                   </label>
                   <Input 
                     type="text" 
@@ -127,7 +127,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#1EFF02]">_</span>Téléphone*
+                    <span className="text-[#72BB8E]">_</span>Téléphone*
                   </label>
                   <Input 
                     type="tel" 
@@ -140,7 +140,7 @@ const Contact = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#1EFF02]">_</span>Adresse mail*
+                    <span className="text-[#72BB8E]">_</span>Adresse mail*
                   </label>
                   <Input 
                     type="email" 
@@ -155,7 +155,7 @@ const Contact = () => {
 
               <div className="space-y-2">
                 <label className="block">
-                  <span className="text-[#1EFF02]">_</span>Le sujet de votre demande*
+                  <span className="text-[#72BB8E]">_</span>Le sujet de votre demande*
                 </label>
                 <Input 
                   type="text" 
@@ -180,7 +180,7 @@ const Contact = () => {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full md:w-auto px-8 py-2 bg-[#1EFF02] text-black hover:bg-[#1EFF02]/90 font-dmsans"
+                className="w-full md:w-auto px-8 py-2 bg-[#72BB8E] text-black hover:bg-[#72BB8E]/90 font-dmsans"
               >
                 {isLoading ? "Envoi en cours..." : "Envoyer"}
               </Button>
@@ -192,7 +192,7 @@ const Contact = () => {
           </div>
 
           {/* Right side - Contact Info */}
-          <div className="md:w-[400px] bg-[#1EFF02] p-8 h-full font-dmsans">
+          <div className="md:w-[400px] bg-[#72BB8E] p-8 h-full font-dmsans">
             <div className="space-y-4">
               <p className="font-bold">SYDO</p>
               <p>31 rue Burdeau</p>
