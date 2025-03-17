@@ -6,7 +6,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
 const endpoint = "https://sydo-chatgpt.openai.azure.com";
-const deploymentName = "gpt-4o-mini-2";
+const deploymentName = "gpt-4o-mini";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -43,9 +43,11 @@ serve(async (req) => {
     const dataUrl = `data:application/pdf;base64,${base64Pdf}`;
 
     // 2. Call Azure OpenAI with vision capabilities to extract text from PDF
-    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
+    const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-02-15-preview`;
     
     console.log('Calling Azure OpenAI for PDF extraction...');
+    console.log('Azure URL:', url);
+    
     const pdfExtractResponse = await fetch(url, {
       method: 'POST',
       headers: {
@@ -82,7 +84,7 @@ serve(async (req) => {
     console.log('Extracted text preview:', extractedText.substring(0, 500));
 
     // 3. Generate glossary from extracted text using Azure OpenAI
-    const url2 = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
+    const url2 = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-02-15-preview`;
     
     // Adding a timeout for the Azure OpenAI request
     const controller = new AbortController();
