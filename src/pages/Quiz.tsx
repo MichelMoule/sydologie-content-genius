@@ -89,24 +89,23 @@ const Quiz = () => {
           &lt; Outils
         </Link>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-          <div className="space-y-8">
+        <div className="flex flex-col space-y-8 mt-8">
+          <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">QUIIIIIZ?</h1>
-            
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
               Vous souhaitez créer rapidement un quiz pour évaluer vos apprenants ?
             </h2>
-            
             <p className="text-lg font-dmsans">
               Utilisez notre outil pour générer automatiquement des quiz pertinents basés sur vos contenus de formation.
             </p>
-            
             <p className="text-lg font-dmsans">
               Notre système d'IA vous aide à créer des questions variées et adaptées à votre contenu.
             </p>
           </div>
           
-          <QuizForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
+          <div className="w-full max-w-4xl mx-auto">
+            <QuizForm onSubmit={onSubmit} isAnalyzing={isAnalyzing} />
+          </div>
         </div>
 
         <Dialog 
