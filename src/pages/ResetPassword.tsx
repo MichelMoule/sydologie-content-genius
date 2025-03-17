@@ -82,7 +82,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
@@ -123,7 +123,7 @@ const ResetPassword = () => {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+                  className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
                   disabled={isLoading}
                 >
                   {isLoading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}

@@ -98,7 +98,7 @@ const Auth = () => {
 
           <Button
             type="submit"
-            className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+            className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
             disabled={isLoading}
           >
             {isLoading ? "Envoi en cours..." : "Envoyer le lien de récupération"}
@@ -108,7 +108,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsForgotPassword(false)}
-              className="text-sm text-[#00FF00] hover:underline"
+              className="text-sm text-[#72BB8E] hover:underline"
             >
               Retour à la connexion
             </button>
@@ -165,7 +165,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsForgotPassword(true)}
-              className="text-xs text-[#00FF00] hover:underline"
+              className="text-xs text-[#72BB8E] hover:underline"
             >
               Mot de passe oublié ?
             </button>
@@ -174,7 +174,7 @@ const Auth = () => {
 
         <Button
           type="submit"
-          className="w-full bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
           disabled={isLoading}
         >
           {isLoading
@@ -188,7 +188,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto space-y-6">
@@ -216,7 +216,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-[#00FF00] hover:underline"
+                className="text-sm text-[#72BB8E] hover:underline"
               >
                 {isSignUp
                   ? "Déjà un compte ? Se connecter"
