@@ -20,6 +20,7 @@ import Glossaire from "./pages/Glossaire";
 import Suggestions from "./pages/Suggestions";
 import Legal from "./pages/Legal";
 import Settings from "./pages/Settings";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/formations" element={<Formations />} />
           <Route path="/outils" element={<Outils />} />
           <Route path="/annuaire" element={<Annuaire />} />
