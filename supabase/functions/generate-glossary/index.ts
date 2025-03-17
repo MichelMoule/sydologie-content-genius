@@ -2,11 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.21.0';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { corsHeaders } from "../_shared/cors.ts";
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
 const endpoint = "https://sydo-chatgpt.openai.azure.com";
@@ -73,84 +69,115 @@ serve(async (req) => {
 
     // 3. Generate glossary from extracted text using Azure OpenAI
     const url = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-08-01-preview`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': azureApiKey!,
-      },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'system',
-            content: `Tu es un expert en création de glossaires.
-            Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
-            
-            IMPORTANT: Ta réponse DOIT être un JSON valide SANS texte additionnel avant ou après.
-            Le format attendu est STRICTEMENT :
-            {
-              "terms": [
-                {
-                  "term": "terme technique",
-                  "definition": "définition claire et concise"
-                }
-              ]
-            }
-            
-            Si tu ne trouves pas de termes techniques, retourne un tableau vide : { "terms": [] }
-            N'ajoute AUCUN texte avant ou après le JSON.`
-          },
-          {
-            role: 'user',
-            content: `Sujet: ${subject}\n\nContenu du document:\n${extractedText}\n\nCrée un glossaire des termes techniques importants.`
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 2000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Azure OpenAI API error:', errorText);
-      throw new Error(`Erreur lors de la génération du glossaire: ${errorText}`);
-    }
-
-    const openAIResponse = await response.json();
-    console.log('Azure OpenAI response received');
-
-    let glossaryContent;
+    
+    // Adding a timeout for the Azure OpenAI request to avoid hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+    
     try {
-      const content = openAIResponse.choices[0].message.content.trim();
-      console.log('Raw content:', content);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': azureApiKey!,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: `Tu es un expert en création de glossaires.
+              Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
+              
+              IMPORTANT: Ta réponse DOIT être un JSON valide SANS texte additionnel avant ou après.
+              Le format attendu est STRICTEMENT :
+              {
+                "terms": [
+                  {
+                    "term": "terme technique",
+                    "definition": "définition claire et concise"
+                  }
+                ]
+              }
+              
+              Si tu ne trouves pas de termes techniques, retourne un tableau vide : { "terms": [] }
+              N'ajoute AUCUN texte avant ou après le JSON.`
+            },
+            {
+              role: 'user',
+              content: `Sujet: ${subject}\n\nContenu du document:\n${extractedText}\n\nCrée un glossaire des termes techniques importants.`
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 2000,
+        }),
+        signal: controller.signal,
+      });
       
-      // Ensure we're parsing valid JSON
-      const jsonStart = content.indexOf('{');
-      const jsonEnd = content.lastIndexOf('}') + 1;
-      const jsonContent = content.slice(jsonStart, jsonEnd);
-      
-      glossaryContent = JSON.parse(jsonContent);
-      
-      if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
-        console.error('Invalid response format:', glossaryContent);
-        throw new Error('Format de réponse invalide: pas de tableau terms');
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Azure OpenAI API error:', errorText);
+        throw new Error(`Erreur lors de la génération du glossaire: ${errorText}`);
       }
 
-      for (const term of glossaryContent.terms) {
-        if (!term.term || !term.definition) {
-          console.error('Invalid term format:', term);
-          throw new Error('Format de terme invalide');
+      const openAIResponse = await response.json();
+      console.log('Azure OpenAI response received');
+
+      // Safely extract and validate JSON
+      let glossaryContent;
+      try {
+        // Get the raw content
+        const content = openAIResponse.choices[0].message.content.trim();
+        console.log('Raw content length:', content.length);
+        
+        // Handle potential markdown code blocks
+        let jsonStr = content;
+        if (content.includes('```json')) {
+          const match = content.match(/```json\n([\s\S]*?)\n```/);
+          if (match && match[1]) {
+            jsonStr = match[1].trim();
+          }
         }
-      }
-    } catch (error) {
-      console.error('Error parsing OpenAI response:', error);
-      throw new Error(`Format de réponse invalide de l'API: ${error.message}`);
-    }
+        
+        // Remove any non-JSON text before or after the JSON object
+        // Find the first { and last }
+        const startIndex = jsonStr.indexOf('{');
+        const endIndex = jsonStr.lastIndexOf('}');
+        
+        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+          jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+          console.log('Cleaned JSON string length:', jsonStr.length);
+          glossaryContent = JSON.parse(jsonStr);
+        } else {
+          throw new Error('No valid JSON object found in response');
+        }
+        
+        // Validate the expected format
+        if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
+          console.error('Invalid response format:', glossaryContent);
+          throw new Error('Format de réponse invalide: pas de tableau terms');
+        }
 
-    return new Response(
-      JSON.stringify({ glossary: glossaryContent }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+        // Validate each term
+        for (const term of glossaryContent.terms) {
+          if (!term.term || !term.definition) {
+            console.error('Invalid term format:', term);
+            throw new Error('Format de terme invalide');
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing OpenAI response:', error);
+        throw new Error(`Format de réponse invalide de l'API: ${error.message}`);
+      }
+
+      return new Response(
+        JSON.stringify({ glossary: glossaryContent }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
   } catch (error) {
     console.error('Erreur dans la fonction generate-glossary:', error);
