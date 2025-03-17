@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -167,26 +168,26 @@ const Settings = () => {
   };
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-dmsans">Chargement...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Paramètres du compte</h1>
+          <h1 className="text-3xl font-bold mb-6 text-[#1F5E40]">Paramètres du compte</h1>
 
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="profile">Profil</TabsTrigger>
-              <TabsTrigger value="security">Sécurité</TabsTrigger>
+              <TabsTrigger value="profile" className="text-[#1F5E40]">Profil</TabsTrigger>
+              <TabsTrigger value="security" className="text-[#1F5E40]">Sécurité</TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile">
               <Card>
                 <CardHeader>
-                  <CardTitle>Informations du profil</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">Informations du profil</CardTitle>
                   <CardDescription>
                     Mettez à jour vos informations personnelles.
                   </CardDescription>
@@ -194,7 +195,7 @@ const Settings = () => {
                 <CardContent>
                   <form onSubmit={handleProfileUpdate} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">Nom complet</Label>
+                      <Label htmlFor="fullName" className="text-[#1F5E40]">Nom complet</Label>
                       <Input
                         id="fullName"
                         type="text"
@@ -203,17 +204,19 @@ const Settings = () => {
                           setProfileData({ ...profileData, fullName: e.target.value })
                         }
                         placeholder="Votre nom complet"
+                        className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email" className="text-[#1F5E40]">Email</Label>
                       <Input
                         id="email"
                         type="email"
                         value={profileData.email}
                         disabled
                         readOnly
+                        className="bg-gray-50"
                       />
                       <p className="text-xs text-muted-foreground">
                         L'email ne peut pas être modifié.
@@ -222,7 +225,7 @@ const Settings = () => {
 
                     <Button
                       type="submit"
-                      className="bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+                      className="bg-[#82C8A0] hover:bg-[#1F5E40] text-white"
                       disabled={isLoading}
                     >
                       {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
@@ -235,7 +238,7 @@ const Settings = () => {
             <TabsContent value="security">
               <Card className="mb-6">
                 <CardHeader>
-                  <CardTitle>Changer de mot de passe</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">Changer de mot de passe</CardTitle>
                   <CardDescription>
                     Mettez à jour votre mot de passe pour sécuriser votre compte.
                   </CardDescription>
@@ -243,7 +246,7 @@ const Settings = () => {
                 <CardContent>
                   <form onSubmit={handlePasswordUpdate} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+                      <Label htmlFor="newPassword" className="text-[#1F5E40]">Nouveau mot de passe</Label>
                       <Input
                         id="newPassword"
                         type="password"
@@ -252,11 +255,12 @@ const Settings = () => {
                           setPasswordData({ ...passwordData, newPassword: e.target.value })
                         }
                         required
+                        className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                      <Label htmlFor="confirmPassword" className="text-[#1F5E40]">Confirmer le mot de passe</Label>
                       <Input
                         id="confirmPassword"
                         type="password"
@@ -265,12 +269,13 @@ const Settings = () => {
                           setPasswordData({ ...passwordData, confirmPassword: e.target.value })
                         }
                         required
+                        className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
                       />
                     </div>
 
                     <Button
                       type="submit"
-                      className="bg-[#00FF00] hover:bg-[#00FF00]/90 text-black"
+                      className="bg-[#82C8A0] hover:bg-[#1F5E40] text-white"
                       disabled={isLoading}
                     >
                       {isLoading ? "Mise à jour..." : "Mettre à jour le mot de passe"}
@@ -281,7 +286,7 @@ const Settings = () => {
 
               <Card className="mb-6">
                 <CardHeader>
-                  <CardTitle>Supprimer le compte</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">Supprimer le compte</CardTitle>
                   <CardDescription>
                     Cette action est irréversible et supprimera définitivement votre compte et toutes vos données.
                   </CardDescription>
@@ -291,14 +296,14 @@ const Settings = () => {
                     <DialogTrigger asChild>
                       <Button 
                         variant="destructive"
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-sydologie-red hover:bg-sydologie-red/90"
                       >
                         Supprimer mon compte
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="font-dmsans">
                       <DialogHeader>
-                        <DialogTitle>Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
+                        <DialogTitle className="text-[#1F5E40]">Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
                         <DialogDescription>
                           Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.
                         </DialogDescription>
@@ -308,6 +313,7 @@ const Settings = () => {
                           variant="outline" 
                           onClick={() => setDeleteDialogOpen(false)}
                           disabled={isLoading}
+                          className="border-[#82C8A0] text-[#1F5E40]"
                         >
                           Annuler
                         </Button>
@@ -315,7 +321,7 @@ const Settings = () => {
                           variant="destructive"
                           onClick={handleDeleteAccount}
                           disabled={isLoading}
-                          className="bg-red-600 hover:bg-red-700"
+                          className="bg-sydologie-red hover:bg-sydologie-red/90"
                         >
                           {isLoading ? "Suppression..." : "Confirmer la suppression"}
                         </Button>
@@ -327,7 +333,7 @@ const Settings = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Déconnexion</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">Déconnexion</CardTitle>
                   <CardDescription>
                     Déconnectez-vous de votre compte.
                   </CardDescription>
@@ -336,7 +342,7 @@ const Settings = () => {
                   <Button 
                     variant="outline"
                     onClick={handleLogout}
-                    className="text-destructive border-destructive hover:bg-destructive/10"
+                    className="border-[#82C8A0] text-[#1F5E40] hover:bg-[#82C8A0]/10"
                   >
                     Se déconnecter
                   </Button>
