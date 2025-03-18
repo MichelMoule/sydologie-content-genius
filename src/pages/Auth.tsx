@@ -1,5 +1,4 @@
 
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,22 +38,32 @@ const Auth = () => {
         });
         setIsForgotPassword(false);
       } else if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
             data: {
               full_name: formData.fullName,
             },
+            emailRedirectTo: `${window.location.origin}`,
           },
         });
 
         if (error) throw error;
 
-        toast({
-          title: "Inscription réussie !",
-          description: "Veuillez vérifier votre email pour confirmer votre compte.",
-        });
+        // If data.user exists and session is created, we can immediately log them in
+        if (data.user && data.session) {
+          toast({
+            title: "Inscription réussie !",
+            description: "Vous êtes maintenant connecté.",
+          });
+          navigate("/");
+        } else {
+          toast({
+            title: "Inscription réussie !",
+            description: "Veuillez vérifier votre email pour confirmer votre compte.",
+          });
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -236,4 +245,3 @@ const Auth = () => {
 };
 
 export default Auth;
-
