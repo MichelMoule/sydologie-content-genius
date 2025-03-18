@@ -90,6 +90,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
     }
 
     try {
+      // Ajouter l'ID de l'utilisateur actuel
       const { data, error } = await supabase
         .from("tool_comments")
         .insert([
@@ -99,9 +100,12 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
             comment: newComment.trim()
           }
         ])
-        .select(); // Ajout de .select() pour récupérer les données insérées
+        .select(); // Récupérer les données insérées
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur détaillée:", error);
+        throw error;
+      }
 
       setNewComment("");
       toast.success("Commentaire ajouté avec succès");
@@ -110,25 +114,42 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
       if (data && data.length > 0) {
         const newCommentData = data[0];
         
-        // Récupérer le nom d'utilisateur
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", currentUser.id)
-          .single();
-        
-        // Ajouter le commentaire au début de la liste avec le nom d'utilisateur
-        setComments(prev => [{
-          ...newCommentData,
-          username: profile?.username || currentUser.email || "Utilisateur"
-        }, ...prev]);
+        try {
+          // Récupérer le nom d'utilisateur
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", currentUser.id)
+            .maybeSingle(); // Utiliser maybeSingle au lieu de single pour éviter les erreurs
+
+          if (profileError) throw profileError;
+          
+          // Ajouter le commentaire au début de la liste avec le nom d'utilisateur
+          setComments(prev => [{
+            ...newCommentData,
+            username: profile?.username || currentUser.email || "Utilisateur"
+          }, ...prev]);
+        } catch (profileError) {
+          console.error("Erreur lors de la récupération du profil:", profileError);
+          // Ajouter quand même le commentaire, mais sans nom d'utilisateur personnalisé
+          setComments(prev => [{
+            ...newCommentData,
+            username: "Utilisateur"
+          }, ...prev]);
+        }
       } else {
         // Si on ne reçoit pas les données, on rafraîchit tous les commentaires
         fetchComments();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de l'ajout du commentaire:", error);
-      toast.error("Erreur lors de l'ajout du commentaire");
+      
+      // Afficher un message d'erreur plus détaillé
+      if (error.code === "42501") {
+        toast.error("Erreur de permission: vous n'avez pas les droits nécessaires pour commenter");
+      } else {
+        toast.error(`Erreur lors de l'ajout du commentaire: ${error.message || "erreur inconnue"}`);
+      }
     }
   };
 
