@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { User, Trash2, Edit, Send } from "lucide-react";
+import { User, Trash2, Edit, Send, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -294,104 +295,140 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
   };
 
   return (
-    <div className="mt-4 space-y-4 font-dmsans">
-      <h3 className="text-lg font-semibold">Commentaires</h3>
-      
-      {/* Zone d'ajout de commentaire */}
-      <div className="flex flex-col space-y-2">
-        <Textarea
-          placeholder="Ajouter un commentaire..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="min-h-[80px] font-dmsans"
-        />
-        <div className="flex justify-end">
-          <Button 
-            onClick={handleAddComment}
-            disabled={!newComment.trim() || addingComment}
-            className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white font-dmsans flex items-center gap-2"
-          >
-            {addingComment ? (
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
-            ) : (
-              <Send size={16} />
-            )}
-            {addingComment ? "Envoi..." : "Commenter"}
-          </Button>
-        </div>
+    <div className="mt-6 space-y-6 font-dmsans">
+      <div className="flex items-center gap-2 mb-4">
+        <MessageCircle className="text-[#9b87f5]" size={22} />
+        <h3 className="text-xl font-bold">Commentaires</h3>
       </div>
-
+      
       {/* Liste des commentaires */}
       {loading ? (
-        <div className="text-center py-4 font-dmsans">Chargement des commentaires...</div>
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9b87f5]"></div>
+        </div>
       ) : comments.length === 0 ? (
-        <div className="text-center py-4 text-gray-500 font-dmsans">Aucun commentaire pour le moment</div>
+        <Card className="bg-gray-50 border-dashed border-gray-300">
+          <CardContent className="text-center py-10">
+            <MessageCircle className="mx-auto text-gray-400 mb-3" size={32} />
+            <p className="text-gray-500 font-dmsans">Aucun commentaire pour le moment</p>
+            <p className="text-sm text-gray-400 font-dmsans mt-1">Soyez le premier à commenter cette suggestion</p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-4">
           {comments.map((comment) => (
-            <div key={comment.id} className="border rounded-lg p-4 bg-white">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2 mb-2">
-                  <User size={16} className="text-gray-500" />
-                  <span className="font-medium font-dmsans">{comment.username}</span>
-                  <span className="text-xs text-gray-500 font-dmsans">{formatDate(comment.created_at)}</span>
+            <Card key={comment.id} className="hover:shadow-md transition-shadow duration-200 border border-gray-200">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-[#e5deff] p-2 rounded-full">
+                      <User size={16} className="text-[#9b87f5]" />
+                    </div>
+                    <div>
+                      <span className="font-medium font-dmsans text-gray-800">{comment.username}</span>
+                      <p className="text-xs text-gray-500 font-dmsans">{formatDate(comment.created_at)}</p>
+                    </div>
+                  </div>
+                  
+                  {currentUser && currentUser.id === comment.user_id && (
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleEditComment(comment)}
+                        className="h-8 w-8 p-0 rounded-full hover:bg-[#e5deff]"
+                      >
+                        <Edit size={16} className="text-gray-500" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="h-8 w-8 p-0 rounded-full hover:bg-red-100"
+                      >
+                        <Trash2 size={16} className="text-red-500" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 
-                {currentUser && currentUser.id === comment.user_id && (
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => handleEditComment(comment)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit size={16} className="text-gray-500" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 size={16} className="text-red-500" />
-                    </Button>
+                {editingComment === comment.id ? (
+                  <div className="mt-2 space-y-2">
+                    <Textarea
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="min-h-[80px] font-dmsans border-[#9b87f5] focus:border-[#8B5CF6]"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setEditingComment(null)}
+                        className="font-dmsans border-[#9b87f5] text-[#9b87f5]"
+                      >
+                        Annuler
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={saveEditedComment}
+                        disabled={!editText.trim()}
+                        className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white font-dmsans"
+                      >
+                        Enregistrer
+                      </Button>
+                    </div>
                   </div>
+                ) : (
+                  <p className="text-gray-700 whitespace-pre-wrap font-dmsans mt-2 leading-relaxed">{comment.comment}</p>
                 )}
-              </div>
-              
-              {editingComment === comment.id ? (
-                <div className="mt-2 space-y-2">
-                  <Textarea
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    className="min-h-[80px] font-dmsans"
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setEditingComment(null)}
-                      className="font-dmsans"
-                    >
-                      Annuler
-                    </Button>
-                    <Button 
-                      size="sm"
-                      onClick={saveEditedComment}
-                      disabled={!editText.trim()}
-                      className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white font-dmsans"
-                    >
-                      Enregistrer
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-gray-700 whitespace-pre-wrap font-dmsans">{comment.comment}</p>
-              )}
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
+
+      {/* Zone d'ajout de commentaire en bas */}
+      <Card className="mt-6 border-t-4 border-t-[#9b87f5]">
+        <CardContent className="p-4">
+          <div className="flex flex-col space-y-3">
+            <div className="flex items-center gap-2 mb-1">
+              {currentUser ? (
+                <>
+                  <div className="bg-[#e5deff] p-2 rounded-full">
+                    <User size={16} className="text-[#9b87f5]" />
+                  </div>
+                  <span className="font-medium text-sm">{currentUser.email || "Utilisateur connecté"}</span>
+                </>
+              ) : (
+                <p className="text-sm text-gray-500 italic">Connectez-vous pour commenter</p>
+              )}
+            </div>
+            
+            <Textarea
+              placeholder={currentUser ? "Ajouter un commentaire..." : "Veuillez vous connecter pour commenter"}
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="min-h-[100px] font-dmsans resize-none focus-visible:ring-[#9b87f5]"
+              disabled={!currentUser}
+            />
+            
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleAddComment}
+                disabled={!newComment.trim() || addingComment || !currentUser}
+                className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white font-dmsans flex items-center gap-2 transition-all duration-200 hover:shadow-md"
+              >
+                {addingComment ? (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+                ) : (
+                  <Send size={16} />
+                )}
+                {addingComment ? "Envoi..." : "Commenter"}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
