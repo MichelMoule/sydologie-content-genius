@@ -9,9 +9,11 @@ const endpoint = "https://sydo-chatgpt.openai.azure.com";
 const deploymentName = "gpt-4o-mini-2";
 const apiVersion = "2024-08-01-preview";
 
-// Configure PDF.js for server-side usage
-const pdfjsWorker = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.mjs");
-pdfjs.GlobalWorkerOptions.workerPort = new pdfjsWorker.PDFWorker();
+// Configure PDF.js worker differently
+const PDFWorker = (await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.mjs")).PDFWorker;
+if (!pdfjs.GlobalWorkerOptions.workerPort) {
+  pdfjs.GlobalWorkerOptions.workerPort = new PDFWorker();
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -162,4 +164,3 @@ serve(async (req) => {
     );
   }
 });
-
