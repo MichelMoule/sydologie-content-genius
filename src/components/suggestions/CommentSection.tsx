@@ -16,6 +16,7 @@ type Comment = {
   comment: string;
   created_at: string;
   username?: string;
+  full_name?: string;
   isEditing?: boolean;
 };
 
@@ -61,7 +62,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
         
         const { data: profiles, error: profilesError } = await supabase
           .from("profiles")
-          .select("id, username")
+          .select("id, username, full_name")
           .in("id", userIds);
 
         if (profilesError) {
@@ -73,14 +74,18 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
 
         const profilesMap = profiles
           ? profiles.reduce((acc, profile) => {
-              acc[profile.id] = profile.username || "Utilisateur";
+              acc[profile.id] = {
+                username: profile.username || "Utilisateur",
+                full_name: profile.full_name || "Utilisateur"
+              };
               return acc;
-            }, {} as Record<string, string>)
+            }, {} as Record<string, { username: string, full_name: string }>)
           : {};
 
         const commentsWithUsernames = comments.map(comment => ({
           ...comment,
-          username: profilesMap[comment.user_id] || "Utilisateur"
+          username: profilesMap[comment.user_id]?.username || "Utilisateur",
+          full_name: profilesMap[comment.user_id]?.full_name || "Utilisateur"
         }));
 
         setComments(commentsWithUsernames);
@@ -325,7 +330,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
                       <User size={16} className="text-[#9b87f5]" />
                     </div>
                     <div>
-                      <span className="font-medium font-dmsans text-gray-800">{comment.username}</span>
+                      <span className="font-medium font-dmsans text-gray-800">{comment.full_name}</span>
                       <p className="text-xs text-gray-500 font-dmsans">{formatDate(comment.created_at)}</p>
                     </div>
                   </div>
@@ -397,7 +402,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
                   <div className="bg-[#e5deff] p-2 rounded-full">
                     <User size={16} className="text-[#9b87f5]" />
                   </div>
-                  <span className="font-medium text-sm">{currentUser.user_metadata?.username || "Utilisateur"}</span>
+                  <span className="font-medium text-sm">{currentUser.user_metadata?.full_name || "Utilisateur"}</span>
                 </>
               ) : (
                 <p className="text-sm text-gray-500 italic">Connectez-vous pour commenter</p>
