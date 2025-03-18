@@ -60,16 +60,26 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const fileExtension = file.name.toLowerCase().split('.').pop();
-      if (fileExtension !== 'docx' && fileExtension !== 'txt') {
+      if (!file.name.toLowerCase().endsWith('.txt')) {
         e.target.value = '';
         toast({
           variant: "destructive",
           title: "Format non supporté",
-          description: "Veuillez sélectionner un fichier Word (.docx) ou texte (.txt)"
+          description: "Veuillez sélectionner un fichier texte (.txt)"
         });
         return;
       }
+      
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        e.target.value = '';
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Le fichier est trop volumineux. Limite: 5MB."
+        });
+        return;
+      }
+      
       form.setValue("courseFile", file);
     }
   };
@@ -111,11 +121,11 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
           />
 
           <FormItem>
-            <FormLabel>Document du cours (Word ou TXT uniquement)</FormLabel>
+            <FormLabel>Document du cours (TXT uniquement)</FormLabel>
             <FormControl>
               <Input
                 type="file"
-                accept=".docx,.txt"
+                accept=".txt"
                 onChange={handleFileChange}
                 className="cursor-pointer"
               />

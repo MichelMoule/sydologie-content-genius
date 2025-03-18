@@ -1,6 +1,6 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import mammoth from 'npm:mammoth@1.6.0';
 
 const AZURE_ENDPOINT = "https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini-2/chat/completions?api-version=2024-08-01-preview";
 const AZURE_API_KEY = Deno.env.get('AZURE_OPENAI_API_KEY');
@@ -27,17 +27,11 @@ serve(async (req) => {
       const fileData = courseFile.data;
       const fileName = courseFile.name.toLowerCase();
 
-      if (fileName.endsWith('.docx')) {
-        try {
-          const result = await mammoth.extractRawText({ buffer: fileData });
-          finalContent += '\n' + result.value;
-        } catch (error) {
-          console.error('Error extracting text from Word document:', error);
-          throw new Error('Failed to process Word document');
-        }
-      } else if (fileName.endsWith('.txt')) {
+      if (fileName.endsWith('.txt')) {
         const decoder = new TextDecoder('utf-8');
         finalContent += '\n' + decoder.decode(fileData);
+      } else {
+        throw new Error('Format de fichier non supporté. Veuillez utiliser un fichier texte (.txt)');
       }
     }
 
@@ -144,3 +138,4 @@ Merci de suivre strictement le format JSON demandé dans le prompt système pour
     );
   }
 });
+
