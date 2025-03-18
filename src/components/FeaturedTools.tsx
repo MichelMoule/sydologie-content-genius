@@ -9,6 +9,7 @@ import {
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const tools = [
   {
@@ -53,12 +54,14 @@ const tools = [
 ];
 
 const FeaturedTools = () => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="w-full max-w-none py-16">
-      <h2 className="text-3xl font-bold mb-12 font-sans container mx-auto">
+    <div className="w-full max-w-none py-8 md:py-16">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-12 font-sans container mx-auto px-4">
         <span className="text-[#1F5E40]">_</span>Nos outils à la une
       </h2>
-      <div className="space-y-0">
+      <div className="space-y-6 md:space-y-0">
         {tools.map((tool, index) => (
           <div key={tool.id} className="w-full">
             <Carousel className="w-full relative">
@@ -85,30 +88,48 @@ const FeaturedTools = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {index === 0 && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                  <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                    <ChevronRight className="h-8 w-8" />
-                  </CarouselNext>
-                </div>
-              )}
-              {index === tools.length - 1 && (
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                    <ChevronLeft className="h-8 w-8" />
-                  </CarouselPrevious>
-                </div>
-              )}
-              {index !== 0 && index !== tools.length - 1 && (
+              {!isMobile && (
                 <>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                      <ChevronRight className="h-8 w-8" />
+                  {index === 0 && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                        <ChevronRight className="h-8 w-8" />
+                      </CarouselNext>
+                    </div>
+                  )}
+                  {index === tools.length - 1 && (
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                      <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                        <ChevronLeft className="h-8 w-8" />
+                      </CarouselPrevious>
+                    </div>
+                  )}
+                  {index !== 0 && index !== tools.length - 1 && (
+                    <>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                          <ChevronRight className="h-8 w-8" />
+                        </CarouselNext>
+                      </div>
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                        <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                          <ChevronLeft className="h-8 w-8" />
+                        </CarouselPrevious>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+              {isMobile && (
+                <>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <CarouselNext className="relative inset-0 translate-x-0 translate-y-0 h-8 w-8 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                      <ChevronRight className="h-5 w-5" />
                     </CarouselNext>
                   </div>
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                    <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-12 w-12 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
-                      <ChevronLeft className="h-8 w-8" />
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                    <CarouselPrevious className="relative inset-0 translate-x-0 translate-y-0 h-8 w-8 bg-black/50 hover:bg-black/70 rounded-full border-none text-white transition-colors">
+                      <ChevronLeft className="h-5 w-5" />
                     </CarouselPrevious>
                   </div>
                 </>

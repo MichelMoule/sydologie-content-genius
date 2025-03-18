@@ -1,14 +1,17 @@
 
 import { Button } from "./ui/button";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Get initial session
@@ -34,9 +37,15 @@ const Navbar = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
+    setMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
   
-  return <nav className="bg-[#82C8A0] text-[#EDE8E0]">
+  return (
+    <nav className="bg-[#82C8A0] text-[#EDE8E0] relative z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -46,7 +55,18 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Navigation Links */}
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:text-[#82C8A0] hover:bg-white/20" 
+              onClick={toggleMobileMenu}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
+
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-8 font-dmsans text-lg font-medium">
             <Link to="/outils" className="hover:text-white transition-colors">
               Outils
@@ -55,7 +75,6 @@ const Navbar = () => {
               Formations
             </Link>
             <Link to="/outils/suggestions" className="hover:text-white transition-colors flex items-center">
-              
               Propositions
             </Link>
             <Link to="/contact" className="hover:text-white transition-colors">
@@ -63,8 +82,8 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Auth Buttons */}
-          <div className="flex items-center space-x-2 font-dmsans">
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-2 font-dmsans">
             {user ? (
               <div className="flex items-center space-x-2">
                 <Link to="/settings">
@@ -88,7 +107,76 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </nav>;
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-16 inset-x-0 bg-[#82C8A0] shadow-lg z-50">
+          <div className="px-4 py-4 space-y-4 font-dmsans">
+            <Link 
+              to="/outils" 
+              className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Outils
+            </Link>
+            <Link 
+              to="/formations" 
+              className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Formations
+            </Link>
+            <Link 
+              to="/outils/suggestions" 
+              className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Propositions
+            </Link>
+            <Link 
+              to="/contact" 
+              className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Nous contacter
+            </Link>
+
+            {/* Mobile Auth Links */}
+            <div className="pt-4 border-t border-white/20">
+              {user ? (
+                <div className="space-y-2">
+                  <Link 
+                    to="/settings" 
+                    className="flex items-center py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="mr-2 h-5 w-5" />
+                    Paramètres
+                  </Link>
+                  <button 
+                    className="flex items-center w-full py-2 px-3 text-xl hover:bg-white/10 rounded-lg text-left"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-5 w-5" />
+                    Déconnexion
+                  </button>
+                </div>
+              ) : (
+                <Link 
+                  to="/auth" 
+                  className="flex items-center py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <User className="mr-2 h-5 w-5" />
+                  Me connecter
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
 };
 
 export default Navbar;

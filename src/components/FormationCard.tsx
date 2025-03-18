@@ -54,7 +54,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group font-dmsans" onClick={onClick}>
       {formation.image?.url && (
-        <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+        <div className="relative w-full h-36 md:h-48 overflow-hidden rounded-t-lg">
           <img
             src={formation.image.url}
             alt={formation.name}
@@ -62,26 +62,26 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
           />
         </div>
       )}
-      <CardHeader>
-        <CardTitle className="text-xl line-clamp-2 mb-4 font-dmsans">{formation.name}</CardTitle>
+      <CardHeader className="py-3 md:py-4">
+        <CardTitle className="text-base md:text-xl line-clamp-2 mb-2 md:mb-4 font-dmsans">{formation.name}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col gap-4">
-        <div className="space-y-3 flex-grow">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="w-4 h-4" />
+      <CardContent className="flex-grow flex flex-col gap-3 md:gap-4 pt-0">
+        <div className="space-y-2 md:space-y-3 flex-grow">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <MapPin className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
             <span>{getTrainingModality(formation.trainingModality)}</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Clock className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Clock className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
             <span>Durée : {formation.durationInHours}h</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <User className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <User className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
             <span>{getFormationType(formation)}</span>
           </div>
         </div>
         <Button 
-          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[40px] font-dmsans"
+          className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white rounded-[40px] h-[36px] md:h-[40px] text-sm md:text-base font-dmsans"
           onClick={(e) => {
             e.stopPropagation();
             onClick();

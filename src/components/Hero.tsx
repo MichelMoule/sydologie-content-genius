@@ -1,9 +1,11 @@
 
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleSignUp = () => {
     navigate("/auth", { state: { isSignUp: true } });
@@ -13,19 +15,20 @@ const Hero = () => {
     navigate("/auth");
   };
 
-  return <div className="container mx-auto px-4 py-20 pb-32 bg-[#EDE8E0]">
+  return (
+    <div className="w-full px-4 py-12 md:py-20 md:pb-32 bg-[#EDE8E0]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-8 relative">
-        <div className="md:w-3/5 pt-20">
+        <div className="w-full md:w-3/5 pt-4 md:pt-20">
           <div className="text-[#82C8A0] mb-4 text-sm uppercase tracking-wide font-medium">
             BIENVENUE SUR SYDOLOGIE.AI
           </div>
-          <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold mb-4 leading-tight font-unbounded">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight font-unbounded">
             Découvrez nos outils utilisant{" "}
             <span className="text-[#82C8A0]">l'intelligence artificielle</span>{" "}
             au service de vos formations
           </h1>
           
-          <div className="mt-20 md:hidden">
+          <div className="mt-8 md:mt-20 md:hidden">
             <p className="text-gray-600 mb-6 text-base">
               Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est <strong>RGPD</strong> !
             </p>
@@ -53,7 +56,6 @@ const Hero = () => {
         
         <div className="md:w-2/5 hidden md:block">
           <div className="pt-28 py-[159px]">
-            
             <div className="space-y-3 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
               <Button 
                 className="bg-[#82C8A0] text-white hover:bg-[#82C8A0]/90 py-3 px-5 rounded-full text-base flex items-center gap-2"
@@ -78,11 +80,24 @@ const Hero = () => {
 
         {/* Robot image positioned to the right */}
         <div className="hidden lg:block absolute right-0 top-0 h-full" style={{
-        transform: 'translateX(70%)'
-      }}>
+          transform: 'translateX(70%)'
+        }}>
           <img src="/lovable-uploads/103c8caa-73e8-467a-a9f0-8489673a57ff.png" alt="Robot assistant" className="h-full max-h-[600px] object-contain" />
         </div>
+
+        {/* Mobile robot image */}
+        {isMobile && (
+          <div className="w-full flex justify-center my-8">
+            <img 
+              src="/lovable-uploads/103c8caa-73e8-467a-a9f0-8489673a57ff.png" 
+              alt="Robot assistant" 
+              className="h-48 object-contain" 
+            />
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Hero;
