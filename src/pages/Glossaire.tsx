@@ -70,9 +70,12 @@ const Glossaire = () => {
       formData.append("subject", subject);
 
       console.log("Envoi de la requête à l'API...");
-      const { data, error } = await supabase.functions.invoke<GlossaryResponse>("generate-glossary", {
-        body: formData,
-      });
+      const { data, error } = await supabase.functions.invoke<GlossaryResponse>(
+        "generate-glossary", 
+        {
+          body: formData,
+        }
+      );
 
       if (error) {
         console.error("Erreur API:", error);
