@@ -1,4 +1,3 @@
-
 import { BookText, Shield, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -98,16 +97,6 @@ const Legal = () => {
                 <div>
                   <h3 className="text-xl font-bold mb-2">Webmaster</h3>
                   <p>Youri Minne – contact@sydo.fr</p>
-                </div>
-                
-                <Separator />
-                
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Hébergeur</h3>
-                  <p>Vercel Inc.</p>
-                  <p>340 S Lemon Ave #4133</p>
-                  <p>Walnut, CA 91789</p>
-                  <p>États-Unis</p>
                 </div>
               </div>
             </CardContent>
@@ -229,7 +218,7 @@ const Legal = () => {
                 </p>
                 
                 <p>
-                  En tout état de cause, Société Sydo ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site sydologie.ai. L'utilisateur fournit ces informations en toute connaissance de cause, notamment lorsqu'il procède par lui-même à leur saisie. Il est alors précisé à l'utilisateur du site sydologie.ai l'obligation ou non de fournir ces informations.
+                  En tout état de cause, Société Sydo ne collecte des informations personnelles relatives à l'utilisateur que pour le besoin de certains services proposés par le site sydologie.ai. L'utilisateur fournit ces informations en toute connaissance de cause, notamment lorsqu'il procède par lui-même à leur saisie. Il est alors précisé à l'utilisateur du site sydology.ai l'obligation ou non de fournir ces informations.
                 </p>
                 
                 <p>
@@ -327,3 +316,4 @@ const Legal = () => {
 };
 
 export default Legal;
+
