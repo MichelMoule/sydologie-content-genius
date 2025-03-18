@@ -38,23 +38,36 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
   const fetchComments = async () => {
     setLoading(true);
     try {
+      console.log("Récupération des commentaires pour la suggestion:", toolSuggestionId);
       const { data: comments, error } = await supabase
         .from("tool_comments")
         .select("*")
         .eq("tool_suggestion_id", toolSuggestionId)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur lors de la récupération des commentaires:", error);
+        throw error;
+      }
+
+      console.log("Commentaires récupérés:", comments?.length || 0);
 
       // Récupérer les noms d'utilisateurs
       if (comments && comments.length > 0) {
         const userIds = [...new Set(comments.map(c => c.user_id))];
+        console.log("Récupération des profils pour les utilisateurs:", userIds);
+        
         const { data: profiles, error: profilesError } = await supabase
           .from("profiles")
           .select("id, username")
           .in("id", userIds);
 
-        if (profilesError) throw profilesError;
+        if (profilesError) {
+          console.error("Erreur lors de la récupération des profils:", profilesError);
+          throw profilesError;
+        }
+
+        console.log("Profils récupérés:", profiles?.length || 0);
 
         const profilesMap = profiles
           ? profiles.reduce((acc, profile) => {
@@ -89,24 +102,29 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
       return;
     }
 
+    console.log("Tentative d'ajout d'un commentaire par l'utilisateur:", currentUser.id);
+    console.log("Pour la suggestion:", toolSuggestionId);
+    
     try {
-      // Ajouter l'ID de l'utilisateur actuel
+      const commentData = {
+        tool_suggestion_id: toolSuggestionId,
+        user_id: currentUser.id,
+        comment: newComment.trim()
+      };
+      
+      console.log("Données du commentaire à insérer:", commentData);
+      
       const { data, error } = await supabase
         .from("tool_comments")
-        .insert([
-          {
-            tool_suggestion_id: toolSuggestionId,
-            user_id: currentUser.id,
-            comment: newComment.trim()
-          }
-        ])
-        .select(); // Récupérer les données insérées
+        .insert([commentData])
+        .select();
 
       if (error) {
-        console.error("Erreur détaillée:", error);
+        console.error("Erreur détaillée lors de l'insertion:", error);
         throw error;
       }
 
+      console.log("Commentaire ajouté avec succès:", data);
       setNewComment("");
       toast.success("Commentaire ajouté avec succès");
       
@@ -116,13 +134,19 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
         
         try {
           // Récupérer le nom d'utilisateur
+          console.log("Récupération du profil pour l'utilisateur:", currentUser.id);
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("username")
             .eq("id", currentUser.id)
-            .maybeSingle(); // Utiliser maybeSingle au lieu de single pour éviter les erreurs
+            .maybeSingle();
 
-          if (profileError) throw profileError;
+          if (profileError) {
+            console.error("Erreur lors de la récupération du profil:", profileError);
+            throw profileError;
+          }
+          
+          console.log("Profil récupéré:", profile);
           
           // Ajouter le commentaire au début de la liste avec le nom d'utilisateur
           setComments(prev => [{
@@ -138,15 +162,23 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
           }, ...prev]);
         }
       } else {
+        console.log("Aucune donnée retournée après l'insertion, rafraîchissement des commentaires");
         // Si on ne reçoit pas les données, on rafraîchit tous les commentaires
         fetchComments();
       }
     } catch (error: any) {
       console.error("Erreur lors de l'ajout du commentaire:", error);
+      console.error("Code d'erreur:", error.code);
+      console.error("Message d'erreur:", error.message);
+      console.error("Détails:", error.details);
       
       // Afficher un message d'erreur plus détaillé
       if (error.code === "42501") {
         toast.error("Erreur de permission: vous n'avez pas les droits nécessaires pour commenter");
+      } else if (error.code === "23503") {
+        toast.error("Erreur de référence: la suggestion n'existe plus ou l'utilisateur n'est pas valide");
+      } else if (error.code === "23514") {
+        toast.error("Erreur de validation: vérifiez le format de votre commentaire");
       } else {
         toast.error(`Erreur lors de l'ajout du commentaire: ${error.message || "erreur inconnue"}`);
       }
@@ -162,12 +194,16 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
     if (!editText.trim() || !editingComment) return;
 
     try {
+      console.log("Tentative de modification du commentaire:", editingComment);
       const { error } = await supabase
         .from("tool_comments")
         .update({ comment: editText.trim() })
         .eq("id", editingComment);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur lors de la modification du commentaire:", error);
+        throw error;
+      }
 
       setEditingComment(null);
       toast.success("Commentaire modifié avec succès");
@@ -186,12 +222,16 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
 
   const handleDeleteComment = async (commentId: string) => {
     try {
+      console.log("Tentative de suppression du commentaire:", commentId);
       const { error } = await supabase
         .from("tool_comments")
         .delete()
         .eq("id", commentId);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur lors de la suppression du commentaire:", error);
+        throw error;
+      }
 
       toast.success("Commentaire supprimé avec succès");
       setComments(comments.filter(c => c.id !== commentId));
