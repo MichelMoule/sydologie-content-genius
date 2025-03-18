@@ -2,6 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/+esm";
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
 const endpoint = "https://sydo-chatgpt.openai.azure.com";
@@ -25,35 +26,36 @@ serve(async (req) => {
       );
     }
 
-    // Read the PDF file content
-    const fileContent = await pdfFile.text();
-    console.log(`File content length: ${fileContent.length}`);
-
-    // If the file is binary (likely a PDF), we need a different approach
-    let textToProcess = fileContent;
+    // Extract text from PDF
+    console.log('Extracting text from PDF...');
+    const pdfArrayBuffer = await pdfFile.arrayBuffer();
     
-    // If the content seems to be binary (not readable text)
-    if (fileContent.includes('%PDF') || /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(fileContent.substring(0, 1000))) {
-      console.log('PDF detected, using Azure OpenAI vision capabilities for extraction');
+    // Initialize PDF.js
+    pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    
+    try {
+      // Load the PDF document
+      const loadingTask = pdfjs.getDocument({ data: new Uint8Array(pdfArrayBuffer) });
+      const pdf = await loadingTask.promise;
       
-      // Convert the file to base64 for the vision API
-      const fileArrayBuffer = await pdfFile.arrayBuffer();
-      const fileBytes = new Uint8Array(fileArrayBuffer);
+      let extractedText = '';
       
-      // Convert to base64 in chunks to avoid stack overflow
-      let base64Pdf = '';
-      const chunkSize = 8192;
-      for (let i = 0; i < fileBytes.length; i += chunkSize) {
-        const chunk = fileBytes.slice(i, i + chunkSize);
-        base64Pdf += btoa(String.fromCharCode.apply(null, [...chunk]));
+      // Extract text from each page
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item: any) => item.str).join(' ');
+        extractedText += pageText + ' ';
       }
       
-      const dataUrl = `data:application/pdf;base64,${base64Pdf}`;
+      console.log(`Extracted ${extractedText.length} characters of text`);
+      console.log('Text preview:', extractedText.substring(0, 200));
       
-      // Call Azure OpenAI with vision capabilities
-      const visionUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${apiVersion}`;
+      // Now we have the text content, generate the glossary
+      console.log('Generating glossary from extracted text');
+      const glossaryUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${apiVersion}`;
       
-      const visionResponse = await fetch(visionUrl, {
+      const glossaryResponse = await fetch(glossaryUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,129 +64,95 @@ serve(async (req) => {
         body: JSON.stringify({
           messages: [
             {
-              role: 'user',
-              content: [
-                { type: 'text', text: 'Extrait tout le texte de ce document PDF. Retourne UNIQUEMENT le texte extrait, sans commentaires ni formatage.' },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: dataUrl,
+              role: 'system',
+              content: `Tu es un expert en création de glossaires.
+              Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
+              
+              IMPORTANT: Ta réponse DOIT être un JSON valide SANS texte additionnel avant ou après.
+              Le format attendu est STRICTEMENT :
+              {
+                "terms": [
+                  {
+                    "term": "terme technique",
+                    "definition": "définition claire et concise"
                   }
-                }
-              ],
+                ]
+              }
+              
+              Si tu ne trouves pas de termes techniques, retourne un tableau vide : { "terms": [] }
+              N'ajoute AUCUN texte avant ou après le JSON.`
+            },
+            {
+              role: 'user',
+              content: `Sujet: ${subject}\n\nContenu du document:\n${extractedText}\n\nCrée un glossaire des termes techniques importants.`
             }
           ],
-          max_tokens: 4096,
+          temperature: 0.3,
+          max_tokens: 2000,
         }),
       });
 
-      if (!visionResponse.ok) {
-        const error = await visionResponse.text();
-        console.error('PDF extraction error:', error);
-        throw new Error('Erreur lors de l\'extraction du texte du PDF');
+      if (!glossaryResponse.ok) {
+        const errorText = await glossaryResponse.text();
+        console.error('Glossary generation error:', errorText);
+        throw new Error(`Erreur lors de la génération du glossaire: ${errorText}`);
       }
 
-      const extractionResult = await visionResponse.json();
-      textToProcess = extractionResult.choices[0].message.content;
-      console.log('Extracted text preview:', textToProcess.substring(0, 500));
-    }
+      const openAIResponse = await glossaryResponse.json();
+      console.log('Glossary response received');
 
-    // Now we have the text content, generate the glossary
-    console.log('Generating glossary from text content');
-    const glossaryUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${apiVersion}`;
-    
-    const glossaryResponse = await fetch(glossaryUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': azureApiKey!,
-      },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'system',
-            content: `Tu es un expert en création de glossaires.
-            Ta tâche est d'identifier les termes techniques importants dans le texte fourni et de générer des définitions claires et concises.
-            
-            IMPORTANT: Ta réponse DOIT être un JSON valide SANS texte additionnel avant ou après.
-            Le format attendu est STRICTEMENT :
-            {
-              "terms": [
-                {
-                  "term": "terme technique",
-                  "definition": "définition claire et concise"
-                }
-              ]
-            }
-            
-            Si tu ne trouves pas de termes techniques, retourne un tableau vide : { "terms": [] }
-            N'ajoute AUCUN texte avant ou après le JSON.`
-          },
-          {
-            role: 'user',
-            content: `Sujet: ${subject}\n\nContenu du document:\n${textToProcess}\n\nCrée un glossaire des termes techniques importants.`
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 2000,
-      }),
-    });
-
-    if (!glossaryResponse.ok) {
-      const errorText = await glossaryResponse.text();
-      console.error('Glossary generation error:', errorText);
-      throw new Error(`Erreur lors de la génération du glossaire: ${errorText}`);
-    }
-
-    const openAIResponse = await glossaryResponse.json();
-    console.log('Glossary response received');
-
-    // Parse the response
-    try {
-      const content = openAIResponse.choices[0].message.content.trim();
-      console.log('Raw content preview:', content.substring(0, 100));
-      
-      let glossaryContent;
+      // Parse the response
       try {
-        glossaryContent = JSON.parse(content);
-      } catch (e) {
-        console.log('Direct parsing failed, trying to extract JSON');
+        const content = openAIResponse.choices[0].message.content.trim();
+        console.log('Raw content preview:', content.substring(0, 100));
         
-        // Try to handle markdown code blocks or extract JSON
-        let jsonStr = content;
-        if (content.includes('```json')) {
-          const match = content.match(/```json\n([\s\S]*?)\n```/);
-          if (match && match[1]) {
-            jsonStr = match[1].trim();
+        let glossaryContent;
+        try {
+          glossaryContent = JSON.parse(content);
+        } catch (e) {
+          console.log('Direct parsing failed, trying to extract JSON');
+          
+          // Try to handle markdown code blocks or extract JSON
+          let jsonStr = content;
+          if (content.includes('```json')) {
+            const match = content.match(/```json\n([\s\S]*?)\n```/);
+            if (match && match[1]) {
+              jsonStr = match[1].trim();
+            }
+          }
+          
+          // Extract JSON between curly braces
+          const startIndex = jsonStr.indexOf('{');
+          const endIndex = jsonStr.lastIndexOf('}');
+          
+          if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+            jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+            glossaryContent = JSON.parse(jsonStr);
+          } else {
+            throw new Error('No valid JSON found in response');
           }
         }
         
-        // Extract JSON between curly braces
-        const startIndex = jsonStr.indexOf('{');
-        const endIndex = jsonStr.lastIndexOf('}');
-        
-        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-          jsonStr = jsonStr.substring(startIndex, endIndex + 1);
-          glossaryContent = JSON.parse(jsonStr);
-        } else {
-          throw new Error('No valid JSON found in response');
+        // Validate format
+        if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
+          throw new Error('Format de réponse invalide: pas de tableau terms');
         }
-      }
-      
-      // Validate format
-      if (!glossaryContent.terms || !Array.isArray(glossaryContent.terms)) {
-        throw new Error('Format de réponse invalide: pas de tableau terms');
-      }
 
+        return new Response(
+          JSON.stringify({ glossary: glossaryContent }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (error) {
+        console.error('Error parsing response:', error);
+        throw new Error(`Format de réponse invalide: ${error.message}`);
+      }
+    } catch (pdfError) {
+      console.error('Error extracting text from PDF:', pdfError);
       return new Response(
-        JSON.stringify({ glossary: glossaryContent }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Erreur lors de l\'extraction du texte du PDF' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
-    } catch (error) {
-      console.error('Error parsing response:', error);
-      throw new Error(`Format de réponse invalide: ${error.message}`);
     }
-
   } catch (error) {
     console.error('Error in generate-glossary function:', error);
     return new Response(
