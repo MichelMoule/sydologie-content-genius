@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -39,10 +38,12 @@ const Glossaire = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      if (selectedFile.type !== "application/pdf") {
+      const fileType = selectedFile.name.split('.').pop()?.toLowerCase();
+      
+      if (!fileType || !['txt', 'docx'].includes(fileType)) {
         toast({
           title: "Type de fichier non supporté",
-          description: "Veuillez sélectionner un fichier PDF",
+          description: "Veuillez sélectionner un fichier .txt ou .docx",
           variant: "destructive",
         });
         return;
@@ -145,7 +146,7 @@ const Glossaire = () => {
           <div className="text-center space-y-4">
             <h1 className="text-4xl font-bold mb-4 font-dmsans">GlossAIre</h1>
             <p className="text-xl text-zinc-600 font-dmsans">
-              Générez automatiquement des glossaires à partir de vos supports de formation PDF
+              Générez automatiquement des glossaires à partir de vos supports de formation Word ou TXT
             </p>
           </div>
 
@@ -154,7 +155,7 @@ const Glossaire = () => {
               <CardHeader>
                 <CardTitle className="font-dmsans">Créer un nouveau glossaire</CardTitle>
                 <CardDescription className="font-dmsans">
-                  Importez votre PDF et précisez le sujet pour obtenir un glossaire pertinent
+                  Importez votre fichier Word ou TXT et précisez le sujet pour obtenir un glossaire pertinent
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -172,7 +173,7 @@ const Glossaire = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="file" className="font-dmsans">Document PDF</Label>
+                    <Label htmlFor="file" className="font-dmsans">Document (Word ou TXT)</Label>
                     <div className="flex items-center justify-center w-full">
                       <label
                         htmlFor="file"
@@ -183,12 +184,12 @@ const Glossaire = () => {
                           <p className="mb-2 text-sm text-zinc-600 font-dmsans">
                             <span className="font-bold font-dmsans">Cliquez pour charger</span> ou glissez-déposez
                           </p>
-                          <p className="text-xs text-zinc-500 font-dmsans">PDF (MAX. 10MB)</p>
+                          <p className="text-xs text-zinc-500 font-dmsans">Word ou TXT (MAX. 10MB)</p>
                         </div>
                         <input
                           id="file"
                           type="file"
-                          accept=".pdf"
+                          accept=".txt,.docx"
                           className="hidden"
                           onChange={handleFileChange}
                           required
