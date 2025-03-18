@@ -57,6 +57,41 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          tool_suggestion_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          tool_suggestion_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          tool_suggestion_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_comments_tool_suggestion_id_fkey"
+            columns: ["tool_suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "tool_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tool_suggestions: {
         Row: {
           category: string

@@ -21,10 +21,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon, User } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon, User, MessageCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import SuggestionForm from "@/components/suggestions/SuggestionForm";
+import CommentSection from "@/components/suggestions/CommentSection";
 
 type ToolSuggestion = {
   id: string;
@@ -39,12 +46,14 @@ type ToolSuggestion = {
   downvotes_count: number;
   user_vote?: string | null;
   username?: string | null;
+  comments_count?: number;
 };
 
 const Suggestions = () => {
   const [suggestions, setSuggestions] = useState<ToolSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [expandedSuggestion, setExpandedSuggestion] = useState<string | null>(null);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -91,6 +100,20 @@ const Suggestions = () => {
         
         if (countError) throw countError;
 
+        // Récupérer le nombre de commentaires pour chaque suggestion
+        const { data: commentCounts, error: commentCountError } = await supabase
+          .from('tool_comments')
+          .select('tool_suggestion_id, count')
+          .eq('count', 'exact');
+
+        // Créer un map des commentaires par tool_suggestion_id
+        const commentCountMap = {};
+        if (!commentCountError && commentCounts) {
+          commentCounts.forEach(item => {
+            commentCountMap[item.tool_suggestion_id] = parseInt(item.count);
+          });
+        }
+
         const userIds = [...new Set(suggestionsWithVotes.map(s => s.submitted_by))];
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
@@ -114,7 +137,8 @@ const Suggestions = () => {
             ...suggestion,
             upvotes_count: upvotes,
             downvotes_count: downvotes,
-            username: profilesMap[suggestion.submitted_by] || "Utilisateur"
+            username: profilesMap[suggestion.submitted_by] || "Utilisateur",
+            comments_count: commentCountMap[suggestion.id] || 0
           };
         });
         
@@ -221,6 +245,14 @@ const Suggestions = () => {
     return suggestion.upvotes_count - suggestion.downvotes_count;
   };
 
+  const toggleExpandSuggestion = (suggestionId: string) => {
+    if (expandedSuggestion === suggestionId) {
+      setExpandedSuggestion(null);
+    } else {
+      setExpandedSuggestion(suggestionId);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -296,90 +328,122 @@ const Suggestions = () => {
             </Dialog>
           </div>
         ) : (
-          <Table>
-            <TableCaption className="font-dmsans">Liste des propositions d'outils classées par popularité</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px] font-dmsans">Rang</TableHead>
-                <TableHead className="font-dmsans">Outil</TableHead>
-                <TableHead className="font-dmsans">Proposé par</TableHead>
-                <TableHead className="font-dmsans">Catégorie</TableHead>
-                <TableHead className="text-center font-dmsans">Score</TableHead>
-                <TableHead className="text-right font-dmsans">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {suggestions.map((suggestion, index) => (
-                <TableRow key={suggestion.id} className={index < 3 ? "bg-green-50/50" : ""}>
-                  <TableCell className="font-medium font-dmsans">
-                    {index + 1}
-                    {index < 3 && (
-                      <span className="ml-1 text-xs font-bold text-green-600">
-                        {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-semibold text-lg font-dmsans">{suggestion.name}</div>
-                      <div className="text-sm text-gray-500 mt-1 font-dmsans">{suggestion.description}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1 text-sm text-gray-600 font-dmsans">
-                      <User size={14} />
-                      {suggestion.username || "Utilisateur"}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={`
-                      ${suggestion.category === 'conception' ? 'bg-blue-500' : ''}
-                      ${suggestion.category === 'realisation' ? 'bg-green-500' : ''}
-                      ${suggestion.category === 'analyse' ? 'bg-purple-500' : ''}
-                      ${suggestion.category === 'autre' ? 'bg-gray-500' : ''}
-                      font-dmsans
-                    `}>
-                      {suggestion.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-center font-medium font-dmsans">
-                    <span className={`
-                      ${getScore(suggestion) > 0 ? 'text-green-600' : ''}
-                      ${getScore(suggestion) < 0 ? 'text-red-600' : ''}
-                      ${getScore(suggestion) === 0 ? 'text-gray-600' : ''}
-                    `}>
-                      {getScore(suggestion)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={`flex items-center space-x-1 font-dmsans ${
-                        suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
-                      }`}
-                      onClick={() => handleVote(suggestion.id, 'up')}
-                    >
-                      <ThumbsUp size={16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
-                      <span>{suggestion.upvotes_count}</span>
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={`flex items-center space-x-1 font-dmsans ${
-                        suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
-                      }`}
-                      onClick={() => handleVote(suggestion.id, 'down')}
-                    >
-                      <ThumbsDown size={16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
-                      <span>{suggestion.downvotes_count}</span>
-                    </Button>
-                  </TableCell>
+          <div>
+            <Table>
+              <TableCaption className="font-dmsans">Liste des propositions d'outils classées par popularité</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px] font-dmsans">Rang</TableHead>
+                  <TableHead className="font-dmsans">Outil</TableHead>
+                  <TableHead className="font-dmsans">Proposé par</TableHead>
+                  <TableHead className="font-dmsans">Catégorie</TableHead>
+                  <TableHead className="text-center font-dmsans">Score</TableHead>
+                  <TableHead className="text-right font-dmsans">Actions</TableHead>
                 </TableRow>
+              </TableHeader>
+              <TableBody>
+                {suggestions.map((suggestion, index) => (
+                  <TableRow key={suggestion.id} className={index < 3 ? "bg-green-50/50" : ""}>
+                    <TableCell className="font-medium font-dmsans">
+                      {index + 1}
+                      {index < 3 && (
+                        <span className="ml-1 text-xs font-bold text-green-600">
+                          {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-semibold text-lg font-dmsans">{suggestion.name}</div>
+                        <div className="text-sm text-gray-500 mt-1 font-dmsans">{suggestion.description}</div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleExpandSuggestion(suggestion.id)}
+                          className="mt-2 text-[#9b87f5] hover:text-[#8B5CF6] hover:bg-transparent p-0 h-auto font-dmsans flex items-center gap-1"
+                        >
+                          <MessageCircle size={16} />
+                          {suggestion.comments_count || 0} commentaire{suggestion.comments_count !== 1 ? 's' : ''}
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-sm text-gray-600 font-dmsans">
+                        <User size={14} />
+                        {suggestion.username || "Utilisateur"}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`
+                        ${suggestion.category === 'conception' ? 'bg-blue-500' : ''}
+                        ${suggestion.category === 'realisation' ? 'bg-green-500' : ''}
+                        ${suggestion.category === 'analyse' ? 'bg-purple-500' : ''}
+                        ${suggestion.category === 'autre' ? 'bg-gray-500' : ''}
+                        font-dmsans
+                      `}>
+                        {suggestion.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center font-medium font-dmsans">
+                      <span className={`
+                        ${getScore(suggestion) > 0 ? 'text-green-600' : ''}
+                        ${getScore(suggestion) < 0 ? 'text-red-600' : ''}
+                        ${getScore(suggestion) === 0 ? 'text-gray-600' : ''}
+                      `}>
+                        {getScore(suggestion)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`flex items-center space-x-1 font-dmsans ${
+                          suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
+                        }`}
+                        onClick={() => handleVote(suggestion.id, 'up')}
+                      >
+                        <ThumbsUp size={16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
+                        <span>{suggestion.upvotes_count}</span>
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`flex items-center space-x-1 font-dmsans ${
+                          suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
+                        }`}
+                        onClick={() => handleVote(suggestion.id, 'down')}
+                      >
+                        <ThumbsDown size={16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
+                        <span>{suggestion.downvotes_count}</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Section des commentaires */}
+            <Accordion type="single" collapsible value={expandedSuggestion || ""}>
+              {suggestions.map((suggestion) => (
+                <AccordionItem 
+                  key={`comments-${suggestion.id}`} 
+                  value={suggestion.id}
+                  className={`mt-2 rounded-lg border ${expandedSuggestion === suggestion.id ? 'bg-gray-50' : ''}`}
+                >
+                  <AccordionTrigger className="px-4 font-dmsans">
+                    Commentaires pour {suggestion.name}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CommentSection 
+                      toolSuggestionId={suggestion.id} 
+                      currentUser={user}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </TableBody>
-          </Table>
+            </Accordion>
+          </div>
         )}
       </div>
     </div>
