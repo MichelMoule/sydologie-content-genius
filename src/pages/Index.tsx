@@ -4,8 +4,6 @@ import Hero from "@/components/Hero";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import Incontournables from "@/components/Incontournables";
-import FeaturedContent from "@/components/FeaturedContent";
-import FeaturedTools from "@/components/FeaturedTools";
 
 const Index = () => {
   return (
@@ -14,8 +12,6 @@ const Index = () => {
       <Hero />
       <div className="bg-white">
         <Incontournables />
-        <FeaturedTools />
-        <FeaturedContent />
       </div>
       <Newsletter />
       <Footer />
