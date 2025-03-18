@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import mammoth from 'npm:mammoth@1.6.0';
 
 const AZURE_ENDPOINT = "https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini-2/chat/completions?api-version=2024-08-01-preview";
 const AZURE_API_KEY = Deno.env.get('AZURE_OPENAI_API_KEY');
@@ -19,12 +20,25 @@ serve(async (req) => {
     
     const { courseContent, courseFile, quizType, learningObjectives, numberOfQuestions, difficultyLevel } = requestBody;
 
-    if (!courseContent) {
-      throw new Error('Course content is required');
-    }
+    let finalContent = courseContent;
 
-    if (!AZURE_API_KEY) {
-      throw new Error('Azure OpenAI API key is not configured');
+    // Handle file content if present
+    if (courseFile) {
+      const fileData = courseFile.data;
+      const fileName = courseFile.name.toLowerCase();
+
+      if (fileName.endsWith('.docx')) {
+        try {
+          const result = await mammoth.extractRawText({ buffer: fileData });
+          finalContent += '\n' + result.value;
+        } catch (error) {
+          console.error('Error extracting text from Word document:', error);
+          throw new Error('Failed to process Word document');
+        }
+      } else if (fileName.endsWith('.txt')) {
+        const decoder = new TextDecoder('utf-8');
+        finalContent += '\n' + decoder.decode(fileData);
+      }
     }
 
     const systemPrompt = `Vous êtes un expert en pédagogie qui excelle dans la création de quiz d'évaluation.
@@ -59,7 +73,7 @@ Assurez-vous que :
 
     const userPrompt = `Voici le contenu du cours pour lequel je souhaite générer un quiz :
 
-${courseContent}
+${finalContent}
 
 Merci de suivre strictement le format JSON demandé dans le prompt système pour la génération du quiz.`;
 

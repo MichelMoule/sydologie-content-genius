@@ -44,6 +44,31 @@ const Quiz = () => {
         return;
       }
 
+      // Add file validation
+      if (values.courseFile) {
+        const file = values.courseFile as File;
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Le fichier est trop volumineux. Limite: 5MB."
+          });
+          setIsAnalyzing(false);
+          return;
+        }
+
+        const fileExtension = file.name.toLowerCase().split('.').pop();
+        if (fileExtension !== 'docx' && fileExtension !== 'txt') {
+          toast({
+            variant: "destructive",
+            title: "Format non supporté",
+            description: "Veuillez sélectionner un fichier Word (.docx) ou texte (.txt)"
+          });
+          setIsAnalyzing(false);
+          return;
+        }
+      }
+
       const { data: quizData, error: quizError } = await supabase.functions.invoke('generate-quiz', {
         body: values,
       });

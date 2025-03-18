@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -42,6 +43,7 @@ interface QuizFormProps {
 }
 
 export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,6 +60,16 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const fileExtension = file.name.toLowerCase().split('.').pop();
+      if (fileExtension !== 'docx' && fileExtension !== 'txt') {
+        e.target.value = '';
+        toast({
+          variant: "destructive",
+          title: "Format non supporté",
+          description: "Veuillez sélectionner un fichier Word (.docx) ou texte (.txt)"
+        });
+        return;
+      }
       form.setValue("courseFile", file);
     }
   };
@@ -99,11 +111,11 @@ export const QuizForm = ({ onSubmit, isAnalyzing }: QuizFormProps) => {
           />
 
           <FormItem>
-            <FormLabel>Fichier du cours (PDF/Word)</FormLabel>
+            <FormLabel>Document du cours (Word ou TXT uniquement)</FormLabel>
             <FormControl>
               <Input
                 type="file"
-                accept=".pdf,.doc,.docx"
+                accept=".docx,.txt"
                 onChange={handleFileChange}
                 className="cursor-pointer"
               />
