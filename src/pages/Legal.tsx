@@ -75,7 +75,7 @@ const Legal = () => {
                 
                 <div>
                   <h3 className="text-xl font-bold mb-2">Créateur</h3>
-                  <p>64pixels.net</p>
+                  <p>Sydo</p>
                 </div>
                 
                 <Separator />
@@ -89,17 +89,25 @@ const Legal = () => {
                 <Separator />
                 
                 <div>
+                  <h3 className="text-xl font-bold mb-2">Directeur technique</h3>
+                  <p>Youri Minne</p>
+                </div>
+                
+                <Separator />
+                
+                <div>
                   <h3 className="text-xl font-bold mb-2">Webmaster</h3>
-                  <p>Romain Archimbaud – contact@sydo.fr</p>
+                  <p>Youri Minne – contact@sydo.fr</p>
                 </div>
                 
                 <Separator />
                 
                 <div>
                   <h3 className="text-xl font-bold mb-2">Hébergeur</h3>
-                  <p>1and1 – 1&1 Internet SARL</p>
-                  <p>7, place de la Gare BP 70109</p>
-                  <p>57201 Sarreguemines Cedex</p>
+                  <p>Vercel Inc.</p>
+                  <p>340 S Lemon Ave #4133</p>
+                  <p>Walnut, CA 91789</p>
+                  <p>États-Unis</p>
                 </div>
               </div>
             </CardContent>
