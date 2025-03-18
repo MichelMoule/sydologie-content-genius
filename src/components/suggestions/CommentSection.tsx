@@ -191,7 +191,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
           // Ajouter le commentaire au début de la liste avec le nom d'utilisateur
           setComments(prev => [{
             ...newCommentData,
-            username: profile?.username || currentUser.email || "Utilisateur"
+            username: profile?.username || "Utilisateur"
           }, ...prev]);
         } catch (profileError) {
           console.error("Erreur lors de la récupération du profil:", profileError);
@@ -397,7 +397,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
                   <div className="bg-[#e5deff] p-2 rounded-full">
                     <User size={16} className="text-[#9b87f5]" />
                   </div>
-                  <span className="font-medium text-sm">{currentUser.email || "Utilisateur connecté"}</span>
+                  <span className="font-medium text-sm">{currentUser.user_metadata?.username || "Utilisateur"}</span>
                 </>
               ) : (
                 <p className="text-sm text-gray-500 italic">Connectez-vous pour commenter</p>
