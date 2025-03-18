@@ -51,6 +51,16 @@ const Program = () => {
           return;
         }
 
+        if (!file.name.toLowerCase().endsWith('.docx')) {
+          toast({
+            variant: "destructive",
+            title: "Format non supporté",
+            description: "Veuillez sélectionner un fichier Word (.docx)"
+          });
+          setIsGenerating(false);
+          return;
+        }
+
         fileContent = await readFileContent(file);
       }
 

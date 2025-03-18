@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -69,6 +68,16 @@ export const ProgramForm = ({ onSubmit, isGenerating }: ProgramFormProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.name.toLowerCase().endsWith('.docx')) {
+        // Clear the input
+        e.target.value = '';
+        toast({
+          variant: "destructive",
+          title: "Format non supporté",
+          description: "Veuillez sélectionner un fichier Word (.docx)"
+        });
+        return;
+      }
       form.setValue("courseFile", file);
     }
   };
@@ -219,11 +228,11 @@ export const ProgramForm = ({ onSubmit, isGenerating }: ProgramFormProps) => {
           />
 
           <FormItem>
-            <FormLabel>Document du cours (PDF/Word/TXT)</FormLabel>
+            <FormLabel>Document du cours (Word uniquement)</FormLabel>
             <FormControl>
               <Input
                 type="file"
-                accept=".pdf,.doc,.docx,.txt"
+                accept=".docx"
                 onChange={handleFileChange}
                 className="cursor-pointer"
               />
