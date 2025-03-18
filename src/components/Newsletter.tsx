@@ -1,40 +1,19 @@
 
-import { useState } from "react";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 const Newsletter = () => {
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !email.includes('@') || !email.includes('.')) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez entrer une adresse email valide",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    // Redirect to Substack with the email prefilled
-    const substackUrl = `https://sydologie.substack.com/subscribe?email=${encodeURIComponent(email)}&simple=true&utm_source=website`;
+  const handleRedirectToSubstack = () => {
+    // Direct redirect to Substack
+    const substackUrl = "https://sydologie.substack.com/subscribe?utm_source=website&simple=true";
     window.open(substackUrl, '_blank');
     
     toast({
-      title: "Merci !",
+      title: "Redirection",
       description: "Vous allez être redirigé vers notre page d'inscription Substack",
     });
-    
-    // Reset form
-    setEmail("");
-    setIsSubmitting(false);
   };
 
   return (
@@ -50,24 +29,16 @@ const Newsletter = () => {
             <h3 className="text-4xl font-bold text-white">
               inscrivez vous à notre newsletter !
             </h3>
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
-              <Input 
-                type="email" 
-                placeholder="Votre@email.com"
-                className="bg-white text-black placeholder:text-gray-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            <div className="flex justify-start">
               <Button 
-                type="submit"
+                onClick={handleRedirectToSubstack}
                 variant="outline"
                 className="bg-white text-black hover:bg-black hover:text-white transition-colors"
-                disabled={isSubmitting}
+                size="lg"
               >
-                {isSubmitting ? "En cours..." : "M'inscrire à la newsletter"}
+                S'inscrire à la newsletter Substack
               </Button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
