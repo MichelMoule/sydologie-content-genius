@@ -5,7 +5,8 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 const azureApiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
 const endpoint = "https://sydo-chatgpt.openai.azure.com";
-const deploymentName = "gpt-4o-mini";
+const deploymentName = "gpt-4o-mini-2";
+const apiVersion = "2024-08-01-preview";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -50,7 +51,7 @@ serve(async (req) => {
       const dataUrl = `data:application/pdf;base64,${base64Pdf}`;
       
       // Call Azure OpenAI with vision capabilities
-      const visionUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-02-15-preview`;
+      const visionUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${apiVersion}`;
       
       const visionResponse = await fetch(visionUrl, {
         method: 'POST',
@@ -90,7 +91,7 @@ serve(async (req) => {
 
     // Now we have the text content, generate the glossary
     console.log('Generating glossary from text content');
-    const glossaryUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=2024-02-15-preview`;
+    const glossaryUrl = `${endpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${apiVersion}`;
     
     const glossaryResponse = await fetch(glossaryUrl, {
       method: 'POST',
