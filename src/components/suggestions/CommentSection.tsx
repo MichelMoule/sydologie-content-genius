@@ -90,7 +90,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
     }
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("tool_comments")
         .insert([
           {
@@ -98,13 +98,34 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
             user_id: currentUser.id,
             comment: newComment.trim()
           }
-        ]);
+        ])
+        .select(); // Ajout de .select() pour récupérer les données insérées
 
       if (error) throw error;
 
       setNewComment("");
       toast.success("Commentaire ajouté avec succès");
-      fetchComments();
+      
+      // Immédiatement ajouter le commentaire à la liste
+      if (data && data.length > 0) {
+        const newCommentData = data[0];
+        
+        // Récupérer le nom d'utilisateur
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", currentUser.id)
+          .single();
+        
+        // Ajouter le commentaire au début de la liste avec le nom d'utilisateur
+        setComments(prev => [{
+          ...newCommentData,
+          username: profile?.username || currentUser.email || "Utilisateur"
+        }, ...prev]);
+      } else {
+        // Si on ne reçoit pas les données, on rafraîchit tous les commentaires
+        fetchComments();
+      }
     } catch (error) {
       console.error("Erreur lors de l'ajout du commentaire:", error);
       toast.error("Erreur lors de l'ajout du commentaire");
@@ -129,7 +150,13 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
 
       setEditingComment(null);
       toast.success("Commentaire modifié avec succès");
-      fetchComments();
+      
+      // Mettre à jour le commentaire dans l'état local
+      setComments(prev => prev.map(comment => 
+        comment.id === editingComment 
+          ? { ...comment, comment: editText.trim() } 
+          : comment
+      ));
     } catch (error) {
       console.error("Erreur lors de la modification du commentaire:", error);
       toast.error("Erreur lors de la modification du commentaire");

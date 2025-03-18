@@ -94,7 +94,7 @@ const Suggestions = () => {
         
         if (countError) throw countError;
 
-        // Corriger l'erreur TS en ne faisant pas de requête avec eq('count', 'exact')
+        // Récupérer tous les commentaires pour le comptage
         const { data: commentCounts, error: commentCountError } = await supabase
           .from('tool_comments')
           .select('tool_suggestion_id');
@@ -427,4 +427,3 @@ const Suggestions = () => {
 };
 
 export default Suggestions;
-
