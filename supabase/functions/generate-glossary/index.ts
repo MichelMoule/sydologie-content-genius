@@ -9,6 +9,10 @@ const endpoint = "https://sydo-chatgpt.openai.azure.com";
 const deploymentName = "gpt-4o-mini-2";
 const apiVersion = "2024-08-01-preview";
 
+// Configure PDF.js for server-side usage
+const pdfjsWorker = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.mjs");
+pdfjs.GlobalWorkerOptions.workerPort = new pdfjsWorker.PDFWorker();
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -29,9 +33,6 @@ serve(async (req) => {
     // Extract text from PDF
     console.log('Extracting text from PDF...');
     const pdfArrayBuffer = await pdfFile.arrayBuffer();
-    
-    // Initialize PDF.js
-    pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
     
     try {
       // Load the PDF document
@@ -161,3 +162,4 @@ serve(async (req) => {
     );
   }
 });
+
