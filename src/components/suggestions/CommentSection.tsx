@@ -29,6 +29,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [addingComment, setAddingComment] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -105,7 +106,28 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
     console.log("Tentative d'ajout d'un commentaire par l'utilisateur:", currentUser.id);
     console.log("Pour la suggestion:", toolSuggestionId);
     
+    setAddingComment(true);
+    
     try {
+      // Vérifier d'abord la session active
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error("Erreur de session:", sessionError);
+        toast.error("Problème d'authentification. Veuillez vous reconnecter.");
+        navigate("/auth");
+        return;
+      }
+      
+      if (!sessionData.session) {
+        console.error("Aucune session active");
+        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+        navigate("/auth");
+        return;
+      }
+      
+      console.log("Session vérifiée, utilisateur authentifié:", sessionData.session.user.id);
+      
       const commentData = {
         tool_suggestion_id: toolSuggestionId,
         user_id: currentUser.id,
@@ -121,7 +143,24 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
 
       if (error) {
         console.error("Erreur détaillée lors de l'insertion:", error);
-        throw error;
+        console.error("Code d'erreur:", error.code);
+        console.error("Message d'erreur:", error.message);
+        console.error("Détails:", error.details);
+        
+        if (error.code === "42501") {
+          toast.error("Erreur de permission: vous n'avez pas les droits nécessaires pour commenter. Vérifiez que vous êtes bien connecté.");
+          
+          // Tenter de se reconnecter
+          navigate("/auth");
+        } else if (error.code === "23503") {
+          toast.error("Erreur de référence: la suggestion n'existe plus ou l'utilisateur n'est pas valide");
+        } else if (error.code === "23514") {
+          toast.error("Erreur de validation: vérifiez le format de votre commentaire");
+        } else {
+          toast.error(`Erreur lors de l'ajout du commentaire: ${error.message || "erreur inconnue"}`);
+        }
+        
+        return;
       }
 
       console.log("Commentaire ajouté avec succès:", data);
@@ -174,7 +213,7 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
       
       // Afficher un message d'erreur plus détaillé
       if (error.code === "42501") {
-        toast.error("Erreur de permission: vous n'avez pas les droits nécessaires pour commenter");
+        toast.error("Erreur de permission: vous n'avez pas les droits nécessaires pour commenter. Vérifiez que vous êtes bien connecté.");
       } else if (error.code === "23503") {
         toast.error("Erreur de référence: la suggestion n'existe plus ou l'utilisateur n'est pas valide");
       } else if (error.code === "23514") {
@@ -182,6 +221,8 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
       } else {
         toast.error(`Erreur lors de l'ajout du commentaire: ${error.message || "erreur inconnue"}`);
       }
+    } finally {
+      setAddingComment(false);
     }
   };
 
@@ -267,11 +308,15 @@ const CommentSection = ({ toolSuggestionId, currentUser }: CommentSectionProps) 
         <div className="flex justify-end">
           <Button 
             onClick={handleAddComment}
-            disabled={!newComment.trim()}
+            disabled={!newComment.trim() || addingComment}
             className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white font-dmsans flex items-center gap-2"
           >
-            <Send size={16} />
-            Commenter
+            {addingComment ? (
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+            ) : (
+              <Send size={16} />
+            )}
+            {addingComment ? "Envoi..." : "Commenter"}
           </Button>
         </div>
       </div>
