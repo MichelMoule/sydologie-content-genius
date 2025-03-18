@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 
 const Auth = () => {
@@ -14,6 +14,7 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -51,7 +52,18 @@ const Auth = () => {
 
         if (error) throw error;
 
-        // If data.user exists and session is created, we can immediately log them in
+        if (data.user) {
+          const { error: prefsError } = await supabase
+            .from('email_preferences')
+            .insert([
+              { user_id: data.user.id, marketing_emails: marketingConsent }
+            ]);
+          
+          if (prefsError) {
+            console.error("Failed to save email preferences:", prefsError);
+          }
+        }
+
         if (data.user && data.session) {
           toast({
             title: "Inscription réussie !",
@@ -173,6 +185,23 @@ const Auth = () => {
             className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
           />
         </div>
+
+        {isSignUp && (
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="marketingConsent" 
+              checked={marketingConsent}
+              onCheckedChange={(checked) => setMarketingConsent(checked === true)}
+              className="border-[#82C8A0] data-[state=checked]:bg-[#1F5E40]"
+            />
+            <Label 
+              htmlFor="marketingConsent" 
+              className="text-sm text-muted-foreground cursor-pointer"
+            >
+              J'accepte de recevoir des emails concernant les nouveautés de Sydologie.ai
+            </Label>
+          </div>
+        )}
 
         {!isSignUp && (
           <div className="text-right">

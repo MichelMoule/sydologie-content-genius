@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,6 +36,7 @@ const Settings = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const [marketingEmails, setMarketingEmails] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -48,6 +50,19 @@ const Settings = () => {
         fullName: data.user.user_metadata?.full_name || "",
         email: data.user.email || "",
       });
+
+      // Get email preferences
+      const { data: prefsData, error } = await supabase
+        .from('email_preferences')
+        .select('marketing_emails')
+        .eq('user_id', data.user.id)
+        .single();
+
+      if (prefsData) {
+        setMarketingEmails(prefsData.marketing_emails);
+      } else if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error("Error fetching email preferences:", error);
+      }
     };
 
     checkUser();
@@ -67,6 +82,53 @@ const Settings = () => {
       toast({
         title: "Profil mis à jour",
         description: "Vos informations de profil ont été mises à jour avec succès.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailPreferencesUpdate = async (value: boolean) => {
+    setIsLoading(true);
+    try {
+      if (!user) return;
+
+      // Check if preference record exists
+      const { data: existingPref } = await supabase
+        .from('email_preferences')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      let error;
+      
+      if (existingPref) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from('email_preferences')
+          .update({ marketing_emails: value })
+          .eq('user_id', user.id);
+        error = updateError;
+      } else {
+        // Insert new record
+        const { error: insertError } = await supabase
+          .from('email_preferences')
+          .insert([{ user_id: user.id, marketing_emails: value }]);
+        error = insertError;
+      }
+
+      if (error) throw error;
+
+      setMarketingEmails(value);
+      toast({
+        title: "Préférences mises à jour",
+        description: "Vos préférences d'email ont été mises à jour avec succès.",
       });
     } catch (error: any) {
       toast({
@@ -181,6 +243,7 @@ const Settings = () => {
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="mb-6">
               <TabsTrigger value="profile" className="text-[#1F5E40]">Profil</TabsTrigger>
+              <TabsTrigger value="preferences" className="text-[#1F5E40]">Préférences</TabsTrigger>
               <TabsTrigger value="security" className="text-[#1F5E40]">Sécurité</TabsTrigger>
             </TabsList>
 
@@ -231,6 +294,35 @@ const Settings = () => {
                       {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
                     </Button>
                   </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="preferences">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-[#1F5E40]">Préférences d'emails</CardTitle>
+                  <CardDescription>
+                    Gérez les types d'emails que vous souhaitez recevoir.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-[#1F5E40]">Emails marketing</Label>
+                        <p className="text-xs text-muted-foreground">
+                          Recevoir des emails concernant les nouveautés de Sydologie.ai
+                        </p>
+                      </div>
+                      <Switch
+                        checked={marketingEmails}
+                        onCheckedChange={handleEmailPreferencesUpdate}
+                        disabled={isLoading}
+                        className="data-[state=checked]:bg-[#1F5E40]"
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
