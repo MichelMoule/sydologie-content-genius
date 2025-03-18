@@ -44,9 +44,13 @@ serve(async (req) => {
       extractedText = await file.text();
     } else if (fileType === 'docx') {
       // For .docx files, use mammoth to convert to text
-      const arrayBuffer = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer });
+      const buffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ buffer });
       extractedText = result.value;
+    }
+
+    if (!extractedText) {
+      throw new Error('Impossible d\'extraire le texte du fichier');
     }
 
     console.log(`Extracted ${extractedText.length} characters of text`);
@@ -154,3 +158,4 @@ serve(async (req) => {
     );
   }
 });
+
