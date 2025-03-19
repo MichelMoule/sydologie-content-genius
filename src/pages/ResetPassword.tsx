@@ -9,6 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Footer from "@/components/Footer";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -20,15 +22,48 @@ const ResetPassword = () => {
     confirmPassword: "",
   });
   const [token, setToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Extract token from URL or hash fragment
+    // Vérifier si une erreur est présente dans l'URL
+    const checkForErrors = () => {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(location.search);
+      
+      // Vérifier le hash fragment pour les erreurs
+      if (hash && hash.includes('error=')) {
+        const errorParam = hash.split('error=')[1]?.split('&')[0];
+        const errorDesc = hash.includes('error_description=') 
+          ? decodeURIComponent(hash.split('error_description=')[1]?.split('&')[0]) 
+          : null;
+          
+        if (errorParam === 'access_denied' || errorParam === 'otp_expired') {
+          setError(errorDesc || "Le lien de réinitialisation a expiré ou est invalide. Veuillez demander un nouveau lien.");
+          return true;
+        }
+      }
+      
+      // Vérifier les paramètres d'URL pour les erreurs
+      if (searchParams.get('error')) {
+        const errorParam = searchParams.get('error');
+        const errorDesc = searchParams.get('error_description');
+        
+        if (errorParam === 'access_denied' || errorParam === 'otp_expired') {
+          setError(errorDesc || "Le lien de réinitialisation a expiré ou est invalide. Veuillez demander un nouveau lien.");
+          return true;
+        }
+      }
+      
+      return false;
+    };
+
+    // Extraire le token de l'URL ou du hash fragment
     const getTokenFromUrl = () => {
-      // First try to get from query parameters
+      // D'abord essayer dans les paramètres de requête
       const searchParams = new URLSearchParams(location.search);
       const urlToken = searchParams.get("token");
       
-      // If not in query parameters, try hash fragment
+      // Si pas dans les paramètres, essayer dans le hash fragment
       if (urlToken) {
         return urlToken;
       }
@@ -41,17 +76,19 @@ const ResetPassword = () => {
       return null;
     };
     
+    // Vérifier d'abord les erreurs
+    const hasError = checkForErrors();
+    if (hasError) {
+      return; // Ne pas continuer si une erreur est détectée
+    }
+    
+    // Sinon, essayer d'extraire le token
     const extractedToken = getTokenFromUrl();
     
     if (extractedToken) {
       setToken(extractedToken);
     } else {
-      toast({
-        variant: "destructive",
-        title: "Lien invalide",
-        description: "Ce lien de réinitialisation n'est pas valide ou a expiré.",
-      });
-      navigate("/auth");
+      setError("Ce lien de réinitialisation n'est pas valide ou a expiré. Veuillez demander un nouveau lien.");
     }
   }, [location, navigate, toast]);
 
@@ -107,6 +144,10 @@ const ResetPassword = () => {
     }
   };
 
+  const handleRequestNewLink = () => {
+    navigate("/auth", { state: { showForgotPassword: true } });
+  };
+
   return (
     <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
@@ -116,45 +157,60 @@ const ResetPassword = () => {
             <CardHeader>
               <CardTitle>Réinitialisation du mot de passe</CardTitle>
               <CardDescription>
-                Veuillez saisir votre nouveau mot de passe.
+                {error ? "Une erreur est survenue" : "Veuillez saisir votre nouveau mot de passe."}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handlePasswordReset} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">Nouveau mot de passe</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, newPassword: e.target.value })
-                    }
-                    required
-                  />
+              {error ? (
+                <div className="space-y-4">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                  <Button 
+                    onClick={handleRequestNewLink}
+                    className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
+                  >
+                    Demander un nouveau lien
+                  </Button>
                 </div>
+              ) : (
+                <form onSubmit={handlePasswordReset} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, newPassword: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, confirmPassword: e.target.value })
-                    }
-                    required
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
 
-                <Button
-                  type="submit"
-                  className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
-                </Button>
-              </form>
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
+                  </Button>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>

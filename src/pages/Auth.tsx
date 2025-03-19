@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,7 @@ import Navbar from "@/components/Navbar";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -22,13 +22,18 @@ const Auth = () => {
     fullName: "",
   });
 
+  useEffect(() => {
+    if (location.state?.showForgotPassword) {
+      setIsForgotPassword(true);
+    }
+  }, [location.state]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (isForgotPassword) {
-        // Use Supabase's default password reset
         const { error } = await supabase.auth.resetPasswordForEmail(
           formData.email,
           { redirectTo: `${window.location.origin}/reset-password` }
