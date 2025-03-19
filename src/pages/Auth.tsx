@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,10 +24,31 @@ const Auth = () => {
   });
 
   useEffect(() => {
-    if (location.state?.showForgotPassword) {
-      setIsForgotPassword(true);
-    }
-  }, [location.state]);
+    // Vérifier si une erreur est présente dans l'URL
+    const checkForErrors = () => {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(location.search);
+      
+      // Vérifier si nous venons de reset-password avec showForgotPassword
+      if (location.state?.showForgotPassword) {
+        setIsForgotPassword(true);
+        // Pré-remplir l'email s'il a été fourni
+        if (location.state.email) {
+          setFormData(prev => ({ ...prev, email: location.state.email }));
+        }
+        return;
+      }
+      
+      // Si nous avons des erreurs dans l'URL, nettoyer l'URL
+      if ((hash && (hash.includes('error=') || hash.includes('error_description='))) || 
+          (searchParams.get('error') || searchParams.get('error_description'))) {
+        // Remplacer l'URL sans les paramètres d'erreur
+        window.history.replaceState({}, document.title, "/auth");
+      }
+    };
+    
+    checkForErrors();
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

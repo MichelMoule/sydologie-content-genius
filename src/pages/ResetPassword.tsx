@@ -79,6 +79,8 @@ const ResetPassword = () => {
     // Vérifier d'abord les erreurs
     const hasError = checkForErrors();
     if (hasError) {
+      // Nettoyer l'URL en cas d'erreur
+      window.history.replaceState({}, document.title, "/reset-password");
       return; // Ne pas continuer si une erreur est détectée
     }
     
@@ -87,6 +89,8 @@ const ResetPassword = () => {
     
     if (extractedToken) {
       setToken(extractedToken);
+      // Nettoyer l'URL après avoir extrait le token
+      window.history.replaceState({}, document.title, "/reset-password");
     } else {
       setError("Ce lien de réinitialisation n'est pas valide ou a expiré. Veuillez demander un nouveau lien.");
     }
@@ -145,7 +149,14 @@ const ResetPassword = () => {
   };
 
   const handleRequestNewLink = () => {
-    navigate("/auth", { state: { showForgotPassword: true } });
+    // Rediriger vers la page d'authentification avec un état indiquant d'afficher le formulaire de récupération
+    navigate("/auth", { 
+      state: { 
+        showForgotPassword: true,
+        // On peut aussi passer l'email si on l'a, pour pré-remplir le formulaire
+        email: "" 
+      } 
+    });
   };
 
   return (
