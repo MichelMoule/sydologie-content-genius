@@ -69,6 +69,10 @@ const ResetPassword = () => {
       }
       
       const hash = window.location.hash;
+      if (hash && hash.includes('access_token=')) {
+        return hash.split('access_token=')[1]?.split('&')[0];
+      }
+      
       if (hash && hash.includes('token=')) {
         return hash.split('token=')[1]?.split('&')[0];
       }
@@ -91,6 +95,26 @@ const ResetPassword = () => {
       setToken(extractedToken);
       // Nettoyer l'URL après avoir extrait le token
       window.history.replaceState({}, document.title, "/reset-password");
+      
+      // Vérifier que nous sommes bien connectés avec ce token
+      const checkSession = async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data.session) {
+          // Si nous n'avons pas de session, essayer de se connecter avec le token
+          try {
+            await supabase.auth.setSession({
+              access_token: extractedToken,
+              refresh_token: extractedToken,
+            });
+            console.log("Session établie avec le token");
+          } catch (sessionError) {
+            console.error("Erreur lors de l'établissement de la session:", sessionError);
+            setError("Impossible d'établir une session. Veuillez demander un nouveau lien de réinitialisation.");
+          }
+        }
+      };
+      
+      checkSession();
     } else {
       setError("Ce lien de réinitialisation n'est pas valide ou a expiré. Veuillez demander un nouveau lien.");
     }
@@ -110,18 +134,21 @@ const ResetPassword = () => {
       return;
     }
 
-    if (!token) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Jeton de réinitialisation manquant.",
-      });
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      // Use Supabase's built-in password update
+      // Vérifier si nous avons une session active
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData.session) {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Votre session a expiré. Veuillez demander un nouveau lien de réinitialisation.",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Utiliser la méthode updateUser de Supabase
       const { error } = await supabase.auth.updateUser({
         password: passwordData.newPassword,
       });
@@ -133,7 +160,7 @@ const ResetPassword = () => {
         description: "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.",
       });
 
-      // Redirect to login page after successful password reset
+      // Rediriger vers la page de connexion après une réinitialisation réussie
       setTimeout(() => {
         navigate("/auth");
       }, 2000);
@@ -141,8 +168,18 @@ const ResetPassword = () => {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: error.message,
+        description: error.message || "Une erreur est survenue lors de la réinitialisation du mot de passe.",
       });
+      
+      // Si l'erreur est liée à la session, proposer un nouveau lien
+      if (error.message && (
+        error.message.includes("session") || 
+        error.message.includes("JWT") || 
+        error.message.includes("token") || 
+        error.message.includes("expired")
+      )) {
+        setError("Votre session a expiré. Veuillez demander un nouveau lien de réinitialisation.");
+      }
     } finally {
       setIsLoading(false);
     }
