@@ -25,5 +25,11 @@
     "button": "Proposer un outil",
     "dialogTitle": "Proposer un outil",
     "dialogDescription": "Suggérez un outil qui pourrait être développé sur sydologie.ai"
+  },
+  "tools": {
+    "title": "Nos outils",
+    "subtitle": "Découvrez nos outils IA pour l'éducation",
+    "sectionTitle": "Tous les outils",
+    "sectionDescription": "Explorez notre collection d'outils IA pour améliorer vos méthodes d'enseignement"
   }
 }

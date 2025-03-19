@@ -34,6 +34,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
   useEffect(() => {
     localStorage.setItem("language", language);
+    // Force re-render of components when language changes
+    document.documentElement.setAttribute("lang", language);
   }, [language]);
 
   const getTranslation = (): Translations => {
@@ -49,6 +51,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       if (value && value[k]) {
         value = value[k];
       } else {
+        console.warn(`Translation key not found: ${key}`);
         return key;
       }
     }

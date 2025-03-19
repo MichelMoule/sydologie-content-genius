@@ -25,5 +25,11 @@
     "button": "Suggest a tool",
     "dialogTitle": "Suggest a tool",
     "dialogDescription": "Suggest a tool that could be developed on sydologie.ai"
+  },
+  "tools": {
+    "title": "Our tools",
+    "subtitle": "Discover our AI tools for education",
+    "sectionTitle": "All tools",
+    "sectionDescription": "Explore our collection of AI tools to enhance your teaching methods"
   }
 }
