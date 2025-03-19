@@ -25,21 +25,19 @@ const ResetPassword = () => {
     // Extract token from URL
     const searchParams = new URLSearchParams(location.search);
     const urlToken = searchParams.get("token");
+    const hash = window.location.hash;
     
     if (urlToken) {
       setToken(urlToken);
-    } else {
+    } else if (hash && hash.includes('token=')) {
       // Check for token in hash (for backward compatibility)
-      const hash = window.location.hash;
-      if (hash && hash.includes('token=')) {
-        const hashToken = hash.split('token=')[1]?.split('&')[0];
-        if (hashToken) {
-          setToken(hashToken);
-        }
+      const hashToken = hash.split('token=')[1]?.split('&')[0];
+      if (hashToken) {
+        setToken(hashToken);
       }
     }
     
-    if (!urlToken && !hash.includes('token=')) {
+    if (!urlToken && !(hash && hash.includes('token='))) {
       toast({
         variant: "destructive",
         title: "Lien invalide",
