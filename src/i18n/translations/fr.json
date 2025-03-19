@@ -63,7 +63,11 @@
     "subtitle": "Découvrez nos outils IA pour l'éducation",
     "sectionTitle": "Tous les outils",
     "sectionDescription": "Explorez notre collection d'outils IA pour améliorer vos méthodes d'enseignement",
-    "backToTools": "Outils"
+    "backToTools": "Outils",
+    "sections": {
+      "conception": "Nos outils de conception",
+      "analysis": "Nos outils d'analyse"
+    }
   },
   "contact": {
     "title": "CONTACT",
@@ -104,5 +108,125 @@
     "cardCount": "Carte {current} sur {total}",
     "previous": "Précédent",
     "next": "Suivant"
+  },
+  "notFound": {
+    "message": "Oups ! Page non trouvée",
+    "returnHome": "Retour à l'accueil"
+  },
+  "resetPassword": {
+    "title": "Réinitialisation du mot de passe",
+    "description": "Veuillez saisir votre nouveau mot de passe.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "reset": "Réinitialiser le mot de passe",
+    "resetting": "Réinitialisation...",
+    "redirecting": "Redirection...",
+    "unauthorized": {
+      "title": "Accès non autorisé",
+      "description": "Cette page est accessible uniquement via un lien de récupération de mot de passe."
+    },
+    "error": {
+      "title": "Erreur",
+      "passwordMismatch": "Les mots de passe ne correspondent pas."
+    },
+    "success": {
+      "title": "Mot de passe mis à jour",
+      "description": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter."
+    }
+  },
+  "settings": {
+    "title": "Paramètres du compte",
+    "tabs": {
+      "profile": "Profil",
+      "preferences": "Préférences",
+      "security": "Sécurité"
+    },
+    "profile": {
+      "title": "Informations du profil",
+      "description": "Mettez à jour vos informations personnelles.",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Votre nom complet",
+      "email": "Email",
+      "emailCannotChange": "L'email ne peut pas être modifié.",
+      "updating": "Mise à jour...",
+      "updateProfile": "Mettre à jour le profil",
+      "success": "Profil mis à jour avec succès."
+    },
+    "preferences": {
+      "title": "Préférences d'emails",
+      "description": "Gérez les types d'emails que vous souhaitez recevoir.",
+      "marketingEmails": "Emails marketing",
+      "marketingDescription": "Recevoir des emails concernant les nouveautés de Sydologie.ai",
+      "success": "Préférences mises à jour avec succès."
+    },
+    "security": {
+      "password": {
+        "title": "Changer de mot de passe",
+        "description": "Mettez à jour votre mot de passe pour sécuriser votre compte.",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "updating": "Mise à jour...",
+        "updatePassword": "Mettre à jour le mot de passe",
+        "success": "Mot de passe mis à jour avec succès."
+      },
+      "deleteAccount": {
+        "title": "Supprimer le compte",
+        "description": "Cette action est irréversible et supprimera définitivement votre compte et toutes vos données.",
+        "button": "Supprimer mon compte",
+        "confirm": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+        "confirmDescription": "Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "confirmDelete": "Confirmer la suppression",
+        "success": "Compte supprimé avec succès."
+      },
+      "logout": {
+        "title": "Déconnexion",
+        "description": "Déconnectez-vous de votre compte.",
+        "button": "Se déconnecter",
+        "success": "Déconnexion réussie."
+      }
+    }
+  },
+  "videoScript": {
+    "title": "Scrypto-vidéo",
+    "subtitle": "Créez facilement des scripts pour vos vidéos pédagogiques",
+    "description1": "Utilisez notre outil pour générer automatiquement des scripts de vidéos éducatives basés sur vos besoins spécifiques.",
+    "description2": "Notre système d'IA vous aide à structurer votre contenu avec des sections claires, du texte de narration et des suggestions visuelles.",
+    "form": {
+      "generating": "Génération en cours...",
+      "download": "Télécharger PDF"
+    }
+  },
+  "quiz": {
+    "title": "QUIIIIIZ?",
+    "subtitle": "Vous souhaitez créer rapidement un quiz pour évaluer vos apprenants ?",
+    "description1": "Utilisez notre outil pour générer automatiquement des quiz pertinents basés sur vos contenus de formation.",
+    "description2": "Notre système d'IA vous aide à créer des questions variées et adaptées à votre contenu.",
+    "form": {
+      "generating": "Génération en cours...",
+      "download": "Télécharger PDF"
+    }
+  },
+  "program": {
+    "title": "ProgrAImme",
+    "subtitle": "Créez rapidement des programmes pédagogiques pour vos formations",
+    "form": {
+      "generating": "Génération en cours...",
+      "download": "Télécharger PDF"
+    }
+  },
+  "formations": {
+    "title": "Nos Formations",
+    "subtitle": "Découvrez nos formations dédiées à l'IA éducative",
+    "noFormations": "Aucune formation disponible pour le moment",
+    "loading": "Chargement des formations...",
+    "error": "Erreur lors du chargement des formations",
+    "details": "Voir les détails",
+    "date": "Date",
+    "duration": "Durée",
+    "price": "Prix",
+    "location": "Lieu",
+    "register": "S'inscrire"
   }
 }

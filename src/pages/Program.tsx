@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -12,9 +13,11 @@ import { ProgramAnalysis } from "@/components/program/ProgramAnalysis";
 import { ProgramData } from "@/components/program/types";
 import { generateProgramPDF } from "@/components/program/ProgramPDF";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/hooks/use-language";
 
 const Program = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isGenerating, setIsGenerating] = useState(false);
   const [programData, setProgramData] = useState<ProgramData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -32,8 +35,8 @@ const Program = () => {
       if (!user) {
         toast({
           variant: "destructive",
-          title: "Erreur",
-          description: "Vous devez être connecté pour générer un programme pédagogique."
+          title: t("error"),
+          description: t("program.loginRequired")
         });
         return;
       }
@@ -44,8 +47,8 @@ const Program = () => {
         if (file.size > 5 * 1024 * 1024) {
           toast({
             variant: "destructive",
-            title: "Erreur",
-            description: "Le fichier est trop volumineux. Limite: 5MB."
+            title: t("error"),
+            description: t("program.fileTooLarge")
           });
           setIsGenerating(false);
           return;
@@ -54,8 +57,8 @@ const Program = () => {
         if (!file.name.toLowerCase().endsWith('.docx')) {
           toast({
             variant: "destructive",
-            title: "Format non supporté",
-            description: "Veuillez sélectionner un fichier Word (.docx)"
+            title: t("program.unsupportedFormat"),
+            description: t("program.fileTypeError")
           });
           setIsGenerating(false);
           return;
@@ -78,15 +81,15 @@ const Program = () => {
       setProgramData(programResult.program);
       setIsDialogOpen(true);
       toast({
-        title: "Succès",
-        description: "Votre programme pédagogique a été généré avec succès."
+        title: t("success"),
+        description: t("program.successMessage")
       });
     } catch (error) {
       console.error("Error generating program:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la génération du programme pédagogique."
+        title: t("error"),
+        description: t("program.errorMessage")
       });
     } finally {
       setIsGenerating(false);
@@ -118,8 +121,8 @@ const Program = () => {
     if (!programData) return;
     generateProgramPDF(programData, programName);
     toast({
-      title: "PDF généré avec succès",
-      description: "Le téléchargement devrait commencer automatiquement."
+      title: t("success"),
+      description: t("program.pdfSuccess")
     });
   };
 
@@ -129,14 +132,14 @@ const Program = () => {
       
       <div className="container mx-auto px-4 py-8 flex-grow">
         <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
-          &lt; Outils
+          &lt; {t("tools.backToTools")}
         </Link>
         
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
-            <h1 className="text-6xl font-bold font-dmsans">ProgrAImme</h1>
+            <h1 className="text-6xl font-bold font-dmsans">{t("program.title")}</h1>
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
-              Créez rapidement des programmes pédagogiques pour vos formations
+              {t("program.subtitle")}
             </h2>
           </div>
           
@@ -153,7 +156,7 @@ const Program = () => {
                 {programData && (
                   <Button variant="outline" size="sm" className="ml-4 font-dmsans" onClick={handleDownloadPDF}>
                     <Download className="mr-2 h-4 w-4" />
-                    Télécharger PDF
+                    {t("program.form.download")}
                   </Button>
                 )}
               </DialogTitle>

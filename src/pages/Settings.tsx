@@ -20,10 +20,12 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
+import { useLanguage } from "@/hooks/use-language";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -80,13 +82,13 @@ const Settings = () => {
       if (error) throw error;
 
       toast({
-        title: "Profil mis à jour",
-        description: "Vos informations de profil ont été mises à jour avec succès.",
+        title: t("settings.profile.success"),
+        description: t("settings.profile.success"),
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
+        title: t("error"),
         description: error.message,
       });
     } finally {
@@ -127,13 +129,13 @@ const Settings = () => {
 
       setMarketingEmails(value);
       toast({
-        title: "Préférences mises à jour",
-        description: "Vos préférences d'email ont été mises à jour avec succès.",
+        title: t("settings.preferences.success"),
+        description: t("settings.preferences.success"),
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
+        title: t("error"),
         description: error.message,
       });
     } finally {
@@ -148,8 +150,8 @@ const Settings = () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas.",
+        title: t("error"),
+        description: t("settings.security.password.mismatchError"),
       });
       setIsLoading(false);
       return;
@@ -163,8 +165,8 @@ const Settings = () => {
       if (error) throw error;
 
       toast({
-        title: "Mot de passe mis à jour",
-        description: "Votre mot de passe a été mis à jour avec succès.",
+        title: t("settings.security.password.success"),
+        description: t("settings.security.password.success"),
       });
 
       setPasswordData({
@@ -175,7 +177,7 @@ const Settings = () => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
+        title: t("error"),
         description: error.message,
       });
     } finally {
@@ -188,13 +190,13 @@ const Settings = () => {
       await supabase.auth.signOut();
       navigate("/");
       toast({
-        title: "Déconnexion réussie",
-        description: "Vous avez été déconnecté avec succès.",
+        title: t("settings.security.logout.success"),
+        description: t("settings.security.logout.success"),
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
+        title: t("error"),
         description: error.message,
       });
     }
@@ -210,8 +212,8 @@ const Settings = () => {
       await supabase.auth.signOut();
       
       toast({
-        title: "Compte supprimé",
-        description: "Votre compte a été supprimé avec succès.",
+        title: t("settings.security.deleteAccount.success"),
+        description: t("settings.security.deleteAccount.success"),
       });
       
       navigate("/");
@@ -220,8 +222,8 @@ const Settings = () => {
       
       toast({
         variant: "destructive",
-        title: "Erreur lors de la suppression",
-        description: "Une erreur est survenue lors de la suppression de votre compte. Veuillez contacter le support.",
+        title: t("error"),
+        description: t("settings.security.deleteAccount.error"),
       });
     } finally {
       setIsLoading(false);
@@ -230,7 +232,7 @@ const Settings = () => {
   };
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center font-dmsans">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-dmsans">{t("loading")}</div>;
   }
 
   return (
@@ -238,27 +240,27 @@ const Settings = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-[#1F5E40]">Paramètres du compte</h1>
+          <h1 className="text-3xl font-bold mb-6 text-[#1F5E40]">{t("settings.title")}</h1>
 
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="profile" className="text-[#1F5E40]">Profil</TabsTrigger>
-              <TabsTrigger value="preferences" className="text-[#1F5E40]">Préférences</TabsTrigger>
-              <TabsTrigger value="security" className="text-[#1F5E40]">Sécurité</TabsTrigger>
+              <TabsTrigger value="profile" className="text-[#1F5E40]">{t("settings.tabs.profile")}</TabsTrigger>
+              <TabsTrigger value="preferences" className="text-[#1F5E40]">{t("settings.tabs.preferences")}</TabsTrigger>
+              <TabsTrigger value="security" className="text-[#1F5E40]">{t("settings.tabs.security")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-[#1F5E40]">Informations du profil</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">{t("settings.profile.title")}</CardTitle>
                   <CardDescription>
-                    Mettez à jour vos informations personnelles.
+                    {t("settings.profile.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleProfileUpdate} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="fullName" className="text-[#1F5E40]">Nom complet</Label>
+                      <Label htmlFor="fullName" className="text-[#1F5E40]">{t("settings.profile.fullName")}</Label>
                       <Input
                         id="fullName"
                         type="text"
@@ -266,13 +268,13 @@ const Settings = () => {
                         onChange={(e) =>
                           setProfileData({ ...profileData, fullName: e.target.value })
                         }
-                        placeholder="Votre nom complet"
+                        placeholder={t("settings.profile.fullNamePlaceholder")}
                         className="border-[#82C8A0] focus-visible:ring-[#1F5E40]"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[#1F5E40]">Email</Label>
+                      <Label htmlFor="email" className="text-[#1F5E40]">{t("settings.profile.email")}</Label>
                       <Input
                         id="email"
                         type="email"
@@ -282,7 +284,7 @@ const Settings = () => {
                         className="bg-gray-50"
                       />
                       <p className="text-xs text-muted-foreground">
-                        L'email ne peut pas être modifié.
+                        {t("settings.profile.emailCannotChange")}
                       </p>
                     </div>
 
@@ -291,7 +293,7 @@ const Settings = () => {
                       className="bg-[#82C8A0] hover:bg-[#1F5E40] text-white"
                       disabled={isLoading}
                     >
-                      {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
+                      {isLoading ? t("settings.profile.updating") : t("settings.profile.updateProfile")}
                     </Button>
                   </form>
                 </CardContent>
@@ -301,18 +303,18 @@ const Settings = () => {
             <TabsContent value="preferences">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-[#1F5E40]">Préférences d'emails</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">{t("settings.preferences.title")}</CardTitle>
                   <CardDescription>
-                    Gérez les types d'emails que vous souhaitez recevoir.
+                    {t("settings.preferences.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label className="text-[#1F5E40]">Emails marketing</Label>
+                        <Label className="text-[#1F5E40]">{t("settings.preferences.marketingEmails")}</Label>
                         <p className="text-xs text-muted-foreground">
-                          Recevoir des emails concernant les nouveautés de Sydologie.ai
+                          {t("settings.preferences.marketingDescription")}
                         </p>
                       </div>
                       <Switch
@@ -330,15 +332,15 @@ const Settings = () => {
             <TabsContent value="security">
               <Card className="mb-6">
                 <CardHeader>
-                  <CardTitle className="text-[#1F5E40]">Changer de mot de passe</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">{t("settings.security.password.title")}</CardTitle>
                   <CardDescription>
-                    Mettez à jour votre mot de passe pour sécuriser votre compte.
+                    {t("settings.security.password.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handlePasswordUpdate} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="newPassword" className="text-[#1F5E40]">Nouveau mot de passe</Label>
+                      <Label htmlFor="newPassword" className="text-[#1F5E40]">{t("settings.security.password.newPassword")}</Label>
                       <Input
                         id="newPassword"
                         type="password"
@@ -352,7 +354,7 @@ const Settings = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-[#1F5E40]">Confirmer le mot de passe</Label>
+                      <Label htmlFor="confirmPassword" className="text-[#1F5E40]">{t("settings.security.password.confirmPassword")}</Label>
                       <Input
                         id="confirmPassword"
                         type="password"
@@ -370,7 +372,7 @@ const Settings = () => {
                       className="bg-[#82C8A0] hover:bg-[#1F5E40] text-white"
                       disabled={isLoading}
                     >
-                      {isLoading ? "Mise à jour..." : "Mettre à jour le mot de passe"}
+                      {isLoading ? t("settings.security.password.updating") : t("settings.security.password.updatePassword")}
                     </Button>
                   </form>
                 </CardContent>
@@ -378,9 +380,9 @@ const Settings = () => {
 
               <Card className="mb-6">
                 <CardHeader>
-                  <CardTitle className="text-[#1F5E40]">Supprimer le compte</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">{t("settings.security.deleteAccount.title")}</CardTitle>
                   <CardDescription>
-                    Cette action est irréversible et supprimera définitivement votre compte et toutes vos données.
+                    {t("settings.security.deleteAccount.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -390,14 +392,14 @@ const Settings = () => {
                         variant="destructive"
                         className="bg-sydologie-red hover:bg-sydologie-red/90"
                       >
-                        Supprimer mon compte
+                        {t("settings.security.deleteAccount.button")}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="font-dmsans">
                       <DialogHeader>
-                        <DialogTitle className="text-[#1F5E40] font-dmsans">Êtes-vous sûr de vouloir supprimer votre compte ?</DialogTitle>
+                        <DialogTitle className="text-[#1F5E40] font-dmsans">{t("settings.security.deleteAccount.confirm")}</DialogTitle>
                         <DialogDescription className="font-dmsans">
-                          Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.
+                          {t("settings.security.deleteAccount.confirmDescription")}
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter>
@@ -407,7 +409,7 @@ const Settings = () => {
                           disabled={isLoading}
                           className="border-[#82C8A0] text-[#1F5E40] font-dmsans"
                         >
-                          Annuler
+                          {t("settings.security.deleteAccount.cancel")}
                         </Button>
                         <Button 
                           variant="destructive"
@@ -415,7 +417,7 @@ const Settings = () => {
                           disabled={isLoading}
                           className="bg-sydologie-red hover:bg-sydologie-red/90 font-dmsans"
                         >
-                          {isLoading ? "Suppression..." : "Confirmer la suppression"}
+                          {isLoading ? t("settings.security.deleteAccount.deleting") : t("settings.security.deleteAccount.confirmDelete")}
                         </Button>
                       </DialogFooter>
                     </DialogContent>
@@ -425,9 +427,9 @@ const Settings = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-[#1F5E40]">Déconnexion</CardTitle>
+                  <CardTitle className="text-[#1F5E40]">{t("settings.security.logout.title")}</CardTitle>
                   <CardDescription>
-                    Déconnectez-vous de votre compte.
+                    {t("settings.security.logout.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -436,7 +438,7 @@ const Settings = () => {
                     onClick={handleLogout}
                     className="border-[#82C8A0] text-[#1F5E40] hover:bg-[#82C8A0]/10"
                   >
-                    Se déconnecter
+                    {t("settings.security.logout.button")}
                   </Button>
                 </CardContent>
               </Card>

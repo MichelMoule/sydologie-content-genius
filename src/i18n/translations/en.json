@@ -63,7 +63,11 @@
     "subtitle": "Discover our AI tools for education",
     "sectionTitle": "All tools",
     "sectionDescription": "Explore our collection of AI tools to enhance your teaching methods",
-    "backToTools": "Tools"
+    "backToTools": "Tools",
+    "sections": {
+      "conception": "Our Design Tools",
+      "analysis": "Our Analysis Tools"
+    }
   },
   "contact": {
     "title": "CONTACT",
@@ -104,5 +108,125 @@
     "cardCount": "Card {current} of {total}",
     "previous": "Previous",
     "next": "Next"
+  },
+  "notFound": {
+    "message": "Oops! Page not found",
+    "returnHome": "Return to Home"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "description": "Please enter your new password.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "reset": "Reset password",
+    "resetting": "Resetting...",
+    "redirecting": "Redirecting...",
+    "unauthorized": {
+      "title": "Unauthorized access",
+      "description": "This page is only accessible via a password recovery link."
+    },
+    "error": {
+      "title": "Error",
+      "passwordMismatch": "Passwords do not match."
+    },
+    "success": {
+      "title": "Password updated",
+      "description": "Your password has been successfully reset. You can now log in."
+    }
+  },
+  "settings": {
+    "title": "Account Settings",
+    "tabs": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "security": "Security"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your personal information.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Email",
+      "emailCannotChange": "Email cannot be changed.",
+      "updating": "Updating...",
+      "updateProfile": "Update profile",
+      "success": "Profile updated successfully."
+    },
+    "preferences": {
+      "title": "Email Preferences",
+      "description": "Manage what types of emails you receive.",
+      "marketingEmails": "Marketing emails",
+      "marketingDescription": "Receive emails about Sydologie.ai updates and news",
+      "success": "Preferences updated successfully."
+    },
+    "security": {
+      "password": {
+        "title": "Change Password",
+        "description": "Update your password to secure your account.",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "updating": "Updating...",
+        "updatePassword": "Update password",
+        "success": "Password updated successfully."
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "This action is irreversible and will permanently delete your account and all your data.",
+        "button": "Delete my account",
+        "confirm": "Are you sure you want to delete your account?",
+        "confirmDescription": "This action is irreversible. All your data will be permanently removed from our servers.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "confirmDelete": "Confirm deletion",
+        "success": "Account deleted successfully."
+      },
+      "logout": {
+        "title": "Logout",
+        "description": "Log out of your account.",
+        "button": "Log out",
+        "success": "Successfully logged out."
+      }
+    }
+  },
+  "videoScript": {
+    "title": "ScryptoVideo",
+    "subtitle": "Easily create scripts for your educational videos",
+    "description1": "Use our tool to automatically generate scripts for educational videos based on your specific needs.",
+    "description2": "Our AI system helps you structure your content with clear sections, narration text, and visual suggestions.",
+    "form": {
+      "generating": "Generating...",
+      "download": "Download PDF"
+    }
+  },
+  "quiz": {
+    "title": "QUIIIIIZ?",
+    "subtitle": "Want to quickly create a quiz to evaluate your learners?",
+    "description1": "Use our tool to automatically generate relevant quizzes based on your training content.",
+    "description2": "Our AI system helps you create varied questions adapted to your content.",
+    "form": {
+      "generating": "Generating...",
+      "download": "Download PDF"
+    }
+  },
+  "program": {
+    "title": "ProgrAImme",
+    "subtitle": "Quickly create educational programs for your trainings",
+    "form": {
+      "generating": "Generating...",
+      "download": "Download PDF"
+    }
+  },
+  "formations": {
+    "title": "Our Trainings",
+    "subtitle": "Discover our training courses dedicated to educational AI",
+    "noFormations": "No trainings available at the moment",
+    "loading": "Loading trainings...",
+    "error": "Error loading trainings",
+    "details": "See details",
+    "date": "Date",
+    "duration": "Duration",
+    "price": "Price",
+    "location": "Location",
+    "register": "Register"
   }
 }
