@@ -1,0 +1,29 @@
+
+{
+  "navbar": {
+    "tools": "Tools",
+    "trainings": "Trainings",
+    "suggestions": "Suggestions",
+    "contact": "Contact us",
+    "settings": "Settings",
+    "login": "Log in",
+    "logout": "Log out"
+  },
+  "suggestions": {
+    "upvote": "votes",
+    "comment": "comment",
+    "comments": "comments",
+    "hide": "hide",
+    "show": "show",
+    "loginToVote": "You must be logged in to vote",
+    "voteError": "Error during vote",
+    "user": "User"
+  },
+  "emptySuggestions": {
+    "title": "No suggestions yet",
+    "subtitle": "Be the first to suggest a tool!",
+    "button": "Suggest a tool",
+    "dialogTitle": "Suggest a tool",
+    "dialogDescription": "Suggest a tool that could be developed on sydologie.ai"
+  }
+}

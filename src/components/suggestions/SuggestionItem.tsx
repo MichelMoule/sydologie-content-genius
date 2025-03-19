@@ -8,6 +8,7 @@ import CommentSection from "@/components/suggestions/CommentSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/hooks/use-language";
 
 type ToolSuggestion = {
   id: string;
@@ -36,6 +37,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
   const [expandedComment, setExpandedComment] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const getScore = (suggestion: ToolSuggestion) => {
     return suggestion.upvotes_count;
@@ -43,7 +45,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
 
   const handleVote = async (suggestionId: string, voteType: 'up') => {
     if (!currentUser) {
-      toast.error('Vous devez être connecté pour voter');
+      toast.error(t('suggestions.loginToVote'));
       navigate('/auth');
       return;
     }
@@ -103,7 +105,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
       }
     } catch (error) {
       console.error('Erreur lors du vote:', error);
-      toast.error('Erreur lors du vote');
+      toast.error(t('suggestions.voteError'));
     }
   };
 
@@ -133,7 +135,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
           <div className="flex flex-wrap md:flex-nowrap items-center justify-between md:justify-end gap-2 md:gap-4 mt-2 md:mt-0">
             <div className="flex items-center gap-1 text-xs md:text-sm text-gray-600 font-dmsans">
               <User size={isMobile ? 12 : 14} />
-              {suggestion.username || "Utilisateur"}
+              {suggestion.username || t('suggestions.user')}
             </div>
             
             <Badge className={`
@@ -176,8 +178,8 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
           className="mt-2 text-[#9b87f5] hover:text-[#8B5CF6] hover:bg-transparent p-0 h-auto font-dmsans flex items-center gap-1 text-xs md:text-sm"
         >
           <MessageCircle size={isMobile ? 14 : 16} />
-          {suggestion.comments_count || 0} commentaire{suggestion.comments_count !== 1 ? 's' : ''}
-          {expandedComment ? ' (cacher)' : ' (afficher)'}
+          {suggestion.comments_count || 0} {(suggestion.comments_count || 0) !== 1 ? t('suggestions.comments') : t('suggestions.comment')}
+          {expandedComment ? ` (${t('suggestions.hide')})` : ` (${t('suggestions.show')})`}
         </Button>
       </div>
       

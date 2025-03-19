@@ -1,0 +1,29 @@
+
+{
+  "navbar": {
+    "tools": "Outils",
+    "trainings": "Formations",
+    "suggestions": "Propositions",
+    "contact": "Nous contacter",
+    "settings": "Paramètres",
+    "login": "Me connecter",
+    "logout": "Déconnexion"
+  },
+  "suggestions": {
+    "upvote": "votes",
+    "comment": "commentaire",
+    "comments": "commentaires",
+    "hide": "cacher",
+    "show": "afficher",
+    "loginToVote": "Vous devez être connecté pour voter",
+    "voteError": "Erreur lors du vote",
+    "user": "Utilisateur"
+  },
+  "emptySuggestions": {
+    "title": "Aucune proposition pour le moment",
+    "subtitle": "Soyez le premier à proposer un outil !",
+    "button": "Proposer un outil",
+    "dialogTitle": "Proposer un outil",
+    "dialogDescription": "Suggérez un outil qui pourrait être développé sur sydologie.ai"
+  }
+}

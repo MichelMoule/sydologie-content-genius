@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/hooks/use-language";
+import LanguageSelector from "./LanguageSelector";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   useEffect(() => {
     // Get initial session
@@ -69,21 +72,23 @@ const Navbar = () => {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-8 font-dmsans text-lg font-medium">
             <Link to="/outils" className="hover:text-white transition-colors">
-              Outils
+              {t("navbar.tools")}
             </Link>
             <Link to="/formations" className="hover:text-white transition-colors">
-              Formations
+              {t("navbar.trainings")}
             </Link>
             <Link to="/outils/suggestions" className="hover:text-white transition-colors flex items-center">
-              Propositions
+              {t("navbar.suggestions")}
             </Link>
             <Link to="/contact" className="hover:text-white transition-colors">
-              Nous contacter
+              {t("navbar.contact")}
             </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2 font-dmsans">
+            <LanguageSelector />
+            
             {user ? (
               <div className="flex items-center space-x-2">
                 <Link to="/settings">
@@ -93,14 +98,14 @@ const Navbar = () => {
                 </Link>
                 <Button variant="ghost" className="text-white hover:text-[#82C8A0] hover:bg-white/20 font-medium" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Déconnexion
+                  {t("navbar.logout")}
                 </Button>
               </div>
             ) : (
               <Link to="/auth">
                 <Button variant="ghost" className="text-white hover:text-[#82C8A0] hover:bg-white/20 font-medium">
                   <User className="mr-2 h-4 w-4" />
-                  Me connecter
+                  {t("navbar.login")}
                 </Button>
               </Link>
             )}
@@ -117,32 +122,36 @@ const Navbar = () => {
               className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Outils
+              {t("navbar.tools")}
             </Link>
             <Link 
               to="/formations" 
               className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Formations
+              {t("navbar.trainings")}
             </Link>
             <Link 
               to="/outils/suggestions" 
               className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Propositions
+              {t("navbar.suggestions")}
             </Link>
             <Link 
               to="/contact" 
               className="block py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Nous contacter
+              {t("navbar.contact")}
             </Link>
 
             {/* Mobile Auth Links */}
             <div className="pt-4 border-t border-white/20">
+              <div className="py-2 px-3">
+                <LanguageSelector />
+              </div>
+              
               {user ? (
                 <div className="space-y-2">
                   <Link 
@@ -151,14 +160,14 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Settings className="mr-2 h-5 w-5" />
-                    Paramètres
+                    {t("navbar.settings")}
                   </Link>
                   <button 
                     className="flex items-center w-full py-2 px-3 text-xl hover:bg-white/10 rounded-lg text-left"
                     onClick={handleLogout}
                   >
                     <LogOut className="mr-2 h-5 w-5" />
-                    Déconnexion
+                    {t("navbar.logout")}
                   </button>
                 </div>
               ) : (
@@ -168,7 +177,7 @@ const Navbar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <User className="mr-2 h-5 w-5" />
-                  Me connecter
+                  {t("navbar.login")}
                 </Link>
               )}
             </div>
