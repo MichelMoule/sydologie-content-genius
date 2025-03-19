@@ -63,6 +63,9 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
     return "INTRA uniquement";
   };
 
+  // Remove '/registration' from the end of the URL if it exists
+  const formationPageUrl = formation.publicRegistrationUrl.replace(/\/registration$/, '');
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[90vw] lg:max-w-[1000px] max-h-[90vh] p-0 overflow-hidden font-dmsans">
@@ -117,10 +120,10 @@ const FormationDialog = ({ formation, open, onOpenChange }: FormationDialogProps
                   <p className="text-muted-foreground whitespace-pre-wrap font-dmsans">{formation.description}</p>
                 </div>
 
-                {formation.publicRegistrationUrl && (
+                {formationPageUrl && (
                   <div>
                     <a
-                      href={formation.publicRegistrationUrl}
+                      href={formationPageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-white py-3 px-4 rounded-[40px] h-[40px] inline-block text-center font-dmsans"
