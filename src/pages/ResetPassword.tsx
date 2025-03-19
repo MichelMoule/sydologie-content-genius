@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,29 +12,42 @@ import Footer from "@/components/Footer";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
   });
-  const [hashPresent, setHashPresent] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if we have a hash in the URL (indicates reset password flow)
-    const hash = window.location.hash;
-    if (hash && hash.substring(1).split('&').some(param => param.startsWith('type=recovery'))) {
-      setHashPresent(true);
+    // Extract token from URL
+    const searchParams = new URLSearchParams(location.search);
+    const urlToken = searchParams.get("token");
+    
+    if (urlToken) {
+      setToken(urlToken);
     } else {
-      // No hash means the user accessed this page directly (not through email link)
+      // Check for token in hash (for backward compatibility)
+      const hash = window.location.hash;
+      if (hash && hash.includes('token=')) {
+        const hashToken = hash.split('token=')[1]?.split('&')[0];
+        if (hashToken) {
+          setToken(hashToken);
+        }
+      }
+    }
+    
+    if (!urlToken && !hash.includes('token=')) {
       toast({
         variant: "destructive",
-        title: "Accès non autorisé",
-        description: "Cette page est accessible uniquement via un lien de récupération de mot de passe.",
+        title: "Lien invalide",
+        description: "Ce lien de réinitialisation n'est pas valide ou a expiré.",
       });
       navigate("/auth");
     }
-  }, [navigate, toast]);
+  }, [location, navigate, toast]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +58,16 @@ const ResetPassword = () => {
         variant: "destructive",
         title: "Erreur",
         description: "Les mots de passe ne correspondent pas.",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Jeton de réinitialisation manquant.",
       });
       setIsLoading(false);
       return;
@@ -76,10 +99,6 @@ const ResetPassword = () => {
       setIsLoading(false);
     }
   };
-
-  if (!hashPresent) {
-    return <div className="min-h-screen flex items-center justify-center">Redirection...</div>;
-  }
 
   return (
     <div className="min-h-screen bg-background font-dmsans">

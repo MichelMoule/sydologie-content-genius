@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,11 +28,13 @@ const Auth = () => {
 
     try {
       if (isForgotPassword) {
-        const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
+        // Générer un jeton de réinitialisation via l'API Supabase
+        const { data, error: tokenError } = await supabase.auth.resetPasswordForEmail(
+          formData.email, 
+          { redirectTo: `${window.location.origin}/reset-password` }
+        );
 
-        if (error) throw error;
+        if (tokenError) throw tokenError;
 
         toast({
           title: "Email de récupération envoyé !",

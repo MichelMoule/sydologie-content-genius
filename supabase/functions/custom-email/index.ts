@@ -29,7 +29,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Processing email request:", { type, email, redirectTo });
 
     if (type === "reset_password") {
-      const resetUrl = `${redirectTo}#type=recovery&token=${token}`;
+      // Ici on construit directement le lien de réinitialisation de mot de passe
+      // sans passer par le flux standard de vérification de Supabase
+      const resetUrl = `${redirectTo}?token=${token}`;
       
       const emailResponse = await resend.emails.send({
         from: "Sydologie.ai <no-reply@sydologie.ai>",
