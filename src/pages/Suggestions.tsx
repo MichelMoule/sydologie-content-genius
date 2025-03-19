@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ThumbsUp, ThumbsDown, Plus, LightbulbIcon, User, MessageCircle } from "lucide-react";
+import { ThumbsUp, Plus, LightbulbIcon, User, MessageCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import SuggestionForm from "@/components/suggestions/SuggestionForm";
@@ -127,6 +126,7 @@ const Suggestions = () => {
         const finalSuggestions = suggestionsWithVotes.map(suggestion => {
           const suggestionVotes = votesCounts?.filter(vote => vote.tool_suggestion_id === suggestion.id) || [];
           const upvotes = suggestionVotes.filter(vote => vote.vote_type === 'up').length;
+          // We still keep the count in the data structure for compatibility
           const downvotes = suggestionVotes.filter(vote => vote.vote_type === 'down').length;
           
           return {
@@ -138,8 +138,9 @@ const Suggestions = () => {
           };
         });
         
+        // Modified: Sort suggestions by upvotes only, not by net score
         const sortedSuggestions = finalSuggestions.sort(
-          (a, b) => (b.upvotes_count - b.downvotes_count) - (a.upvotes_count - a.downvotes_count)
+          (a, b) => b.upvotes_count - a.upvotes_count
         );
         
         setSuggestions(sortedSuggestions);
@@ -154,7 +155,7 @@ const Suggestions = () => {
     fetchSuggestions();
   }, [user]);
 
-  const handleVote = async (suggestionId: string, voteType: 'up' | 'down') => {
+  const handleVote = async (suggestionId: string, voteType: 'up') => {
     if (!user) {
       toast.error('Vous devez être connecté pour voter');
       navigate('/auth');
@@ -172,6 +173,7 @@ const Suggestions = () => {
       
       if (existingVote) {
         if (existingVote.vote_type === voteType) {
+          // User is removing their upvote
           await supabase
             .from('tool_votes')
             .delete()
@@ -182,12 +184,14 @@ const Suggestions = () => {
               return {
                 ...suggestion,
                 user_vote: null,
-                [voteType === 'up' ? 'upvotes_count' : 'downvotes_count']: suggestion[voteType === 'up' ? 'upvotes_count' : 'downvotes_count'] - 1
+                upvotes_count: suggestion.upvotes_count - 1
               };
             }
             return suggestion;
           }));
         } else {
+          // This case shouldn't occur anymore since we only have upvotes now,
+          // but keeping for future reference if needed
           await supabase
             .from('tool_votes')
             .update({ vote_type: voteType })
@@ -198,18 +202,14 @@ const Suggestions = () => {
               return {
                 ...suggestion,
                 user_vote: voteType,
-                upvotes_count: voteType === 'up' 
-                  ? suggestion.upvotes_count + 1 
-                  : suggestion.upvotes_count - (existingVote.vote_type === 'up' ? 1 : 0),
-                downvotes_count: voteType === 'down' 
-                  ? suggestion.downvotes_count + 1 
-                  : suggestion.downvotes_count - (existingVote.vote_type === 'down' ? 1 : 0)
+                upvotes_count: suggestion.upvotes_count + 1
               };
             }
             return suggestion;
           }));
         }
       } else {
+        // User is adding a new upvote
         await supabase
           .from('tool_votes')
           .insert([
@@ -225,7 +225,7 @@ const Suggestions = () => {
             return {
               ...suggestion,
               user_vote: voteType,
-              [voteType === 'up' ? 'upvotes_count' : 'downvotes_count']: suggestion[voteType === 'up' ? 'upvotes_count' : 'downvotes_count'] + 1
+              upvotes_count: suggestion.upvotes_count + 1
             };
           }
           return suggestion;
@@ -237,8 +237,9 @@ const Suggestions = () => {
     }
   };
 
+  // Modified: Get score function now returns only upvotes_count
   const getScore = (suggestion: ToolSuggestion) => {
-    return suggestion.upvotes_count - suggestion.downvotes_count;
+    return suggestion.upvotes_count;
   };
 
   const toggleExpandSuggestion = (suggestionId: string) => {
@@ -361,11 +362,7 @@ const Suggestions = () => {
                       </Badge>
                       
                       <div className="flex items-center gap-1 ml-auto md:ml-0">
-                        <span className={`font-medium font-dmsans text-sm md:text-base
-                          ${getScore(suggestion) > 0 ? 'text-green-600' : ''}
-                          ${getScore(suggestion) < 0 ? 'text-red-600' : ''}
-                          ${getScore(suggestion) === 0 ? 'text-gray-600' : ''}
-                        `}>
+                        <span className="font-medium font-dmsans text-sm md:text-base text-green-600">
                           {getScore(suggestion)}
                         </span>
                         
@@ -382,17 +379,7 @@ const Suggestions = () => {
                             <span className="text-xs md:text-sm">{suggestion.upvotes_count}</span>
                           </Button>
                           
-                          <Button
-                            variant="outline"
-                            size={isMobile ? "sm" : "default"}
-                            className={`flex items-center space-x-1 font-dmsans px-2 h-8 md:h-10 ${
-                              suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
-                            }`}
-                            onClick={() => handleVote(suggestion.id, 'down')}
-                          >
-                            <ThumbsDown size={isMobile ? 14 : 16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
-                            <span className="text-xs md:text-sm">{suggestion.downvotes_count}</span>
-                          </Button>
+                          {/* Removed the thumbs down button */}
                         </div>
                       </div>
                     </div>
@@ -410,7 +397,6 @@ const Suggestions = () => {
                   </Button>
                 </div>
                 
-                {/* Section des commentaires intégrée directement sous chaque suggestion */}
                 {expandedSuggestion === suggestion.id && (
                   <div className="border-t p-3 md:p-4 bg-gray-50">
                     <CommentSection 
