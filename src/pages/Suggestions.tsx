@@ -26,6 +26,7 @@ import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import SuggestionForm from "@/components/suggestions/SuggestionForm";
 import CommentSection from "@/components/suggestions/CommentSection";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type ToolSuggestion = {
   id: string;
@@ -49,6 +50,7 @@ const Suggestions = () => {
   const [user, setUser] = useState<any>(null);
   const [expandedSuggestion, setExpandedSuggestion] = useState<string | null>(null);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     const checkUser = async () => {
@@ -251,32 +253,31 @@ const Suggestions = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-4xl font-bold font-dmsans">
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 md:mb-12">
+          <div className="text-left">
+            <h1 className="text-2xl md:text-4xl font-bold font-dmsans">
               <span className="text-[#00FF00]">_</span>Propositions d'outils
             </h1>
-            <p className="text-lg mt-2 text-gray-600 font-dmsans">
+            <p className="text-sm md:text-lg mt-2 text-gray-600 font-dmsans">
               Découvrez les outils les plus demandés par notre communauté et participez au vote ! 
-              Nous développerons l'outil le plus voté (sans engagement sur les délais, notre développeur 
-              a une tendance à la procrastination).
+              {!isMobile && " Nous développerons l'outil le plus voté (sans engagement sur les délais, notre développeur a une tendance à la procrastination)."}
             </p>
           </div>
           
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-[#9b87f5] text-white font-medium hover:bg-[#8B5CF6] flex items-center gap-2 font-dmsans">
-                <Plus size={18} />
+              <Button className="bg-[#9b87f5] text-white font-medium hover:bg-[#8B5CF6] flex items-center gap-2 font-dmsans w-full md:w-auto mt-4 md:mt-0">
+                <Plus size={isMobile ? 16 : 18} />
                 Proposer un outil
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[550px] font-dmsans">
+            <DialogContent className="sm:max-w-[550px] font-dmsans w-[95%] md:w-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-dmsans">
+                <DialogTitle className="text-xl md:text-2xl font-dmsans">
                   <span className="text-[#00FF00]">_</span>Proposer un outil
                 </DialogTitle>
-                <DialogDescription className="font-dmsans">
+                <DialogDescription className="font-dmsans text-sm md:text-base">
                   Suggérez un outil qui pourrait être développé sur sydologie.ai
                 </DialogDescription>
               </DialogHeader>
@@ -294,22 +295,22 @@ const Suggestions = () => {
             <p>Chargement des propositions...</p>
           </div>
         ) : suggestions.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200 font-dmsans">
-            <LightbulbIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-xl font-medium mb-2">Aucune proposition pour le moment</h3>
-            <p className="text-gray-600 mb-6">Soyez le premier à proposer un outil !</p>
+          <div className="text-center py-8 md:py-12 bg-gray-50 rounded-lg border border-gray-200 font-dmsans">
+            <LightbulbIcon className="mx-auto h-10 w-10 md:h-12 md:w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg md:text-xl font-medium mb-2">Aucune proposition pour le moment</h3>
+            <p className="text-gray-600 mb-6 px-4 text-sm md:text-base">Soyez le premier à proposer un outil !</p>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans">
                   Proposer un outil
                 </Button>
               </DialogTrigger>
-              <DialogContent className="font-dmsans">
+              <DialogContent className="font-dmsans w-[95%] md:w-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-dmsans">
+                  <DialogTitle className="text-xl md:text-2xl font-dmsans">
                     <span className="text-[#00FF00]">_</span>Proposer un outil
                   </DialogTitle>
-                  <DialogDescription className="font-dmsans">
+                  <DialogDescription className="font-dmsans text-sm md:text-base">
                     Suggérez un outil qui pourrait être développé sur sydologie.ai
                   </DialogDescription>
                 </DialogHeader>
@@ -322,13 +323,13 @@ const Suggestions = () => {
             </Dialog>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {suggestions.map((suggestion, index) => (
               <div key={suggestion.id} className="bg-white rounded-lg border overflow-hidden">
-                <div className={`p-4 ${index < 3 ? "bg-green-50/50" : ""}`}>
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-lg font-dmsans">
+                <div className={`p-3 md:p-4 ${index < 3 ? "bg-green-50/50" : ""}`}>
+                  <div className="flex flex-col md:flex-row md:justify-between gap-3 md:gap-0">
+                    <div className="flex items-start md:items-center gap-2">
+                      <span className="font-medium text-base md:text-lg font-dmsans">
                         {index + 1}
                         {index < 3 && (
                           <span className="ml-1 text-xs font-bold text-green-600">
@@ -336,19 +337,20 @@ const Suggestions = () => {
                           </span>
                         )}
                       </span>
-                      <div>
-                        <div className="font-semibold text-lg font-dmsans">{suggestion.name}</div>
-                        <div className="text-sm text-gray-500 mt-1 font-dmsans">{suggestion.description}</div>
+                      <div className="text-left">
+                        <div className="font-semibold text-base md:text-lg font-dmsans">{suggestion.name}</div>
+                        <div className="text-xs md:text-sm text-gray-500 mt-1 font-dmsans">{suggestion.description}</div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1 text-sm text-gray-600 font-dmsans">
-                        <User size={14} />
+                    <div className="flex flex-wrap md:flex-nowrap items-center justify-between md:justify-end gap-2 md:gap-4 mt-2 md:mt-0">
+                      <div className="flex items-center gap-1 text-xs md:text-sm text-gray-600 font-dmsans">
+                        <User size={isMobile ? 12 : 14} />
                         {suggestion.username || "Utilisateur"}
                       </div>
                       
                       <Badge className={`
+                        text-xs
                         ${suggestion.category === 'conception' ? 'bg-blue-500' : ''}
                         ${suggestion.category === 'realisation' ? 'bg-green-500' : ''}
                         ${suggestion.category === 'analyse' ? 'bg-purple-500' : ''}
@@ -358,8 +360,8 @@ const Suggestions = () => {
                         {suggestion.category}
                       </Badge>
                       
-                      <div className="flex items-center gap-1">
-                        <span className={`font-medium font-dmsans
+                      <div className="flex items-center gap-1 ml-auto md:ml-0">
+                        <span className={`font-medium font-dmsans text-sm md:text-base
                           ${getScore(suggestion) > 0 ? 'text-green-600' : ''}
                           ${getScore(suggestion) < 0 ? 'text-red-600' : ''}
                           ${getScore(suggestion) === 0 ? 'text-gray-600' : ''}
@@ -367,29 +369,29 @@ const Suggestions = () => {
                           {getScore(suggestion)}
                         </span>
                         
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-1 md:space-x-2">
                           <Button
                             variant="outline"
-                            size="sm"
-                            className={`flex items-center space-x-1 font-dmsans ${
+                            size={isMobile ? "sm" : "default"}
+                            className={`flex items-center space-x-1 font-dmsans px-2 h-8 md:h-10 ${
                               suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
                             }`}
                             onClick={() => handleVote(suggestion.id, 'up')}
                           >
-                            <ThumbsUp size={16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
-                            <span>{suggestion.upvotes_count}</span>
+                            <ThumbsUp size={isMobile ? 14 : 16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
+                            <span className="text-xs md:text-sm">{suggestion.upvotes_count}</span>
                           </Button>
                           
                           <Button
                             variant="outline"
-                            size="sm"
-                            className={`flex items-center space-x-1 font-dmsans ${
+                            size={isMobile ? "sm" : "default"}
+                            className={`flex items-center space-x-1 font-dmsans px-2 h-8 md:h-10 ${
                               suggestion.user_vote === 'down' ? 'bg-red-100 border-red-500' : ''
                             }`}
                             onClick={() => handleVote(suggestion.id, 'down')}
                           >
-                            <ThumbsDown size={16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
-                            <span>{suggestion.downvotes_count}</span>
+                            <ThumbsDown size={isMobile ? 14 : 16} className={suggestion.user_vote === 'down' ? 'text-red-500' : ''} />
+                            <span className="text-xs md:text-sm">{suggestion.downvotes_count}</span>
                           </Button>
                         </div>
                       </div>
@@ -400,9 +402,9 @@ const Suggestions = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => toggleExpandSuggestion(suggestion.id)}
-                    className="mt-2 text-[#9b87f5] hover:text-[#8B5CF6] hover:bg-transparent p-0 h-auto font-dmsans flex items-center gap-1"
+                    className="mt-2 text-[#9b87f5] hover:text-[#8B5CF6] hover:bg-transparent p-0 h-auto font-dmsans flex items-center gap-1 text-xs md:text-sm"
                   >
-                    <MessageCircle size={16} />
+                    <MessageCircle size={isMobile ? 14 : 16} />
                     {suggestion.comments_count || 0} commentaire{suggestion.comments_count !== 1 ? 's' : ''}
                     {expandedSuggestion === suggestion.id ? ' (cacher)' : ' (afficher)'}
                   </Button>
@@ -410,7 +412,7 @@ const Suggestions = () => {
                 
                 {/* Section des commentaires intégrée directement sous chaque suggestion */}
                 {expandedSuggestion === suggestion.id && (
-                  <div className="border-t p-4 bg-gray-50">
+                  <div className="border-t p-3 md:p-4 bg-gray-50">
                     <CommentSection 
                       toolSuggestionId={suggestion.id} 
                       currentUser={user}

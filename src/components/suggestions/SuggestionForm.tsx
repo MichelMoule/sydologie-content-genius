@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { NavigateFunction } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -62,6 +64,7 @@ type SuggestionFormProps = {
 
 const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const isMobile = useIsMobile();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -127,20 +130,20 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4 font-dmsans">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6 mt-3 md:mt-4 font-dmsans">
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-dmsans">Votre pseudo</FormLabel>
+            <FormItem className="space-y-1 md:space-y-2">
+              <FormLabel className="font-dmsans text-sm md:text-base">Votre pseudo</FormLabel>
               <FormControl>
-                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} className="font-dmsans" />
+                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
               </FormControl>
-              <FormDescription className="font-dmsans">
+              <FormDescription className="font-dmsans text-xs md:text-sm">
                 Ce pseudo sera affiché publiquement avec votre suggestion
               </FormDescription>
-              <FormMessage className="font-dmsans" />
+              <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
           )}
         />
@@ -149,12 +152,12 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-dmsans">Nom de l'outil</FormLabel>
+            <FormItem className="space-y-1 md:space-y-2">
+              <FormLabel className="font-dmsans text-sm md:text-base">Nom de l'outil</FormLabel>
               <FormControl>
-                <Input placeholder="ex: Générateur de scénarios pédagogiques" {...field} className="font-dmsans" />
+                <Input placeholder="ex: Générateur de scénarios pédagogiques" {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
               </FormControl>
-              <FormMessage className="font-dmsans" />
+              <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
           )}
         />
@@ -163,16 +166,16 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-dmsans">Description</FormLabel>
+            <FormItem className="space-y-1 md:space-y-2">
+              <FormLabel className="font-dmsans text-sm md:text-base">Description</FormLabel>
               <FormControl>
                 <Textarea 
                   placeholder="Décrivez brièvement l'outil et son utilité..." 
                   {...field} 
-                  className="font-dmsans"
+                  className="font-dmsans text-sm md:text-base min-h-[80px] md:min-h-[100px]"
                 />
               </FormControl>
-              <FormMessage className="font-dmsans" />
+              <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
           )}
         />
@@ -181,39 +184,39 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           control={form.control}
           name="category"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-dmsans">Catégorie</FormLabel>
+            <FormItem className="space-y-1 md:space-y-2">
+              <FormLabel className="font-dmsans text-sm md:text-base">Catégorie</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="font-dmsans">
+                  <SelectTrigger className="font-dmsans text-sm md:text-base h-9 md:h-10">
                     <SelectValue placeholder="Sélectionner une catégorie" className="font-dmsans" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="font-dmsans">
-                  <SelectItem value="conception" className="font-dmsans">Conception</SelectItem>
-                  <SelectItem value="realisation" className="font-dmsans">Réalisation</SelectItem>
-                  <SelectItem value="analyse" className="font-dmsans">Analyse</SelectItem>
-                  <SelectItem value="autre" className="font-dmsans">Autre</SelectItem>
+                  <SelectItem value="conception" className="font-dmsans text-sm md:text-base">Conception</SelectItem>
+                  <SelectItem value="realisation" className="font-dmsans text-sm md:text-base">Réalisation</SelectItem>
+                  <SelectItem value="analyse" className="font-dmsans text-sm md:text-base">Analyse</SelectItem>
+                  <SelectItem value="autre" className="font-dmsans text-sm md:text-base">Autre</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage className="font-dmsans" />
+              <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
           )}
         />
         
         <Button 
           type="submit" 
-          className="w-full bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans"
+          className="w-full bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans text-sm md:text-base h-9 md:h-10 mt-2 md:mt-4"
           disabled={submitting}
         >
           {submitting ? 'Envoi en cours...' : 'Soumettre ma proposition'}
         </Button>
         
         {!user && (
-          <FormDescription className="text-yellow-600 font-dmsans">
+          <FormDescription className="text-yellow-600 font-dmsans text-xs md:text-sm">
             Vous devez être connecté pour proposer un outil.
           </FormDescription>
         )}
