@@ -148,7 +148,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
             </Badge>
             
             <div className="flex items-center gap-1 ml-auto md:ml-0">
-              <span className="font-medium font-dmsans text-sm md:text-base text-green-600">
+              <span className="font-medium font-dmsans text-sm md:text-base text-sydologie-green">
                 {getScore(suggestion)}
               </span>
               
@@ -157,11 +157,11 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
                   variant="outline"
                   size={isMobile ? "sm" : "default"}
                   className={`flex items-center space-x-1 font-dmsans px-2 h-8 md:h-10 ${
-                    suggestion.user_vote === 'up' ? 'bg-green-100 border-green-500' : ''
+                    suggestion.user_vote === 'up' ? 'bg-green-100 border-sydologie-green' : ''
                   }`}
                   onClick={() => handleVote(suggestion.id, 'up')}
                 >
-                  <ThumbsUp size={isMobile ? 14 : 16} className={suggestion.user_vote === 'up' ? 'text-green-500' : ''} />
+                  <ThumbsUp size={isMobile ? 14 : 16} className={suggestion.user_vote === 'up' ? 'text-sydologie-green' : ''} />
                   <span className="text-xs md:text-sm">{suggestion.upvotes_count}</span>
                 </Button>
               </div>
