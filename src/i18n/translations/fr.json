@@ -67,6 +67,14 @@
     "sections": {
       "conception": "Nos outils de conception",
       "analysis": "Nos outils d'analyse"
+    },
+    "hero": {
+      "title": "Nous développons des outils pour vous aider dans la conception, la réalisation et l'analyse de vos formations.",
+      "contactUs": "Contactez-nous",
+      "customTools": "pour toute demande d'outil sur mesure.",
+      "ideaTitle": "Une idée d'outil ?",
+      "ideaDescription": "Contribuez au développement de sydologie.ai en proposant de nouvelles fonctionnalités",
+      "viewSuggestions": "Voir les propositions"
     }
   },
   "contact": {
@@ -196,7 +204,11 @@
     "form": {
       "generating": "Génération en cours...",
       "download": "Télécharger PDF"
-    }
+    },
+    "successMessage": "Votre script vidéo a été généré avec succès !",
+    "errorMessage": "Une erreur est survenue lors de la génération de votre script vidéo. Veuillez réessayer.",
+    "pdfSuccess": "Votre PDF a été téléchargé avec succès !",
+    "loginRequired": "Vous devez être connecté pour générer un script."
   },
   "quiz": {
     "title": "QUIIIIIZ?",
@@ -228,5 +240,7 @@
     "price": "Prix",
     "location": "Lieu",
     "register": "S'inscrire"
-  }
+  },
+  "success": "Succès",
+  "error": "Erreur"
 }

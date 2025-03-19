@@ -67,6 +67,14 @@
     "sections": {
       "conception": "Our Design Tools",
       "analysis": "Our Analysis Tools"
+    },
+    "hero": {
+      "title": "We develop tools to help you with the design, implementation and analysis of your training.",
+      "contactUs": "Contact us",
+      "customTools": "for any custom tool request.",
+      "ideaTitle": "Tool idea?",
+      "ideaDescription": "Contribute to the development of sydologie.ai by suggesting new features",
+      "viewSuggestions": "View suggestions"
     }
   },
   "contact": {
@@ -196,7 +204,11 @@
     "form": {
       "generating": "Generating...",
       "download": "Download PDF"
-    }
+    },
+    "successMessage": "Your video script has been generated successfully!",
+    "errorMessage": "An error occurred while generating your video script. Please try again.",
+    "pdfSuccess": "Your PDF has been downloaded successfully!",
+    "loginRequired": "You must be logged in to generate a script."
   },
   "quiz": {
     "title": "QUIIIIIZ?",
@@ -228,5 +240,7 @@
     "price": "Price",
     "location": "Location",
     "register": "Register"
-  }
+  },
+  "success": "Success",
+  "error": "Error"
 }
