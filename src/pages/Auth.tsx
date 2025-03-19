@@ -28,13 +28,13 @@ const Auth = () => {
 
     try {
       if (isForgotPassword) {
-        // Générer un jeton de réinitialisation via l'API Supabase
-        const { data, error: tokenError } = await supabase.auth.resetPasswordForEmail(
-          formData.email, 
+        // Use Supabase's default password reset
+        const { error } = await supabase.auth.resetPasswordForEmail(
+          formData.email,
           { redirectTo: `${window.location.origin}/reset-password` }
         );
 
-        if (tokenError) throw tokenError;
+        if (error) throw error;
 
         toast({
           title: "Email de récupération envoyé !",

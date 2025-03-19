@@ -22,22 +22,30 @@ const ResetPassword = () => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Extract token from URL
-    const searchParams = new URLSearchParams(location.search);
-    const urlToken = searchParams.get("token");
-    const hash = window.location.hash;
-    
-    if (urlToken) {
-      setToken(urlToken);
-    } else if (hash && hash.includes('token=')) {
-      // Check for token in hash (for backward compatibility)
-      const hashToken = hash.split('token=')[1]?.split('&')[0];
-      if (hashToken) {
-        setToken(hashToken);
+    // Extract token from URL or hash fragment
+    const getTokenFromUrl = () => {
+      // First try to get from query parameters
+      const searchParams = new URLSearchParams(location.search);
+      const urlToken = searchParams.get("token");
+      
+      // If not in query parameters, try hash fragment
+      if (urlToken) {
+        return urlToken;
       }
-    }
+      
+      const hash = window.location.hash;
+      if (hash && hash.includes('token=')) {
+        return hash.split('token=')[1]?.split('&')[0];
+      }
+      
+      return null;
+    };
     
-    if (!urlToken && !(hash && hash.includes('token='))) {
+    const extractedToken = getTokenFromUrl();
+    
+    if (extractedToken) {
+      setToken(extractedToken);
+    } else {
       toast({
         variant: "destructive",
         title: "Lien invalide",
@@ -72,6 +80,7 @@ const ResetPassword = () => {
     }
 
     try {
+      // Use Supabase's built-in password update
       const { error } = await supabase.auth.updateUser({
         password: passwordData.newPassword,
       });
