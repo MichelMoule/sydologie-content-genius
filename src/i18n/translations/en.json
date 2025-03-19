@@ -17,7 +17,39 @@
     "show": "show",
     "loginToVote": "You must be logged in to vote",
     "voteError": "Error during vote",
-    "user": "User"
+    "user": "User",
+    "pageTitle": "Tool Suggestions",
+    "pageDescription": "Discover the most requested tools by our community and participate in the vote!",
+    "pageDescriptionExtended": "We will develop the most voted tool (without commitment on deadlines, our developer has a tendency to procrastinate).",
+    "suggestButton": "Suggest a tool",
+    "submissionSuccess": "Your suggestion has been submitted successfully!",
+    "submissionError": "Error submitting your suggestion",
+    "form": {
+      "username": "Your username",
+      "usernamePlaceholder": "Username displayed with your suggestion",
+      "usernameDescription": "This username will be displayed publicly with your suggestion",
+      "toolName": "Tool name",
+      "toolNamePlaceholder": "e.g. Pedagogical scenario generator",
+      "description": "Description",
+      "descriptionPlaceholder": "Briefly describe the tool and its usefulness...",
+      "category": "Category",
+      "categoryPlaceholder": "Select a category",
+      "categories": {
+        "conception": "Design",
+        "realization": "Development",
+        "analysis": "Analysis",
+        "other": "Other"
+      },
+      "submit": "Submit my suggestion",
+      "submitting": "Submitting...",
+      "loginRequired": "You must be logged in to suggest a tool.",
+      "errors": {
+        "name": "The name must contain at least 2 characters.",
+        "description": "The description must contain at least 10 characters.",
+        "category": "Please select a category.",
+        "username": "The username must contain at least 2 characters."
+      }
+    }
   },
   "emptySuggestions": {
     "title": "No suggestions yet",
@@ -30,6 +62,47 @@
     "title": "Our tools",
     "subtitle": "Discover our AI tools for education",
     "sectionTitle": "All tools",
-    "sectionDescription": "Explore our collection of AI tools to enhance your teaching methods"
+    "sectionDescription": "Explore our collection of AI tools to enhance your teaching methods",
+    "backToTools": "Tools"
+  },
+  "contact": {
+    "title": "CONTACT",
+    "requiredFields": "Fields marked with an asterisk * are required",
+    "errorTitle": "Error",
+    "errorMessage": "An error occurred while sending your message. Please try again.",
+    "success": {
+      "title": "YOUR MESSAGE HAS BEEN SENT",
+      "message": "We thank you for your interest and will respond as soon as possible.",
+      "backButton": "Return to home page"
+    },
+    "form": {
+      "lastName": "Last name",
+      "firstName": "First name",
+      "phone": "Phone",
+      "email": "Email address",
+      "subject": "The subject of your request",
+      "messagePlaceholder": "Type your request here",
+      "sending": "Sending...",
+      "send": "Send",
+      "privacyNotice": "This site is protected by reCAPTCHA and Google's Privacy Policy and Terms of Service"
+    }
+  },
+  "flashcards": {
+    "title": "FLASHCARDS",
+    "subtitle": "Generate cards to memorize your content",
+    "description": "Use AI to generate flashcards from your training content.",
+    "aiGeneration": "AI Generation",
+    "numberOfCards": "Number of flashcards to generate (1-20)",
+    "contentPlaceholder": "Paste your content here to automatically generate flashcards...",
+    "generate": "Generate flashcards",
+    "generating": "Generating...",
+    "error": "Error",
+    "emptyContentError": "Please provide content to generate flashcards",
+    "generationError": "An error occurred while generating flashcards",
+    "success": "Success",
+    "cardsGenerated": "{count} flashcards have been generated",
+    "cardCount": "Card {current} of {total}",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

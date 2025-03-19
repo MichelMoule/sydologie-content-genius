@@ -17,7 +17,39 @@
     "show": "afficher",
     "loginToVote": "Vous devez être connecté pour voter",
     "voteError": "Erreur lors du vote",
-    "user": "Utilisateur"
+    "user": "Utilisateur",
+    "pageTitle": "Propositions d'outils",
+    "pageDescription": "Découvrez les outils les plus demandés par notre communauté et participez au vote !",
+    "pageDescriptionExtended": "Nous développerons l'outil le plus voté (sans engagement sur les délais, notre développeur a une tendance à la procrastination).",
+    "suggestButton": "Proposer un outil",
+    "submissionSuccess": "Votre suggestion a été soumise avec succès !",
+    "submissionError": "Erreur lors de la soumission de votre suggestion",
+    "form": {
+      "username": "Votre pseudo",
+      "usernamePlaceholder": "Pseudo affiché avec votre suggestion",
+      "usernameDescription": "Ce pseudo sera affiché publiquement avec votre suggestion",
+      "toolName": "Nom de l'outil",
+      "toolNamePlaceholder": "ex: Générateur de scénarios pédagogiques",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez brièvement l'outil et son utilité...",
+      "category": "Catégorie",
+      "categoryPlaceholder": "Sélectionner une catégorie",
+      "categories": {
+        "conception": "Conception",
+        "realization": "Réalisation",
+        "analysis": "Analyse",
+        "other": "Autre"
+      },
+      "submit": "Soumettre ma proposition",
+      "submitting": "Envoi en cours...",
+      "loginRequired": "Vous devez être connecté pour proposer un outil.",
+      "errors": {
+        "name": "Le nom doit contenir au moins 2 caractères.",
+        "description": "La description doit contenir au moins 10 caractères.",
+        "category": "Veuillez sélectionner une catégorie.",
+        "username": "Le pseudo doit contenir au moins 2 caractères."
+      }
+    }
   },
   "emptySuggestions": {
     "title": "Aucune proposition pour le moment",
@@ -30,6 +62,47 @@
     "title": "Nos outils",
     "subtitle": "Découvrez nos outils IA pour l'éducation",
     "sectionTitle": "Tous les outils",
-    "sectionDescription": "Explorez notre collection d'outils IA pour améliorer vos méthodes d'enseignement"
+    "sectionDescription": "Explorez notre collection d'outils IA pour améliorer vos méthodes d'enseignement",
+    "backToTools": "Outils"
+  },
+  "contact": {
+    "title": "CONTACT",
+    "requiredFields": "Les champs marqués d'une étoile * sont obligatoires",
+    "errorTitle": "Erreur",
+    "errorMessage": "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer.",
+    "success": {
+      "title": "VOTRE MESSAGE A BIEN ÉTÉ ENVOYÉ",
+      "message": "Nous vous remercions pour l'intérêt que vous nous portez et nous répondrons dans les plus brefs délais.",
+      "backButton": "Revenir à la page d'accueil"
+    },
+    "form": {
+      "lastName": "Nom",
+      "firstName": "Prénom",
+      "phone": "Téléphone",
+      "email": "Adresse mail",
+      "subject": "Le sujet de votre demande",
+      "messagePlaceholder": "Tapez votre demande ici",
+      "sending": "Envoi en cours...",
+      "send": "Envoyer",
+      "privacyNotice": "Ce site est protégé par reCAPTCHA et les règles de confidentialité et Google et les Conditions d'utilisation"
+    }
+  },
+  "flashcards": {
+    "title": "FLASHCARDS",
+    "subtitle": "Générez des cartes pour mémoriser vos contenus",
+    "description": "Utilisez l'IA pour générer des flashcards à partir de vos contenus de formation.",
+    "aiGeneration": "Génération par IA",
+    "numberOfCards": "Nombre de flashcards à générer (1-20)",
+    "contentPlaceholder": "Collez votre contenu ici pour générer automatiquement des flashcards...",
+    "generate": "Générer des flashcards",
+    "generating": "Génération en cours...",
+    "error": "Erreur",
+    "emptyContentError": "Veuillez fournir du contenu pour générer les flashcards",
+    "generationError": "Une erreur est survenue lors de la génération des flashcards",
+    "success": "Succès",
+    "cardsGenerated": "{count} flashcards ont été générées",
+    "cardCount": "Carte {current} sur {total}",
+    "previous": "Précédent",
+    "next": "Suivant"
   }
 }

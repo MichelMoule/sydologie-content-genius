@@ -26,6 +26,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { NavigateFunction } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/hooks/use-language";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -65,6 +66,7 @@ type SuggestionFormProps = {
 const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps) => {
   const [submitting, setSubmitting] = useState(false);
   const isMobile = useIsMobile();
+  const { t, language } = useLanguage();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,7 +80,7 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
-      toast.error('Vous devez être connecté pour proposer un outil');
+      toast.error(t('suggestions.loginToVote'));
       navigate('/auth');
       return;
     }
@@ -110,7 +112,7 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
       if (error) throw error;
       
       form.reset();
-      toast.success('Votre suggestion a été soumise avec succès!');
+      toast.success(t('suggestions.submissionSuccess'));
       
       if (data && data[0]) {
         setSuggestions(prev => [...prev, {
@@ -122,10 +124,14 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
       }
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
-      toast.error('Erreur lors de la soumission de votre suggestion');
+      toast.error(t('suggestions.submissionError'));
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const getFormErrorMessage = (fieldName: string, defaultMessage: string) => {
+    return language === 'fr' ? defaultMessage : t(`suggestions.form.errors.${fieldName}`);
   };
 
   return (
@@ -136,12 +142,12 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="username"
           render={({ field }) => (
             <FormItem className="space-y-1 md:space-y-2">
-              <FormLabel className="font-dmsans text-sm md:text-base">Votre pseudo</FormLabel>
+              <FormLabel className="font-dmsans text-sm md:text-base">{t('suggestions.form.username')}</FormLabel>
               <FormControl>
-                <Input placeholder="Pseudo affiché avec votre suggestion" {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
+                <Input placeholder={t('suggestions.form.usernamePlaceholder')} {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
               </FormControl>
               <FormDescription className="font-dmsans text-xs md:text-sm">
-                Ce pseudo sera affiché publiquement avec votre suggestion
+                {t('suggestions.form.usernameDescription')}
               </FormDescription>
               <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
@@ -153,9 +159,9 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="name"
           render={({ field }) => (
             <FormItem className="space-y-1 md:space-y-2">
-              <FormLabel className="font-dmsans text-sm md:text-base">Nom de l'outil</FormLabel>
+              <FormLabel className="font-dmsans text-sm md:text-base">{t('suggestions.form.toolName')}</FormLabel>
               <FormControl>
-                <Input placeholder="ex: Générateur de scénarios pédagogiques" {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
+                <Input placeholder={t('suggestions.form.toolNamePlaceholder')} {...field} className="font-dmsans text-sm md:text-base h-9 md:h-10" />
               </FormControl>
               <FormMessage className="font-dmsans text-xs md:text-sm" />
             </FormItem>
@@ -167,10 +173,10 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="description"
           render={({ field }) => (
             <FormItem className="space-y-1 md:space-y-2">
-              <FormLabel className="font-dmsans text-sm md:text-base">Description</FormLabel>
+              <FormLabel className="font-dmsans text-sm md:text-base">{t('suggestions.form.description')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Décrivez brièvement l'outil et son utilité..." 
+                  placeholder={t('suggestions.form.descriptionPlaceholder')} 
                   {...field} 
                   className="font-dmsans text-sm md:text-base min-h-[80px] md:min-h-[100px]"
                 />
@@ -185,21 +191,21 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           name="category"
           render={({ field }) => (
             <FormItem className="space-y-1 md:space-y-2">
-              <FormLabel className="font-dmsans text-sm md:text-base">Catégorie</FormLabel>
+              <FormLabel className="font-dmsans text-sm md:text-base">{t('suggestions.form.category')}</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="font-dmsans text-sm md:text-base h-9 md:h-10">
-                    <SelectValue placeholder="Sélectionner une catégorie" className="font-dmsans" />
+                    <SelectValue placeholder={t('suggestions.form.categoryPlaceholder')} className="font-dmsans" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="font-dmsans">
-                  <SelectItem value="conception" className="font-dmsans text-sm md:text-base">Conception</SelectItem>
-                  <SelectItem value="realisation" className="font-dmsans text-sm md:text-base">Réalisation</SelectItem>
-                  <SelectItem value="analyse" className="font-dmsans text-sm md:text-base">Analyse</SelectItem>
-                  <SelectItem value="autre" className="font-dmsans text-sm md:text-base">Autre</SelectItem>
+                  <SelectItem value="conception" className="font-dmsans text-sm md:text-base">{t('suggestions.form.categories.conception')}</SelectItem>
+                  <SelectItem value="realisation" className="font-dmsans text-sm md:text-base">{t('suggestions.form.categories.realization')}</SelectItem>
+                  <SelectItem value="analyse" className="font-dmsans text-sm md:text-base">{t('suggestions.form.categories.analysis')}</SelectItem>
+                  <SelectItem value="autre" className="font-dmsans text-sm md:text-base">{t('suggestions.form.categories.other')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage className="font-dmsans text-xs md:text-sm" />
@@ -212,12 +218,12 @@ const SuggestionForm = ({ setSuggestions, user, navigate }: SuggestionFormProps)
           className="w-full bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans text-sm md:text-base h-9 md:h-10 mt-2 md:mt-4"
           disabled={submitting}
         >
-          {submitting ? 'Envoi en cours...' : 'Soumettre ma proposition'}
+          {submitting ? t('suggestions.form.submitting') : t('suggestions.form.submit')}
         </Button>
         
         {!user && (
           <FormDescription className="text-yellow-600 font-dmsans text-xs md:text-sm">
-            Vous devez être connecté pour proposer un outil.
+            {t('suggestions.form.loginRequired')}
           </FormDescription>
         )}
       </form>

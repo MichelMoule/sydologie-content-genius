@@ -9,7 +9,7 @@ type Translations = typeof frTranslations;
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, any>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -36,13 +36,15 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     localStorage.setItem("language", language);
     // Force re-render of components when language changes
     document.documentElement.setAttribute("lang", language);
+    // Add langCode to body for potential CSS targeting
+    document.body.dataset.language = language;
   }, [language]);
 
   const getTranslation = (): Translations => {
     return language === "fr" ? frTranslations : enTranslations;
   };
 
-  const translate = (key: string): string => {
+  const translate = (key: string, params?: Record<string, any>): string => {
     const translations = getTranslation();
     const keys = key.split(".");
     let value: any = translations;
@@ -56,7 +58,17 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       }
     }
 
-    return typeof value === "string" ? value : key;
+    if (typeof value === "string") {
+      // Handle interpolation if params are provided
+      if (params) {
+        return value.replace(/{(\w+)}/g, (match, paramKey) => {
+          return params[paramKey] !== undefined ? params[paramKey].toString() : match;
+        });
+      }
+      return value;
+    }
+    
+    return key;
   };
 
   return (

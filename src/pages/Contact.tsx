@@ -7,11 +7,13 @@ import Navbar from "@/components/Navbar";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -51,8 +53,8 @@ const Contact = () => {
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer.",
+        title: t("contact.errorTitle"),
+        description: t("contact.errorMessage"),
         variant: "destructive",
       });
     } finally {
@@ -66,18 +68,16 @@ const Contact = () => {
         <Navbar />
         <div className="flex-1 bg-[#72BB8E] flex flex-col items-center justify-center px-4">
           <h1 className="text-7xl font-bold text-center mb-8 max-w-3xl text-white">
-            VOTRE MESSAGE
-            <br />
-            A BIEN ÉTÉ ENVOYÉ
+            {t("contact.success.title")}
           </h1>
           <p className="text-center mb-8 max-w-xl text-white">
-            Nous vous remercions pour l'intérêt que vous nous portez et nous répondrons dans les plus brefs délais.
+            {t("contact.success.message")}
           </p>
           <Link 
             to="/"
             className="bg-white px-6 py-2 rounded-md hover:bg-gray-100 transition-colors"
           >
-            Revenir à la page d'accueil
+            {t("contact.success.backButton")}
           </Link>
         </div>
       </div>
@@ -91,14 +91,14 @@ const Contact = () => {
         <div className="flex flex-col md:flex-row gap-12 min-h-[600px]">
           {/* Left side - Form */}
           <div className="flex-1">
-            <h1 className="text-7xl font-bold mb-8">CONTACT</h1>
-            <p className="text-sm mb-8">Les champs marqués d'une étoile * sont obligatoires</p>
+            <h1 className="text-7xl font-bold mb-8">{t("contact.title")}</h1>
+            <p className="text-sm mb-8">{t("contact.requiredFields")}</p>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#72BB8E]">_</span>Nom*
+                    <span className="text-[#72BB8E]">_</span>{t("contact.form.lastName")}*
                   </label>
                   <Input 
                     type="text" 
@@ -111,7 +111,7 @@ const Contact = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#72BB8E]">_</span>Prénom*
+                    <span className="text-[#72BB8E]">_</span>{t("contact.form.firstName")}*
                   </label>
                   <Input 
                     type="text" 
@@ -127,7 +127,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#72BB8E]">_</span>Téléphone*
+                    <span className="text-[#72BB8E]">_</span>{t("contact.form.phone")}*
                   </label>
                   <Input 
                     type="tel" 
@@ -140,7 +140,7 @@ const Contact = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="block">
-                    <span className="text-[#72BB8E]">_</span>Adresse mail*
+                    <span className="text-[#72BB8E]">_</span>{t("contact.form.email")}*
                   </label>
                   <Input 
                     type="email" 
@@ -155,7 +155,7 @@ const Contact = () => {
 
               <div className="space-y-2">
                 <label className="block">
-                  <span className="text-[#72BB8E]">_</span>Le sujet de votre demande*
+                  <span className="text-[#72BB8E]">_</span>{t("contact.form.subject")}*
                 </label>
                 <Input 
                   type="text" 
@@ -169,7 +169,7 @@ const Contact = () => {
 
               <div className="space-y-2">
                 <Textarea 
-                  placeholder="Tapez votre demande ici" 
+                  placeholder={t("contact.form.messagePlaceholder")} 
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
@@ -182,11 +182,11 @@ const Contact = () => {
                 disabled={isLoading}
                 className="w-full md:w-auto px-8 py-2 bg-[#72BB8E] text-black hover:bg-[#72BB8E]/90 font-dmsans"
               >
-                {isLoading ? "Envoi en cours..." : "Envoyer"}
+                {isLoading ? t("contact.form.sending") : t("contact.form.send")}
               </Button>
 
               <p className="text-xs text-gray-500 mt-4">
-                Ce site est protégé par reCAPTCHA et les règles de confidentialité et Google et les Conditions d'utilisation
+                {t("contact.form.privacyNotice")}
               </p>
             </form>
           </div>
