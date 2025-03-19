@@ -36,7 +36,7 @@ const SuggestionHeader = ({ user, setSuggestions }: SuggestionHeaderProps) => {
       
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="bg-[#9b87f5] text-white font-medium hover:bg-[#8B5CF6] flex items-center gap-2 font-dmsans w-full md:w-auto mt-4 md:mt-0">
+          <Button className="bg-sydologie-green text-white font-medium hover:bg-sydologie-green/90 flex items-center gap-2 font-dmsans w-full md:w-auto mt-4 md:mt-0">
             <Plus size={isMobile ? 16 : 18} />
             Proposer un outil
           </Button>

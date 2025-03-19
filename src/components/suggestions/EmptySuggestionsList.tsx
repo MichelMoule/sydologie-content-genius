@@ -23,13 +23,13 @@ const EmptySuggestionsList = ({ user, setSuggestions }: EmptySuggestionsListProp
   const navigate = useNavigate();
 
   return (
-    <div className="text-center py-8 md:py-12 bg-gray-50 rounded-lg border border-gray-200 font-dmsans">
-      <LightbulbIcon className="mx-auto h-10 w-10 md:h-12 md:w-12 text-gray-400 mb-4" />
+    <div className="text-center py-8 md:py-12 bg-[#F2FCE2] rounded-lg border border-sydologie-green/20 font-dmsans">
+      <LightbulbIcon className="mx-auto h-10 w-10 md:h-12 md:w-12 text-sydologie-green mb-4" />
       <h3 className="text-lg md:text-xl font-medium mb-2">Aucune proposition pour le moment</h3>
       <p className="text-gray-600 mb-6 px-4 text-sm md:text-base">Soyez le premier à proposer un outil !</p>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] font-dmsans">
+          <Button className="bg-sydologie-green text-white hover:bg-sydologie-green/90 font-dmsans">
             Proposer un outil
           </Button>
         </DialogTrigger>
