@@ -18,11 +18,9 @@ import { QuizAnalysis } from "@/components/quiz/QuizAnalysis";
 import { QuizData } from "@/components/quiz/types";
 import { generateQuizPDF } from "@/components/quiz/QuizPDF";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/hooks/use-language";
 
 const Quiz = () => {
   const { toast } = useToast();
-  const { t } = useLanguage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<QuizData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -40,8 +38,8 @@ const Quiz = () => {
       if (!user) {
         toast({
           variant: "destructive",
-          title: t("error"),
-          description: t("quiz.loginRequired"),
+          title: "Erreur",
+          description: "Vous devez être connecté pour générer un quiz.",
         });
         return;
       }
@@ -52,8 +50,8 @@ const Quiz = () => {
         if (file.size > 5 * 1024 * 1024) { // 5MB limit
           toast({
             variant: "destructive",
-            title: t("error"),
-            description: t("quiz.fileTooLarge"),
+            title: "Erreur",
+            description: "Le fichier est trop volumineux. Limite: 5MB."
           });
           setIsAnalyzing(false);
           return;
@@ -63,8 +61,8 @@ const Quiz = () => {
         if (fileExtension !== 'docx' && fileExtension !== 'txt') {
           toast({
             variant: "destructive",
-            title: t("quiz.unsupportedFormat"),
-            description: t("quiz.fileTypeError"),
+            title: "Format non supporté",
+            description: "Veuillez sélectionner un fichier Word (.docx) ou texte (.txt)"
           });
           setIsAnalyzing(false);
           return;
@@ -81,16 +79,16 @@ const Quiz = () => {
       setIsDialogOpen(true);
 
       toast({
-        title: t("success"),
-        description: t("quiz.successMessage"),
+        title: "Succès",
+        description: "Votre quiz a été généré avec succès.",
       });
 
     } catch (error) {
       console.error("Error generating quiz:", error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("quiz.errorMessage"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la génération du quiz.",
       });
     } finally {
       setIsAnalyzing(false);
@@ -102,8 +100,8 @@ const Quiz = () => {
     generateQuizPDF(analysis, quizName);
     
     toast({
-      title: t("success"),
-      description: t("quiz.pdfSuccess"),
+      title: "PDF généré avec succès",
+      description: "Le téléchargement devrait commencer automatiquement.",
     });
   };
 
@@ -113,20 +111,20 @@ const Quiz = () => {
       
       <div className="container mx-auto px-4 py-8 flex-grow">
         <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
-          &lt; {t("tools.backToTools")}
+          &lt; Outils
         </Link>
         
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
-            <h1 className="text-6xl font-bold font-dmsans">{t("quiz.title")}</h1>
+            <h1 className="text-6xl font-bold font-dmsans">QUIIIIIZ?</h1>
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
-              {t("quiz.subtitle")}
+              Vous souhaitez créer rapidement un quiz pour évaluer vos apprenants ?
             </h2>
             <p className="text-lg font-dmsans">
-              {t("quiz.description1")}
+              Utilisez notre outil pour générer automatiquement des quiz pertinents basés sur vos contenus de formation.
             </p>
             <p className="text-lg font-dmsans">
-              {t("quiz.description2")}
+              Notre système d'IA vous aide à créer des questions variées et adaptées à votre contenu.
             </p>
           </div>
           
@@ -156,7 +154,7 @@ const Quiz = () => {
                     onClick={handleDownloadPDF}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    {t("quiz.form.download")}
+                    Télécharger PDF
                   </Button>
                 )}
               </DialogTitle>

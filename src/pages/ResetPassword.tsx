@@ -9,12 +9,10 @@ import { useToast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import { useLanguage } from "@/hooks/use-language";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
@@ -31,12 +29,12 @@ const ResetPassword = () => {
       // No hash means the user accessed this page directly (not through email link)
       toast({
         variant: "destructive",
-        title: t("resetPassword.unauthorized.title"),
-        description: t("resetPassword.unauthorized.description"),
+        title: "Accès non autorisé",
+        description: "Cette page est accessible uniquement via un lien de récupération de mot de passe.",
       });
       navigate("/auth");
     }
-  }, [navigate, toast, t]);
+  }, [navigate, toast]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +43,8 @@ const ResetPassword = () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       toast({
         variant: "destructive",
-        title: t("resetPassword.error.title"),
-        description: t("resetPassword.error.passwordMismatch"),
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas.",
       });
       setIsLoading(false);
       return;
@@ -60,8 +58,8 @@ const ResetPassword = () => {
       if (error) throw error;
 
       toast({
-        title: t("resetPassword.success.title"),
-        description: t("resetPassword.success.description"),
+        title: "Mot de passe mis à jour",
+        description: "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.",
       });
 
       // Redirect to login page after successful password reset
@@ -71,7 +69,7 @@ const ResetPassword = () => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: t("resetPassword.error.title"),
+        title: "Erreur",
         description: error.message,
       });
     } finally {
@@ -80,7 +78,7 @@ const ResetPassword = () => {
   };
 
   if (!hashPresent) {
-    return <div className="min-h-screen flex items-center justify-center">{t("resetPassword.redirecting")}</div>;
+    return <div className="min-h-screen flex items-center justify-center">Redirection...</div>;
   }
 
   return (
@@ -90,15 +88,15 @@ const ResetPassword = () => {
         <div className="max-w-md mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle>{t("resetPassword.title")}</CardTitle>
+              <CardTitle>Réinitialisation du mot de passe</CardTitle>
               <CardDescription>
-                {t("resetPassword.description")}
+                Veuillez saisir votre nouveau mot de passe.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordReset} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword">{t("resetPassword.newPassword")}</Label>
+                  <Label htmlFor="newPassword">Nouveau mot de passe</Label>
                   <Input
                     id="newPassword"
                     type="password"
@@ -111,7 +109,7 @@ const ResetPassword = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">{t("resetPassword.confirmPassword")}</Label>
+                  <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -128,7 +126,7 @@ const ResetPassword = () => {
                   className="w-full bg-[#72BB8E] hover:bg-[#72BB8E]/90 text-black"
                   disabled={isLoading}
                 >
-                  {isLoading ? t("resetPassword.resetting") : t("resetPassword.reset")}
+                  {isLoading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
                 </Button>
               </form>
             </CardContent>

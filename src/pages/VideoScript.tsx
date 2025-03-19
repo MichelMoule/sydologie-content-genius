@@ -18,11 +18,9 @@ import { VideoScriptAnalysis } from "@/components/videoscript/VideoScriptAnalysi
 import { VideoScriptData } from "@/components/videoscript/types";
 import { generateVideoScriptPDF } from "@/components/videoscript/VideoScriptPDF";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/hooks/use-language";
 
 const VideoScript = () => {
   const { toast } = useToast();
-  const { t } = useLanguage();
   const [isGenerating, setIsGenerating] = useState(false);
   const [scriptData, setScriptData] = useState<VideoScriptData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -40,8 +38,8 @@ const VideoScript = () => {
       if (!user) {
         toast({
           variant: "destructive",
-          title: t("error"),
-          description: t("videoScript.loginRequired"),
+          title: "Erreur",
+          description: "Vous devez être connecté pour générer un script vidéo.",
         });
         return;
       }
@@ -66,16 +64,16 @@ const VideoScript = () => {
       setIsDialogOpen(true);
 
       toast({
-        title: t("success"),
-        description: t("videoScript.successMessage"),
+        title: "Succès",
+        description: "Votre script vidéo a été généré avec succès.",
       });
 
     } catch (error) {
       console.error("Error generating video script:", error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("videoScript.errorMessage"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la génération du script vidéo.",
       });
     } finally {
       setIsGenerating(false);
@@ -87,8 +85,8 @@ const VideoScript = () => {
     generateVideoScriptPDF(scriptData, scriptName);
     
     toast({
-      title: t("success"),
-      description: t("videoScript.pdfSuccess"),
+      title: "PDF généré avec succès",
+      description: "Le téléchargement devrait commencer automatiquement.",
     });
   };
 
@@ -98,20 +96,22 @@ const VideoScript = () => {
       
       <div className="container mx-auto px-4 py-8 flex-grow">
         <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">
-          &lt; {t("tools.backToTools")}
+          &lt; Outils
         </Link>
         
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
-            <h1 className="text-6xl font-bold font-dmsans">{t("videoScript.title")}</h1>
+            <h1 className="text-6xl font-bold font-dmsans">Scrypto-vidéo</h1>
             <h2 className="text-3xl font-bold leading-tight font-dmsans">
-              {t("videoScript.subtitle")}
+              Créez facilement des scripts pour vos vidéos pédagogiques
             </h2>
             <p className="text-lg font-dmsans">
-              {t("videoScript.description1")}
+              Utilisez notre outil pour générer automatiquement des scripts de vidéos éducatives 
+              basés sur vos besoins spécifiques.
             </p>
             <p className="text-lg font-dmsans">
-              {t("videoScript.description2")}
+              Notre système d'IA vous aide à structurer votre contenu avec des sections claires, 
+              du texte de narration et des suggestions visuelles.
             </p>
           </div>
           
@@ -141,7 +141,7 @@ const VideoScript = () => {
                     onClick={handleDownloadPDF}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    {t("videoScript.form.download")}
+                    Télécharger PDF
                   </Button>
                 )}
               </DialogTitle>

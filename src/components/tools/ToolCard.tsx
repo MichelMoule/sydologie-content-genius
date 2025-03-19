@@ -1,6 +1,5 @@
 
 import { Link } from "react-router-dom";
-import { useLanguage } from "@/hooks/use-language";
 
 interface ToolCardProps {
   id: number;
@@ -11,8 +10,6 @@ interface ToolCardProps {
 }
 
 const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
-  const { t } = useLanguage();
-  
   return (
     <Link 
       key={id} 
