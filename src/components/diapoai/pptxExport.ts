@@ -9,6 +9,12 @@ interface ThemeColors {
   text: string;
 }
 
+// Interface pour les propriétés de texte dans pptxgenjs
+interface TextProps {
+  text: string;
+  options?: object;
+}
+
 // Helper to extract text content from HTML
 const extractTextContent = (html: string): string => {
   const div = document.createElement('div');
@@ -128,7 +134,10 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       const ulElements = slideElement.getElementsByTagName('ul');
       for (let j = 0; j < ulElements.length; j++) {
         const listItems = ulElements[j].getElementsByTagName('li');
-        const listContent = Array.from(listItems).map(li => li.textContent || '');
+        const listContent: TextProps[] = Array.from(listItems).map(li => ({
+          text: li.textContent || '',
+          options: {}
+        }));
         
         if (listContent.length > 0) {
           slide.addText(listContent, {
@@ -145,7 +154,10 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       const olElements = slideElement.getElementsByTagName('ol');
       for (let j = 0; j < olElements.length; j++) {
         const listItems = olElements[j].getElementsByTagName('li');
-        const listContent = Array.from(listItems).map(li => li.textContent || '');
+        const listContent: TextProps[] = Array.from(listItems).map(li => ({
+          text: li.textContent || '',
+          options: {}
+        }));
         
         if (listContent.length > 0) {
           slide.addText(listContent, {
@@ -162,11 +174,12 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       const svgElements = slideElement.getElementsByTagName('svg');
       for (let j = 0; j < svgElements.length; j++) {
         const svgElement = svgElements[j];
-        const svgOuter = svgElement.outerHTML;
+        // Use XMLSerializer pour obtenir l'outerHTML de l'élément SVG
+        const svgString = new XMLSerializer().serializeToString(svgElement);
         
-        if (svgOuter) {
+        if (svgString) {
           try {
-            const dataUrl = svgToDataUrl(svgOuter);
+            const dataUrl = svgToDataUrl(svgString);
             slide.addImage({ 
               data: dataUrl, 
               x: 0.5, 
@@ -180,7 +193,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             const nextElement = svgElement.nextSibling;
             if (nextElement && 
                 nextElement.nodeType === 1 && 
-                (nextElement as Element).classList.contains('diagram-caption')) {
+                (nextElement as Element).classList?.contains('diagram-caption')) {
               const captionText = nextElement.textContent || '';
               slide.addText(captionText, {
                 x: 0.5, y: contentY, w: '95%', h: 0.5,
@@ -200,5 +213,5 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
   }
   
   // Return as blob
-  return await pptx.writeFile({ outputType: 'blob' });
+  return await pptx.writeFile({ outputType: 'blob' }) as Blob;
 };
