@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,7 +7,7 @@ import { OutlineSection } from "@/components/diapoai/types";
 import { Button } from "@/components/ui/button";
 import { Download, FileDown, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { convertHtmlToPptx } from "@/components/diapoai/pptxExport";
+import { convertHtmlToPptx, ThemeColors } from "@/components/diapoai/pptxExport";
 
 // Theme color interface
 interface ThemeColors {
