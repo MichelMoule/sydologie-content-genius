@@ -38,7 +38,7 @@ export const processSlideElement = (
     const titleText = h1Elements[0].textContent || '';
     slide.addText(titleText, {
       x: 0.5, y: 0.5, w: '95%', h: 1,
-      fontSize: isTitle ? 44 : (isSectionTitle ? 40 : 36),
+      fontSize: isTitle ? 40 : (isSectionTitle ? 36 : 32), // Reduced font sizes
       color: colors.primary,
       bold: true,
       align: isTitle || isSectionTitle ? 'center' : 'left'
@@ -47,7 +47,7 @@ export const processSlideElement = (
     const titleText = h2Elements[0].textContent || '';
     slide.addText(titleText, {
       x: 0.5, y: 0.5, w: '95%', h: 1,
-      fontSize: isSectionTitle ? 40 : 32,
+      fontSize: isSectionTitle ? 36 : 28, // Reduced font sizes
       color: colors.primary,
       bold: true,
       align: isSectionTitle ? 'center' : 'left'
@@ -59,7 +59,7 @@ export const processSlideElement = (
     const subtitleText = h2Elements[0].textContent || '';
     slide.addText(subtitleText, { 
       x: 0.5, y: 1.8, w: '95%', h: 0.8, 
-      fontSize: 28, 
+      fontSize: 24, // Reduced from 28
       color: colors.secondary,
       align: 'center'
     });

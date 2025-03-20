@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
@@ -27,8 +28,8 @@ serve(async (req) => {
 
     // Default Sydologie colors that can be overridden
     const themeColors = colors || {
-      primary: "#1A1F2C",    // Sydologie dark purple
-      secondary: "#9b87f5",  // Sydologie primary purple
+      primary: "#1B4D3E",    // Sydologie green
+      secondary: "#FF9B7A",  // Sydologie coral
       background: "#FFFFFF", // White background
       text: "#333333"        // Dark gray for text
     };
@@ -47,43 +48,55 @@ serve(async (req) => {
       Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
       For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
+      IMPORTANT: You MUST vary the presentation formats based on the content type. DO NOT use the same format for all slides.
+      
+      INTELLIGENTLY CHOOSE between these formats based on content:
+      1. Use bullet points for general lists and simple concepts
+      2. Use timeline items for sequential processes, historical events, or steps
+      3. Use feature panels for highlighting important points or takeaways
+      4. Use grid layouts for comparing items or presenting related concepts
+      5. Use diagrams for relationships, processes, and workflows
+      
       Guidelines:
       - Use proper Reveal.js HTML format with sections and slides
       - Include a title slide with a compelling title, subtitle, and brand colors (${themeColors.primary} for primary text, ${themeColors.secondary} for highlights)
       - For each section in the outline, create a section title slide with a visually distinct style (use class="section-title")
       - For each subsection, create content slides with relevant information from the provided content
+      - Font sizes should be slightly reduced from default (h1: 36px, h2: 32px, body: 16px)
       
-      Visual Design Elements:
-      1. Instead of traditional bullet points, create stylized feature panels:
+      Visual Design Elements (VARY THESE BY CONTENT TYPE):
+      1. Feature panels for important points (use when highlighting key concepts):
          - Use div elements with class="feature-panel" for important points
-         - Apply soft background colors (#e6f7f2, #f0f7ff, #fff8e6)
-         - Add appropriate padding and rounded corners (style="padding: 15px; border-radius: 10px;")
-         - Example: <div class="feature-panel" style="background-color: #e6f7f2; padding: 15px; border-radius: 10px;">Entrepreneurs et dirigeants</div>
+         - Apply soft background colors based on the primary color theme
+         - Example: <div class="feature-panel">Entrepreneurs et dirigeants</div>
       
-      2. Create vertical timeline/process elements with numbers:
+      2. Timeline items for sequential processes (use for steps or chronological content):
          - Use div with class="timeline-item" containing a numbered icon and content
          - Example: 
            <div class="timeline-item">
-             <div class="timeline-number" style="background-color: ${themeColors.primary}; color: white;">1</div>
+             <div class="timeline-number">1</div>
              <div class="timeline-content">
                <h3>Titre de l'étape</h3>
-               <ul><li>Point détaillé</li></ul>
+               <p>Description de l'étape</p>
              </div>
            </div>
       
-      3. Create grid layouts for comparing options:
+      3. Grid layouts for comparing options (use for comparing items side by side):
          - Use div with class="grid-container" containing multiple "grid-item" divs
          - Example:
            <div class="grid-container">
-             <div class="grid-item" style="background-color: #e6f7f2;">
-               <h3>OPCO</h3>
-               <p>L'OPCO de votre entreprise peut prendre en charge la formation si vous êtes salarié.</p>
+             <div class="grid-item">
+               <h3>Option 1</h3>
+               <p>Description de l'option 1</p>
              </div>
-             <!-- Additional grid items -->
+             <div class="grid-item">
+               <h3>Option 2</h3>
+               <p>Description de l'option 2</p>
+             </div>
            </div>
       
-      Visual elements to include:
-      - Well-formatted bullet points using <ul> and <li> with proper indentation and styling
+      Standard elements to include:
+      - Well-formatted bullet points using <ul> and <li> with proper styling
       - Numbered lists using <ol> and <li> where appropriate (for steps, processes)
       - Use <span class="highlight"> for important terms or keywords
       
@@ -98,10 +111,7 @@ serve(async (req) => {
       - Use blockquotes with left border styling for important statements
       - Add image placeholders with descriptive captions for visuals
       
-      Advanced Reveal.js features:
-      - Add data-auto-animate attributes to create smooth transitions between related slides
-      - Use fragments (class="fragment") to reveal bullet points sequentially
-      - Include presenter notes with <aside class="notes"> for speaker guidance
+      REMEMBER: INTELLIGENTLY VARY THE PRESENTATION FORMATS BASED ON THE CONTENT. Don't use just one format throughout.
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>

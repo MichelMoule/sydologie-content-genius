@@ -27,7 +27,7 @@ export const processSvgElement = (slide: pptxgen.Slide, svgElement: any, content
       if (caption) {
         slide.addText(caption, {
           x: 0.5, y: contentY, w: '95%', h: 0.5,
-          fontSize: 14,
+          fontSize: 12, // Reduced font size
           color: '#333333',
           italic: true,
           align: 'center'
@@ -58,7 +58,7 @@ export const processDiagramDiv = (slide: pptxgen.Slide, divElement: any, content
     if (divElement.getAttribute('data-chart')) {
       slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 16,
+        fontSize: 14, // Reduced font size
         color: '#FF9B7A',
         italic: true,
         align: 'center'
@@ -78,11 +78,11 @@ export const processParagraphs = (slide: pptxgen.Slide, paragraphs: HTMLCollecti
     if (text.trim()) {
       slide.addText(text, {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 18,
+        fontSize: 16, // Reduced font size from 18 to 16
         color: textColor,
         align: 'left'
       });
-      contentY += 0.7;
+      contentY += 0.6; // Slightly reduced spacing
     }
   }
   return contentY;
@@ -102,11 +102,11 @@ export const processUnorderedLists = (slide: pptxgen.Slide, ulElements: HTMLColl
     if (listContent.length > 0) {
       slide.addText(listContent, {
         x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
-        fontSize: 18,
+        fontSize: 16, // Reduced font size from 18 to 16
         color: textColor,
         bullet: { type: 'bullet' }
       });
-      contentY += 0.6 * listContent.length;
+      contentY += 0.5 * listContent.length; // Reduced spacing
     }
   }
   return contentY;
@@ -126,11 +126,11 @@ export const processOrderedLists = (slide: pptxgen.Slide, olElements: HTMLCollec
     if (listContent.length > 0) {
       slide.addText(listContent, {
         x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
-        fontSize: 18,
+        fontSize: 16, // Reduced font size from 18 to 16
         color: textColor,
         bullet: { type: 'number' }
       });
-      contentY += 0.6 * listContent.length;
+      contentY += 0.5 * listContent.length; // Reduced spacing
     }
   }
   return contentY;
@@ -153,7 +153,7 @@ export const processFeaturePanels = (slide: pptxgen.Slide, divElements: HTMLColl
       // Add a colored rectangle for the panel
       slide.addShape('rect', { 
         x: 0.5, y: contentY, 
-        w: 9, h: 0.8,
+        w: 9, h: 0.7, // Reduced height from 0.8 to 0.7
         fill: { color: lightenHex(colors.primary, 0.9) },
         line: { color: colors.primary, width: 2 },
         rectRadius: 8
@@ -161,13 +161,13 @@ export const processFeaturePanels = (slide: pptxgen.Slide, divElements: HTMLColl
       
       // Add the text content
       slide.addText(text, {
-        x: 0.7, y: contentY + 0.1, w: 8.6, h: 0.6,
-        fontSize: 18,
+        x: 0.7, y: contentY + 0.1, w: 8.6, h: 0.5, // Reduced height from 0.6 to 0.5
+        fontSize: 16, // Reduced font size from 18 to 16
         color: colors.text,
         bold: true
       });
       
-      contentY += 1.0;
+      contentY += 0.9; // Reduced spacing from 1.0 to 0.9
     }
   }
   
@@ -215,8 +215,8 @@ export const processTimelineItems = (slide: pptxgen.Slide, divElements: HTMLColl
       // Add the content text
       slide.addText(contentText, {
         x: 1.2, y: contentY,
-        w: 8.3, h: 0.8,
-        fontSize: 16,
+        w: 8.3, h: 0.7, // Reduced height from 0.8 to 0.7
+        fontSize: 14, // Reduced font size from 16 to 14
         color: colors.text
       });
       
@@ -229,7 +229,7 @@ export const processTimelineItems = (slide: pptxgen.Slide, divElements: HTMLColl
         });
       }
       
-      contentY += 1.2;
+      contentY += 1.1; // Reduced spacing from 1.2 to 1.1
     }
   }
   
@@ -255,8 +255,8 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
       const rows = Math.ceil(itemCount / 2);
       
       // Calculate dimensions for each grid item
-      const itemWidth = 4.4;
-      const itemHeight = 1.5;
+      const itemWidth = 4.3; // Slightly reduced from 4.4
+      const itemHeight = 1.4; // Reduced from 1.5
       const itemSpacing = 0.2;
       
       for (let j = 0; j < gridItems.length; j++) {
@@ -284,7 +284,7 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
           slide.addText(title, {
             x: itemX + 0.1, y: itemY + 0.1,
             w: itemWidth - 0.2, h: 0.4,
-            fontSize: 14,
+            fontSize: 12, // Reduced from 14
             color: colors.primary,
             bold: true
           });
@@ -301,7 +301,7 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
         slide.addText(content, {
           x: itemX + 0.1, y: itemY + 0.6,
           w: itemWidth - 0.2, h: itemHeight - 0.7,
-          fontSize: 12,
+          fontSize: 11, // Reduced from 12
           color: colors.text
         });
       }
@@ -325,7 +325,7 @@ export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTML
     if (canvasElement.hasAttribute('data-chart')) {
       slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         color: secondaryColor,
         italic: true,
         align: 'center'
@@ -339,7 +339,7 @@ export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTML
         if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
           slide.addText(nextElement.textContent || '', {
             x: 0.5, y: contentY, w: '95%', h: 0.5,
-            fontSize: 14,
+            fontSize: 12, // Reduced from 14
             color: textColor,
             italic: true,
             align: 'center'

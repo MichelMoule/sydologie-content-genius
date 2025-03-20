@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,8 +14,8 @@ const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
   const [slidesHtml, setSlidesHtml] = useState<string | null>(null);
   const [colors, setColors] = useState<ThemeColors>({
-    primary: "#1A1F2C",    // Sydologie dark purple
-    secondary: "#9b87f5",  // Sydologie primary purple
+    primary: "#1B4D3E",    // Sydologie green
+    secondary: "#FF9B7A",  // Sydologie coral
     background: "#FFFFFF", // White background
     text: "#333333"        // Dark gray for text
   });

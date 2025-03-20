@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,14 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OutlineEditor from "./OutlineEditor";
 import { useToast } from "@/hooks/use-toast";
-
-// Theme color interface
-interface ThemeColors {
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
-}
+import { ThemeColors } from "./pptx/types";
 
 export const formSchema = z.object({
   content: z.string().min(10, { message: "Le contenu est requis (minimum 10 caractères)" }),
@@ -67,7 +59,6 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Check if it's a docx file
     if (file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
       toast({
         title: "Format non supporté",
@@ -77,7 +68,6 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
       return;
     }
 
-    // Simple file reader for text extraction (in a real app, you'd want to parse docx properly)
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
@@ -91,7 +81,7 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
     setIsGeneratingOutline(true);
     try {
       console.log("Generating outline with content:", values.content.substring(0, 100) + "...");
-      
+
       const { data, error } = await supabase.functions.invoke('generate-diapo', {
         body: { content: values.content, step: 'outline' },
       });
