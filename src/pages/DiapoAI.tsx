@@ -38,11 +38,38 @@ const DiapoAI = () => {
   };
 
   const handleSlidesGenerated = (html: string) => {
-    setSlidesHtml(html);
+    // Amélioration: s'assurer que les schémas SVG ont une classe appropriée
+    const processedHtml = processSvgDiagrams(html);
+    setSlidesHtml(processedHtml);
     toast({
       title: "Diaporama généré avec succès",
       description: "Vous pouvez maintenant visualiser et personnaliser votre diaporama.",
     });
+  };
+
+  // Fonction pour s'assurer que tous les SVG ont les bonnes classes pour l'export
+  const processSvgDiagrams = (html: string): string => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Trouver tous les SVG qui ne sont pas déjà dans un div.diagram ou div.svg-diagram
+    const svgs = Array.from(doc.querySelectorAll('svg')).filter(svg => {
+      const parent = svg.parentElement;
+      return !(parent && (parent.classList.contains('diagram') || parent.classList.contains('svg-diagram')));
+    });
+    
+    // Envelopper ces SVG dans des div.diagram pour un meilleur rendu
+    svgs.forEach(svg => {
+      if (svg.parentElement) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'svg-diagram';
+        svg.parentElement.insertBefore(wrapper, svg);
+        wrapper.appendChild(svg);
+      }
+    });
+    
+    // Convertir de nouveau en string
+    return doc.body.innerHTML;
   };
 
   const handleColorChange = (newColors: ThemeColors) => {
@@ -308,7 +335,9 @@ const DiapoAI = () => {
         description: "Création du fichier PowerPoint...",
       });
       
-      const pptxBlob = await convertHtmlToPptx(slidesHtml, colors);
+      // Traiter le HTML pour s'assurer que les SVG sont correctement formatés
+      const processedHtml = processSvgDiagrams(slidesHtml);
+      const pptxBlob = await convertHtmlToPptx(processedHtml, colors);
       
       // Create download link
       const url = window.URL.createObjectURL(pptxBlob);

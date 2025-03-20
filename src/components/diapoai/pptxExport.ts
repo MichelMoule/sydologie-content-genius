@@ -1,3 +1,4 @@
+
 import pptxgen from "pptxgenjs";
 import { DOMParser } from '@xmldom/xmldom';
 
@@ -24,6 +25,15 @@ const extractTextContent = (html: string): string => {
 // Convert SVG to DataURL for embedding in PowerPoint
 const svgToDataUrl = (svgString: string): string => {
   return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
+};
+
+// Helper to extract SVG from HTML content
+const extractSvgsFromHtml = (html: string): string[] => {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  const svgs = div.querySelectorAll('svg');
+  const serializer = new XMLSerializer();
+  return Array.from(svgs).map(svg => serializer.serializeToString(svg));
 };
 
 // Function to convert HTML content to PPTX
@@ -143,7 +153,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
             fontSize: 18,
             color: colors.text,
-            bullet: { type: 'bullet' } // Removed color property as it's not supported
+            bullet: { type: 'bullet' }
           });
           contentY += 0.6 * listContent.length;
         }
@@ -163,7 +173,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
             fontSize: 18,
             color: colors.text,
-            bullet: { type: 'number' } // Removed color property as it's not supported
+            bullet: { type: 'number' }
           });
           contentY += 0.6 * listContent.length;
         }
@@ -174,7 +184,6 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       for (let j = 0; j < svgElements.length; j++) {
         const svgElement = svgElements[j];
         // Use XMLSerializer to get the serialized SVG string
-        // Fix: Cast svgElement to unknown first, then to Node to satisfy TypeScript
         const serializer = new XMLSerializer();
         const svgString = serializer.serializeToString(svgElement as unknown as Node);
         
@@ -191,22 +200,66 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             contentY += 4.5;
             
             // Look for caption
-            const nextElement = svgElement.nextSibling;
-            if (nextElement && 
-                nextElement.nodeType === 1 && 
-                ((nextElement as unknown) as Element).classList?.contains('diagram-caption')) {
-              const captionText = nextElement.textContent || '';
-              slide.addText(captionText, {
-                x: 0.5, y: contentY, w: '95%', h: 0.5,
-                fontSize: 14,
-                color: colors.text,
-                italic: true,
-                align: 'center'
-              });
-              contentY += 0.7;
+            const nextSibling = svgElement.nextSibling;
+            if (nextSibling && nextSibling.nodeType === 1) {
+              const nextElement = nextSibling as unknown as Element;
+              if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
+                const captionText = nextElement.textContent || '';
+                slide.addText(captionText, {
+                  x: 0.5, y: contentY, w: '95%', h: 0.5,
+                  fontSize: 14,
+                  color: colors.text,
+                  italic: true,
+                  align: 'center'
+                });
+                contentY += 0.7;
+              }
             }
           } catch (e) {
             console.error('Error processing SVG:', e);
+          }
+        }
+      }
+
+      // Check for div with class diagram or svg-diagram
+      const diagramDivs = slideElement.getElementsByTagName('div');
+      for (let j = 0; j < diagramDivs.length; j++) {
+        const divElement = diagramDivs[j];
+        if (divElement.getAttribute('class')?.includes('diagram') || 
+            divElement.getAttribute('class')?.includes('svg-diagram')) {
+          // Extract SVG from div if it exists
+          const nestedSvg = divElement.getElementsByTagName('svg')[0];
+          if (nestedSvg) {
+            try {
+              const serializer = new XMLSerializer();
+              const svgString = serializer.serializeToString(nestedSvg as unknown as Node);
+              const dataUrl = svgToDataUrl(svgString);
+              
+              slide.addImage({ 
+                data: dataUrl, 
+                x: 0.5, 
+                y: contentY, 
+                w: 9,
+                h: 4
+              });
+              contentY += 4.5;
+              
+              // Look for caption within the div
+              const captionElements = divElement.getElementsByClassName('diagram-caption');
+              if (captionElements.length > 0) {
+                const captionText = captionElements[0].textContent || '';
+                slide.addText(captionText, {
+                  x: 0.5, y: contentY, w: '95%', h: 0.5,
+                  fontSize: 14,
+                  color: colors.text,
+                  italic: true,
+                  align: 'center'
+                });
+                contentY += 0.7;
+              }
+            } catch (e) {
+              console.error('Error processing nested SVG:', e);
+            }
           }
         }
       }
