@@ -1,7 +1,7 @@
 
 import pptxgen from "pptxgenjs";
 import { ThemeColors } from "./types";
-import { parseHtml } from "./utils";
+import { parseHtml, DOMElement } from "./utils";
 import { processSlideElement } from "./slideProcessor";
 
 /**
@@ -31,7 +31,6 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
           fontSize: 10, 
           align: 'right',
           fontFace: 'Arial'
-          // Removed both unsupported 'opacity' and 'transparentBackground' properties
         } 
       }}
     ],
@@ -58,8 +57,8 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       continue;
     }
     
-    // Process the slide element - no need for type assertion as processSlideElement accepts both types now
-    processSlideElement(pptx, slideElement, colors);
+    // Process the slide element using our DOMElement type
+    processSlideElement(pptx, slideElement as DOMElement, colors);
   }
   
   // Use the correct interface for writeFile and cast the result appropriately

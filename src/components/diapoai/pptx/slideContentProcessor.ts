@@ -1,10 +1,14 @@
-// Use appropriate imports from related modules
+
 import pptxgen from "pptxgenjs";
 import { ThemeColors } from "./types";
-import { svgToDataUrl, getElementsArrayByTagName } from "./utils";
-
-// Define a type that can represent both browser and xmldom Element types
-type DOMElement = Element | import('@xmldom/xmldom').Element;
+import { 
+  svgToDataUrl, 
+  getElementsArrayByTagName, 
+  hasClass, 
+  getTextContent,
+  filterChildElementsByClass,
+  DOMElement
+} from "./utils";
 
 /**
  * Process paragraphs for a slide
@@ -19,7 +23,7 @@ export const processParagraphs = (
   
   for (let i = 0; i < paragraphs.length; i++) {
     const paragraph = paragraphs[i];
-    const text = paragraph.textContent || '';
+    const text = getTextContent(paragraph);
     
     if (text.trim()) {
       slide.addText(text, {
@@ -52,7 +56,7 @@ export const processUnorderedLists = (
     
     for (let j = 0; j < liElements.length; j++) {
       const li = liElements[j];
-      const text = li.textContent || '';
+      const text = getTextContent(li);
       
       if (text.trim()) {
         slide.addText(`• ${text}`, {
@@ -88,7 +92,7 @@ export const processOrderedLists = (
     
     for (let j = 0; j < liElements.length; j++) {
       const li = liElements[j];
-      const text = li.textContent || '';
+      const text = getTextContent(li);
       
       if (text.trim()) {
         slide.addText(`${j + 1}. ${text}`, {
@@ -174,14 +178,10 @@ export const processDiagramDiv = (
       
       // Look for caption
       let caption = '';
-      const captionElements = Array.from(divElement.childNodes).filter(node => 
-        node.nodeType === 1 && 
-        (node as DOMElement).classList && 
-        (node as DOMElement).classList.contains('diagram-caption')
-      );
+      const captionElements = filterChildElementsByClass(divElement, 'diagram-caption');
       
       if (captionElements.length > 0) {
-        caption = captionElements[0].textContent || '';
+        caption = getTextContent(captionElements[0]);
       }
       
       let currentY = startY + 3.2;
@@ -212,7 +212,7 @@ export const processDiagramDiv = (
  */
 export const processCanvasElements = (
   slide: pptxgen.Slide,
-  canvasElements: Element[],
+  canvasElements: DOMElement[],
   startY: number,
   accentColor: string,
   textColor: string
@@ -248,7 +248,7 @@ export const processCanvasElements = (
  */
 export const processFeaturePanels = (
   slide: pptxgen.Slide,
-  divElements: Element[],
+  divElements: DOMElement[],
   startY: number,
   colors: ThemeColors
 ): number => {
@@ -256,10 +256,9 @@ export const processFeaturePanels = (
   
   for (let i = 0; i < divElements.length; i++) {
     const div = divElements[i];
-    const className = div.getAttribute('class') || '';
     
-    if (className.includes('feature-panel')) {
-      const text = div.textContent || '';
+    if (hasClass(div, 'feature-panel')) {
+      const text = getTextContent(div);
       
       if (text.trim()) {
         // Add box shape
@@ -290,7 +289,7 @@ export const processFeaturePanels = (
  */
 export const processTimelineItems = (
   slide: pptxgen.Slide,
-  divElements: Element[],
+  divElements: DOMElement[],
   startY: number,
   colors: ThemeColors
 ): number => {
@@ -298,21 +297,16 @@ export const processTimelineItems = (
   
   for (let i = 0; i < divElements.length; i++) {
     const div = divElements[i];
-    const className = div.getAttribute('class') || '';
     
-    if (className.includes('timeline-item')) {
+    if (hasClass(div, 'timeline-item')) {
       // Find number div
-      const numberDivs = getElementsArrayByTagName(div, 'div').filter(el => 
-        (el.getAttribute('class') || '').includes('timeline-number')
-      );
+      const numberDivs = filterChildElementsByClass(div, 'timeline-number');
       
       // Find content div
-      const contentDivs = getElementsArrayByTagName(div, 'div').filter(el => 
-        (el.getAttribute('class') || '').includes('timeline-content')
-      );
+      const contentDivs = filterChildElementsByClass(div, 'timeline-content');
       
       if (numberDivs.length > 0 && contentDivs.length > 0) {
-        const number = numberDivs[0].textContent || '';
+        const number = getTextContent(numberDivs[0]);
         const contentDiv = contentDivs[0];
         
         // Find title and text in content
@@ -323,11 +317,11 @@ export const processTimelineItems = (
         let text = '';
         
         if (h3Elements.length > 0) {
-          title = h3Elements[0].textContent || '';
+          title = getTextContent(h3Elements[0]);
         }
         
         if (paragraphs.length > 0) {
-          text = paragraphs[0].textContent || '';
+          text = getTextContent(paragraphs[0]);
         }
         
         // Add circle with number
@@ -389,7 +383,7 @@ export const processTimelineItems = (
  */
 export const processGridContainers = (
   slide: pptxgen.Slide,
-  divElements: Element[],
+  divElements: DOMElement[],
   startY: number,
   colors: ThemeColors
 ): number => {
@@ -397,13 +391,10 @@ export const processGridContainers = (
   
   for (let i = 0; i < divElements.length; i++) {
     const div = divElements[i];
-    const className = div.getAttribute('class') || '';
     
-    if (className.includes('grid-container')) {
+    if (hasClass(div, 'grid-container')) {
       // Find grid items
-      const gridItems = getElementsArrayByTagName(div, 'div').filter(el => 
-        (el.getAttribute('class') || '').includes('grid-item')
-      );
+      const gridItems = filterChildElementsByClass(div, 'grid-item');
       
       if (gridItems.length > 0) {
         const gridItemsCount = gridItems.length;
@@ -426,14 +417,14 @@ export const processGridContainers = (
           let text = '';
           
           if (h3Elements.length > 0) {
-            title = h3Elements[0].textContent || '';
+            title = getTextContent(h3Elements[0]);
           }
           
           if (paragraphs.length > 0) {
-            text = paragraphs[0].textContent || '';
+            text = getTextContent(paragraphs[0]);
           } else {
             // If no paragraphs, use remaining text content
-            const allText = gridItem.textContent || '';
+            const allText = getTextContent(gridItem);
             if (title) {
               text = allText.replace(title, '').trim();
             } else {
