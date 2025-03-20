@@ -175,8 +175,9 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       for (let j = 0; j < svgElements.length; j++) {
         const svgElement = svgElements[j];
         // Use XMLSerializer to get the serialized SVG string
+        // Fix: Cast svgElement to Node type, which is what XMLSerializer expects
         const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svgElement);
+        const svgString = serializer.serializeToString(svgElement as Node);
         
         if (svgString) {
           try {
