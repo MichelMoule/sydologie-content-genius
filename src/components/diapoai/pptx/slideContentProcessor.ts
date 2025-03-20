@@ -137,6 +137,184 @@ export const processOrderedLists = (slide: pptxgen.Slide, olElements: HTMLCollec
 };
 
 /**
+ * Process feature panels (custom styled boxes)
+ */
+export const processFeaturePanels = (slide: pptxgen.Slide, divElements: HTMLCollectionOf<Element>, contentY: number, colors: { primary: string, secondary: string, text: string }): number => {
+  // Filter divs to only get feature panels
+  const featurePanels = Array.from(divElements).filter(div => {
+    return div.getAttribute('class')?.includes('feature-panel');
+  });
+  
+  for (let j = 0; j < featurePanels.length; j++) {
+    const panel = featurePanels[j];
+    const text = panel.textContent || '';
+    
+    if (text.trim()) {
+      // Add a colored rectangle for the panel
+      slide.addShape('rect', { 
+        x: 0.5, y: contentY, 
+        w: 9, h: 0.8,
+        fill: { color: lightenHex(colors.primary, 0.9) },
+        line: { color: colors.primary, width: 2 },
+        rectRadius: 8
+      });
+      
+      // Add the text content
+      slide.addText(text, {
+        x: 0.7, y: contentY + 0.1, w: 8.6, h: 0.6,
+        fontSize: 18,
+        color: colors.text,
+        bold: true
+      });
+      
+      contentY += 1.0;
+    }
+  }
+  
+  return contentY;
+};
+
+/**
+ * Process timeline items (numbered content with vertical line)
+ */
+export const processTimelineItems = (slide: pptxgen.Slide, divElements: HTMLCollectionOf<Element>, contentY: number, colors: { primary: string, secondary: string, text: string }): number => {
+  // Filter divs to only get timeline items
+  const timelineItems = Array.from(divElements).filter(div => {
+    return div.getAttribute('class')?.includes('timeline-item');
+  });
+  
+  for (let j = 0; j < timelineItems.length; j++) {
+    const item = timelineItems[j];
+    
+    // Find number element and content
+    const numberDiv = item.querySelector('.timeline-number');
+    const contentDiv = item.querySelector('.timeline-content');
+    
+    if (numberDiv && contentDiv) {
+      const number = numberDiv.textContent || '';
+      const contentText = contentDiv.textContent || '';
+      
+      // Add the number circle
+      slide.addShape('ellipse', {
+        x: 0.5, y: contentY,
+        w: 0.5, h: 0.5,
+        fill: { color: colors.primary }
+      });
+      
+      // Add the number
+      slide.addText(number, {
+        x: 0.5, y: contentY,
+        w: 0.5, h: 0.5,
+        color: 'FFFFFF',
+        fontSize: 14,
+        bold: true,
+        align: 'center',
+        valign: 'middle'
+      });
+      
+      // Add the content text
+      slide.addText(contentText, {
+        x: 1.2, y: contentY,
+        w: 8.3, h: 0.8,
+        fontSize: 16,
+        color: colors.text
+      });
+      
+      // If not the last item, add a vertical line
+      if (j < timelineItems.length - 1) {
+        slide.addShape('line', {
+          x: 0.75, y: contentY + 0.5,
+          w: 0, h: 0.5,
+          line: { color: colors.primary, width: 1, dashType: 'dash' }
+        });
+      }
+      
+      contentY += 1.2;
+    }
+  }
+  
+  return contentY;
+};
+
+/**
+ * Process grid containers (2x2 or other grid layouts)
+ */
+export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCollectionOf<Element>, contentY: number, colors: { primary: string, secondary: string, text: string }): number => {
+  // Filter divs to only get grid containers
+  const gridContainers = Array.from(divElements).filter(div => {
+    return div.getAttribute('class')?.includes('grid-container');
+  });
+  
+  for (let i = 0; i < gridContainers.length; i++) {
+    const container = gridContainers[i];
+    const gridItems = container.querySelectorAll('.grid-item');
+    
+    if (gridItems.length > 0) {
+      const itemCount = gridItems.length;
+      const columns = itemCount > 2 ? 2 : itemCount;
+      const rows = Math.ceil(itemCount / 2);
+      
+      // Calculate dimensions for each grid item
+      const itemWidth = 4.4;
+      const itemHeight = 1.5;
+      const itemSpacing = 0.2;
+      
+      for (let j = 0; j < gridItems.length; j++) {
+        const item = gridItems[j];
+        const title = item.querySelector('h3')?.textContent || '';
+        const content = item.textContent?.replace(title, '').trim() || '';
+        
+        // Calculate position
+        const col = j % columns;
+        const row = Math.floor(j / columns);
+        const itemX = 0.5 + (col * (itemWidth + itemSpacing));
+        const itemY = contentY + (row * (itemHeight + itemSpacing));
+        
+        // Add rectangle background
+        slide.addShape('rect', {
+          x: itemX, y: itemY,
+          w: itemWidth, h: itemHeight,
+          fill: { color: lightenHex(colors.primary, 0.9) },
+          line: { color: colors.primary, width: 1 },
+          rectRadius: 5
+        });
+        
+        // Add title
+        if (title) {
+          slide.addText(title, {
+            x: itemX + 0.1, y: itemY + 0.1,
+            w: itemWidth - 0.2, h: 0.4,
+            fontSize: 14,
+            color: colors.primary,
+            bold: true
+          });
+          
+          // Add separator line
+          slide.addShape('line', {
+            x: itemX + 0.1, y: itemY + 0.5,
+            w: itemWidth - 0.2, h: 0,
+            line: { color: colors.secondary, width: 1 }
+          });
+        }
+        
+        // Add content
+        slide.addText(content, {
+          x: itemX + 0.1, y: itemY + 0.6,
+          w: itemWidth - 0.2, h: itemHeight - 0.7,
+          fontSize: 12,
+          color: colors.text
+        });
+      }
+      
+      // Update contentY to after the grid
+      contentY += (rows * (itemHeight + itemSpacing));
+    }
+  }
+  
+  return contentY;
+};
+
+/**
  * Process canvas elements (likely Chart.js charts)
  */
 export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTMLCollectionOf<Element>, contentY: number, secondaryColor: string, textColor: string): number => {
@@ -173,3 +351,24 @@ export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTML
   }
   return contentY;
 };
+
+/**
+ * Helper function to lighten a hex color
+ */
+function lightenHex(hexColor: string, factor: number): string {
+  // Remove the # if present
+  hexColor = hexColor.replace(/^#/, '');
+  
+  // Parse the hex values
+  let r = parseInt(hexColor.substring(0, 2), 16);
+  let g = parseInt(hexColor.substring(2, 4), 16);
+  let b = parseInt(hexColor.substring(4, 6), 16);
+  
+  // Lighten the color
+  r = Math.round(r + (255 - r) * factor);
+  g = Math.round(g + (255 - g) * factor);
+  b = Math.round(b + (255 - b) * factor);
+  
+  // Convert back to hex
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}

@@ -7,7 +7,10 @@ import {
   processOrderedLists, 
   processSvgElement, 
   processDiagramDiv,
-  processCanvasElements
+  processCanvasElements,
+  processFeaturePanels,
+  processTimelineItems,
+  processGridContainers
 } from "./slideContentProcessor";
 
 /**
@@ -66,6 +69,18 @@ export const processSlideElement = (
   if (!isTitle && !isSectionTitle) {
     let contentY = h1Elements.length > 0 || h2Elements.length > 0 ? 2 : 0.5;
     
+    // Get all div elements (needed for various custom elements)
+    const divElements = slideElement.getElementsByTagName('div');
+    
+    // Process feature panels (styled boxes with content)
+    contentY = processFeaturePanels(slide, divElements, contentY, colors);
+    
+    // Process timeline items (numbered content with vertical line)
+    contentY = processTimelineItems(slide, divElements, contentY, colors);
+    
+    // Process grid containers (2x2 or other grid layouts)
+    contentY = processGridContainers(slide, divElements, contentY, colors);
+    
     // Process paragraph content
     const paragraphs = slideElement.getElementsByTagName('p');
     contentY = processParagraphs(slide, paragraphs, contentY, colors.text);
@@ -97,9 +112,8 @@ export const processSlideElement = (
     }
     
     // Process divs containing SVGs (for diagrams and charts)
-    const diagramDivs = slideElement.getElementsByTagName('div');
-    for (let j = 0; j < diagramDivs.length; j++) {
-      const divElement = diagramDivs[j];
+    for (let j = 0; j < divElements.length; j++) {
+      const divElement = divElements[j];
       if (
         divElement.getAttribute('class')?.includes('diagram') || 
         divElement.getAttribute('class')?.includes('svg-diagram') ||

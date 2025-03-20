@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
@@ -26,12 +25,12 @@ serve(async (req) => {
     let systemPrompt = '';
     let userPrompt = '';
 
-    // Default SYDO colors that can be overridden
+    // Default Sydologie colors that can be overridden
     const themeColors = colors || {
-      primary: "#1B4D3E",
-      secondary: "#FF9B7A",
-      background: "#FFFFFF",
-      text: "#333333"
+      primary: "#1A1F2C",    // Sydologie dark purple
+      secondary: "#9b87f5",  // Sydologie primary purple
+      background: "#FFFFFF", // White background
+      text: "#333333"        // Dark gray for text
     };
 
     if (step === 'outline') {
@@ -54,78 +53,55 @@ serve(async (req) => {
       - For each section in the outline, create a section title slide with a visually distinct style (use class="section-title")
       - For each subsection, create content slides with relevant information from the provided content
       
+      Visual Design Elements:
+      1. Instead of traditional bullet points, create stylized feature panels:
+         - Use div elements with class="feature-panel" for important points
+         - Apply soft background colors (#e6f7f2, #f0f7ff, #fff8e6)
+         - Add appropriate padding and rounded corners (style="padding: 15px; border-radius: 10px;")
+         - Example: <div class="feature-panel" style="background-color: #e6f7f2; padding: 15px; border-radius: 10px;">Entrepreneurs et dirigeants</div>
+      
+      2. Create vertical timeline/process elements with numbers:
+         - Use div with class="timeline-item" containing a numbered icon and content
+         - Example: 
+           <div class="timeline-item">
+             <div class="timeline-number" style="background-color: ${themeColors.primary}; color: white;">1</div>
+             <div class="timeline-content">
+               <h3>Titre de l'étape</h3>
+               <ul><li>Point détaillé</li></ul>
+             </div>
+           </div>
+      
+      3. Create grid layouts for comparing options:
+         - Use div with class="grid-container" containing multiple "grid-item" divs
+         - Example:
+           <div class="grid-container">
+             <div class="grid-item" style="background-color: #e6f7f2;">
+               <h3>OPCO</h3>
+               <p>L'OPCO de votre entreprise peut prendre en charge la formation si vous êtes salarié.</p>
+             </div>
+             <!-- Additional grid items -->
+           </div>
+      
       Visual elements to include:
       - Well-formatted bullet points using <ul> and <li> with proper indentation and styling
       - Numbered lists using <ol> and <li> where appropriate (for steps, processes)
       - Use <span class="highlight"> for important terms or keywords
       
       Data Visualization & Animation:
-      The presentation supports three powerful plugins that you should use:
-      
-      1. SVG Animations (using the 'animate' plugin):
-      - Add SVG animations using a div with the 'data-animate' attribute
-      - Structure like this:
-        <div data-animate>
-          <svg>...</svg>
-          <!--
-          {
-            "setup": [{ "element": "#element-id", "modifier": "function", "parameters": [values] }],
-            "animation": [{ "element": "#element-id", "modifier": "function", "parameters": [values] }]
-          }
-          -->
-        </div>
-      
-      2. Charts (using the 'chart' plugin):
-      - Add charts using a canvas with the 'data-chart' attribute set to the chart type (bar, line, pie)
-      - Structure like this:
-        <canvas data-chart="bar">
-          <!-- JSON configuration for the chart -->
-          <!--
-          {
-            "data": {
-              "labels": ["Label1", "Label2", "Label3"],
-              "datasets": [{ "data": [10, 20, 30], "label": "Dataset 1" }]
-            }
-          }
-          -->
-        </canvas>
-        OR
-        <canvas data-chart="line">
-          Dataset 1, 10, 20, 30
-          Dataset 2, 5, 15, 25
-          <!-- Optional JSON configuration -->
-        </canvas>
-      
-      3. Custom Elements (using the 'anything' plugin):
-      - Create custom interactive elements with a class name and JSON configuration
-      - The class identifies what type of element it is, and the JSON configures it
-      
-      SVG Diagrams:
-      - Create SVG diagrams for processes, relationships, and concepts using inline SVG code
-      - Include the following types of SVG diagrams where appropriate:
-        1. Process flows with connected boxes and arrows
-        2. Comparison charts showing pros/cons or differences
-        3. Organizational hierarchies or mind maps
-        4. Simple bar or pie charts for data visualization
-        5. Venn diagrams for showing relationships
-      - Use the theme colors (${themeColors.primary}, ${themeColors.secondary}) in SVG elements
-      - Make SVGs responsive using viewBox attribute
-      - Add appropriate titles and labels to SVG elements
+      - Include SVG charts and diagrams using the built-in plugins
+      - Use the 'chart' plugin for data visualization where appropriate
+      - Create simple SVG diagrams for concepts and processes
       
       Design techniques:
       - Use data-background-gradient="linear-gradient(to right, ${themeColors.primary}, #3a8573)" for section title slides
-      - Create two-column layouts using div with flex for comparing concepts
+      - Create two-column layouts using div with class="columns" containing div with class="column"
       - Use blockquotes with left border styling for important statements
       - Add image placeholders with descriptive captions for visuals
-      - Apply different layouts based on content type (e.g., full-screen for important concepts)
-      - Use font-awesome icons or emoji symbols as bullet points or visual cues
       
       Advanced Reveal.js features:
       - Add data-auto-animate attributes to create smooth transitions between related slides
       - Use fragments (class="fragment") to reveal bullet points sequentially
       - Include presenter notes with <aside class="notes"> for speaker guidance
-      - Add data-transition attributes to suggest appropriate transitions between slides
-      - Use properly nested section elements to create vertical slides for detailed topics
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>
@@ -203,6 +179,8 @@ serve(async (req) => {
             --secondary-color: ${themeColors.secondary};
             --background-color: ${themeColors.background};
             --text-color: ${themeColors.text};
+            --light-primary: ${lightenColor(themeColors.primary, 0.9)};
+            --light-secondary: ${lightenColor(themeColors.secondary, 0.9)};
           }
           
           .reveal h1, .reveal h2 { color: var(--primary-color); font-weight: 700; margin-bottom: 0.5em; }
@@ -210,6 +188,86 @@ serve(async (req) => {
           .reveal .highlight { color: var(--secondary-color); font-weight: 600; }
           .reveal .text-primary { color: var(--primary-color); }
           .reveal .text-secondary { color: var(--secondary-color); }
+          
+          /* Feature panels - styled boxes with content */
+          .reveal .feature-panel {
+            background-color: var(--light-primary);
+            color: var(--text-color);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 5px solid var(--primary-color);
+            font-size: 1.1em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          }
+          
+          /* Timeline/numbered items */
+          .reveal .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            position: relative;
+          }
+          
+          .reveal .timeline-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin-right: 15px;
+            margin-top: 5px;
+            position: relative;
+            z-index: 2;
+          }
+          
+          .reveal .timeline-content {
+            flex: 1;
+            padding-bottom: 10px;
+          }
+          
+          .reveal .timeline-item:not(:last-child):after {
+            content: "";
+            position: absolute;
+            left: 20px;
+            top: 45px;
+            bottom: -15px;
+            width: 2px;
+            background-color: var(--primary-color);
+            opacity: 0.3;
+            z-index: 1;
+          }
+          
+          /* Grid layout */
+          .reveal .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+          }
+          
+          .reveal .grid-item {
+            background-color: var(--light-primary);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          }
+          
+          .reveal .grid-item h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+          }
           
           /* Enhanced bullet points */
           .reveal ul { list-style-type: none; margin-left: 0; }
@@ -254,16 +312,6 @@ serve(async (req) => {
             left: 0;
           }
           
-          /* Block quotes */
-          .reveal blockquote { 
-            border-left: 4px solid var(--secondary-color); 
-            padding-left: 1em; 
-            font-style: italic;
-            background: rgba(var(--secondary-color-rgb), 0.1);
-            padding: 1em;
-            border-radius: 0 8px 8px 0;
-          }
-          
           /* Two-column layout */
           .reveal .columns {
             display: flex;
@@ -274,94 +322,15 @@ serve(async (req) => {
             flex: 1;
           }
           
-          /* SVG diagrams */
-          .reveal .svg-diagram {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            display: block;
-          }
-          
-          .reveal .diagram-caption {
-            text-align: center;
+          /* Block quotes */
+          .reveal blockquote { 
+            border-left: 4px solid var(--secondary-color); 
+            padding: 1em 1.5em;
             font-style: italic;
-            margin-top: 0.5em;
-            color: var(--text-color);
-            opacity: 0.8;
-          }
-          
-          /* Image placeholders */
-          .reveal .image-placeholder {
-            background-color: #f0f0f0;
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
-            width: 80%;
-            position: relative;
-          }
-          .reveal .image-placeholder:after {
-            content: "Image illustrative";
-            color: #888;
-            font-style: italic;
-          }
-          
-          /* Diagram styling */
-          .reveal .diagram {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 1em auto;
-            width: 90%;
-          }
-          .reveal .process-flow {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-          }
-          .reveal .process-step {
-            background: rgba(var(--primary-color-rgb), 0.1);
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            padding: 0.5em 1em;
-            text-align: center;
-            min-width: 100px;
-            position: relative;
-          }
-          .reveal .process-step:not(:last-child):after {
-            content: "→";
-            position: absolute;
-            right: -1.5em;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-color);
-            font-size: 1.5em;
-          }
-          
-          /* Tables */
-          .reveal table {
-            width: 100%;
-            border-collapse: collapse;
+            background: var(--light-secondary);
+            border-radius: 0 8px 8px 0;
             margin: 1em 0;
-          }
-          .reveal table th {
-            background-color: rgba(var(--primary-color-rgb), 0.2);
-            color: var(--primary-color);
-            font-weight: bold;
-            text-align: left;
-            padding: 0.5em;
-            border: 1px solid rgba(var(--primary-color-rgb), 0.3);
-          }
-          .reveal table td {
-            padding: 0.5em;
-            border: 1px solid rgba(var(--primary-color-rgb), 0.2);
-          }
-          .reveal table tr:nth-child(even) {
-            background-color: rgba(var(--primary-color-rgb), 0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
           }
           
           /* Section title slides */
@@ -420,4 +389,30 @@ function hexToRgb(hex: string) {
   }
   
   return `${r}, ${g}, ${b}`;
+}
+
+// Function to lighten a color for backgrounds
+function lightenColor(hex: string, factor: number): string {
+  // Remove the # if present
+  hex = hex.replace(/^#/, '');
+  
+  // Parse the hex values
+  let r, g, b;
+  if (hex.length === 3) {
+    r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+    g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+    b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+  } else {
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+  }
+  
+  // Lighten the color
+  r = Math.round(r + (255 - r) * factor);
+  g = Math.round(g + (255 - g) * factor);
+  b = Math.round(b + (255 - b) * factor);
+  
+  // Convert back to hex
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }

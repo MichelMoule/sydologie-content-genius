@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,22 +9,14 @@ import { Download, FileDown, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { convertHtmlToPptx, ThemeColors } from "@/components/diapoai/pptxExport";
 
-// We're removing this duplicate interface since we're importing it above
-// interface ThemeColors {
-//   primary: string;
-//   secondary: string;
-//   background: string;
-//   text: string;
-// }
-
 const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
   const [slidesHtml, setSlidesHtml] = useState<string | null>(null);
   const [colors, setColors] = useState<ThemeColors>({
-    primary: "#1B4D3E",
-    secondary: "#FF9B7A",
-    background: "#FFFFFF",
-    text: "#333333"
+    primary: "#1A1F2C",    // Sydologie dark purple
+    secondary: "#9b87f5",  // Sydologie primary purple
+    background: "#FFFFFF", // White background
+    text: "#333333"        // Dark gray for text
   });
   const { toast } = useToast();
 
@@ -38,7 +29,6 @@ const DiapoAI = () => {
   };
 
   const handleSlidesGenerated = (html: string) => {
-    // Amélioration: s'assurer que les schémas SVG ont une classe appropriée
     const processedHtml = processSvgDiagrams(html);
     setSlidesHtml(processedHtml);
     toast({
@@ -47,18 +37,15 @@ const DiapoAI = () => {
     });
   };
 
-  // Fonction pour s'assurer que tous les SVG ont les bonnes classes pour l'export
   const processSvgDiagrams = (html: string): string => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     
-    // Trouver tous les SVG qui ne sont pas déjà dans un div.diagram ou div.svg-diagram
     const svgs = Array.from(doc.querySelectorAll('svg')).filter(svg => {
       const parent = svg.parentElement;
       return !(parent && (parent.classList.contains('diagram') || parent.classList.contains('svg-diagram')));
     });
     
-    // Envelopper ces SVG dans des div.diagram pour un meilleur rendu
     svgs.forEach(svg => {
       if (svg.parentElement) {
         const wrapper = document.createElement('div');
@@ -68,7 +55,6 @@ const DiapoAI = () => {
       }
     });
     
-    // Convertir de nouveau en string
     return doc.body.innerHTML;
   };
 
@@ -79,7 +65,6 @@ const DiapoAI = () => {
   const downloadHtml = () => {
     if (!slidesHtml) return;
 
-    // Create a full HTML document with additional styling
     const fullHtml = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -106,6 +91,8 @@ const DiapoAI = () => {
       --text-color: ${colors.text};
       --primary-color-rgb: ${hexToRgb(colors.primary)};
       --secondary-color-rgb: ${hexToRgb(colors.secondary)};
+      --light-primary: ${lightenColor(colors.primary, 0.9)};
+      --light-secondary: ${lightenColor(colors.secondary, 0.9)};
     }
     
     .reveal .slides { height: 100%; }
@@ -119,6 +106,86 @@ const DiapoAI = () => {
     .reveal .highlight { color: var(--secondary-color); font-weight: 600; }
     .reveal .text-primary { color: var(--primary-color); }
     .reveal .text-secondary { color: var(--secondary-color); }
+    
+    /* Feature panels - styled boxes with content */
+    .reveal .feature-panel {
+      background-color: var(--light-primary);
+      color: var(--text-color);
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      border-left: 5px solid var(--primary-color);
+      font-size: 1.1em;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    /* Timeline/numbered items */
+    .reveal .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .reveal .timeline-number {
+      background-color: var(--primary-color);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      margin-right: 15px;
+      margin-top: 5px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .reveal .timeline-content {
+      flex: 1;
+      padding-bottom: 10px;
+    }
+    
+    .reveal .timeline-item:not(:last-child):after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 45px;
+      bottom: -15px;
+      width: 2px;
+      background-color: var(--primary-color);
+      opacity: 0.3;
+      z-index: 1;
+    }
+    
+    /* Grid layout */
+    .reveal .grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .reveal .grid-item {
+      background-color: var(--light-primary);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .reveal .grid-item h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+      font-size: 1.3em;
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
     
     /* Enhanced bullet points */
     .reveal ul { list-style-type: none; margin-left: 0; }
@@ -166,11 +233,12 @@ const DiapoAI = () => {
     /* Block quotes */
     .reveal blockquote { 
       border-left: 4px solid var(--secondary-color); 
-      padding-left: 1em; 
+      padding: 1em 1.5em;
       font-style: italic;
-      background: rgba(var(--secondary-color-rgb), 0.1);
-      padding: 1em;
+      background: var(--light-secondary);
       border-radius: 0 8px 8px 0;
+      margin: 1em 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     
     /* Two-column layout */
@@ -356,10 +424,8 @@ const DiapoAI = () => {
 </html>
     `;
 
-    // Create a Blob
     const blob = new Blob([fullHtml], { type: 'text/html' });
     
-    // Create download link
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -367,7 +433,6 @@ const DiapoAI = () => {
     document.body.appendChild(a);
     a.click();
     
-    // Cleanup
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   };
@@ -381,11 +446,9 @@ const DiapoAI = () => {
         description: "Création du fichier PowerPoint...",
       });
       
-      // Traiter le HTML pour s'assurer que les SVG sont correctement formatés
       const processedHtml = processSvgDiagrams(slidesHtml);
       const pptxBlob = await convertHtmlToPptx(processedHtml, colors);
       
-      // Create download link
       const url = window.URL.createObjectURL(pptxBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -393,7 +456,6 @@ const DiapoAI = () => {
       document.body.appendChild(a);
       a.click();
       
-      // Cleanup
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
@@ -410,8 +472,7 @@ const DiapoAI = () => {
       });
     }
   };
-  
-  // Fonction utilitaire pour convertir une couleur hex en RGB
+
   const hexToRgb = (hex: string): string => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (!result) return "0, 0, 0";
@@ -421,6 +482,27 @@ const DiapoAI = () => {
     const b = parseInt(result[3], 16);
     
     return `${r}, ${g}, ${b}`;
+  };
+
+  const lightenColor = (hex: string, factor: number): string => {
+    hex = hex.replace(/^#/, '');
+    
+    let r, g, b;
+    if (hex.length === 3) {
+      r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+      g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+      b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+    } else {
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
+    }
+    
+    r = Math.round(r + (255 - r) * factor);
+    g = Math.round(g + (255 - g) * factor);
+    b = Math.round(b + (255 - b) * factor);
+    
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   };
 
   return (
