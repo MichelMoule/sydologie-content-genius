@@ -16,6 +16,7 @@ import Flashcards from "./pages/Flashcards";
 import VideoScript from "./pages/VideoScript";
 import NotFound from "./pages/NotFound";
 import Glossaire from "./pages/Glossaire";
+import DiapoAI from "./pages/DiapoAI";
 import Suggestions from "./pages/Suggestions";
 import Legal from "./pages/Legal";
 import Settings from "./pages/Settings";
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/outils/flashcards" element={<Flashcards />} />
           <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="/outils/videoscript" element={<VideoScript />} />
+          <Route path="/outils/diapoai" element={<DiapoAI />} />
           <Route path="/outils/suggestions" element={<Suggestions />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/legal" element={<Legal />} />

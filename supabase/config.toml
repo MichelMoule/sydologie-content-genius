@@ -24,3 +24,9 @@ verify_jwt = false
 
 [functions.generate-video-script]
 verify_jwt = false
+
+[functions.generate-flashcards]
+verify_jwt = false
+
+[functions.generate-diapo]
+verify_jwt = false
