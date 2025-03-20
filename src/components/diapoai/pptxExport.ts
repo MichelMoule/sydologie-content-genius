@@ -144,7 +144,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
             fontSize: 18,
             color: colors.text,
-            bullet: { type: 'bullet', color: colors.secondary }
+            bullet: { type: 'bullet' } // Removed color property as it's not supported
           });
           contentY += 0.6 * listContent.length;
         }
@@ -164,7 +164,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
             fontSize: 18,
             color: colors.text,
-            bullet: { type: 'number', color: colors.primary }
+            bullet: { type: 'number' } // Removed color property as it's not supported
           });
           contentY += 0.6 * listContent.length;
         }
@@ -174,8 +174,9 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       const svgElements = slideElement.getElementsByTagName('svg');
       for (let j = 0; j < svgElements.length; j++) {
         const svgElement = svgElements[j];
-        // Use XMLSerializer pour obtenir l'outerHTML de l'élément SVG
-        const svgString = new XMLSerializer().serializeToString(svgElement);
+        // Use XMLSerializer to get the serialized SVG string
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svgElement);
         
         if (svgString) {
           try {
@@ -193,7 +194,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             const nextElement = svgElement.nextSibling;
             if (nextElement && 
                 nextElement.nodeType === 1 && 
-                (nextElement as Element).classList?.contains('diagram-caption')) {
+                ((nextElement as unknown) as Element).classList?.contains('diagram-caption')) {
               const captionText = nextElement.textContent || '';
               slide.addText(captionText, {
                 x: 0.5, y: contentY, w: '95%', h: 0.5,
@@ -212,6 +213,9 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
     }
   }
   
-  // Return as blob
-  return await pptx.writeFile({ outputType: 'blob' }) as Blob;
+  // Use the correct interface for writeFile and cast the result appropriately
+  // pptxgenjs actually returns a Promise<string | Blob | Buffer> depending on the outputType
+  // Since we know we're requesting a Blob, we can safely cast the result
+  const pptxBlob = await pptx.writeFile() as unknown as Blob;
+  return pptxBlob;
 };
