@@ -1,4 +1,3 @@
-
 // Use appropriate imports from related modules
 import pptxgen from "pptxgenjs";
 import { ThemeColors } from "./types";
@@ -21,12 +20,12 @@ export const processParagraphs = (
     
     if (text.trim()) {
       slide.addText(text, {
-        x: 0.5, y: currentY, w: '95%', h: 0.5,
-        fontSize: 16,
+        x: 0.5, y: currentY, w: '95%', h: 0.6,
+        fontSize: 20, // Increased from 16
         color: textColor,
         breakLine: true
       });
-      currentY += 0.6;
+      currentY += 0.7; // Increased spacing
     }
   }
   
@@ -54,16 +53,16 @@ export const processUnorderedLists = (
       
       if (text.trim()) {
         slide.addText(`• ${text}`, {
-          x: 0.7, y: currentY, w: '90%', h: 0.5,
-          fontSize: 16,
+          x: 0.7, y: currentY, w: '90%', h: 0.6,
+          fontSize: 20, // Increased from 16
           color: textColor,
           breakLine: true
         });
-        currentY += 0.5;
+        currentY += 0.6; // Increased spacing
       }
     }
     
-    currentY += 0.2; // Add spacing after list
+    currentY += 0.3; // Added more spacing after list
   }
   
   return currentY;
@@ -90,16 +89,16 @@ export const processOrderedLists = (
       
       if (text.trim()) {
         slide.addText(`${j + 1}. ${text}`, {
-          x: 0.7, y: currentY, w: '90%', h: 0.5,
-          fontSize: 16,
+          x: 0.7, y: currentY, w: '90%', h: 0.6,
+          fontSize: 20, // Increased from 16
           color: textColor,
           breakLine: true
         });
-        currentY += 0.5;
+        currentY += 0.6; // Increased spacing
       }
     }
     
-    currentY += 0.2; // Add spacing after list
+    currentY += 0.3; // Added more spacing after list
   }
   
   return currentY;
@@ -222,7 +221,7 @@ export const processCanvasElements = (
   if (canvasElements.length > 0) {
     slide.addText('Chart (Canvas elements cannot be automatically converted to PowerPoint)', {
       x: 0.5, y: currentY, w: '90%', h: 0.5,
-      fontSize: 16,
+      fontSize: 20, // Increased from 16
       color: textColor,
       italic: true,
       align: 'center'
@@ -262,20 +261,20 @@ export const processFeaturePanels = (
       if (text.trim()) {
         // Add box shape
         slide.addShape('rect', {
-          x: 0.5, y: currentY, w: '95%', h: 0.8,
+          x: 0.5, y: currentY, w: '95%', h: 1.0, // Increased height
           fill: { color: colors.primary, transparency: 90 },
           line: { color: colors.primary, width: 1 }
         });
         
         // Add text inside box
         slide.addText(text, {
-          x: 0.7, y: currentY + 0.1, w: '90%', h: 0.6,
-          fontSize: 16,
+          x: 0.7, y: currentY + 0.1, w: '90%', h: 0.8, // Increased height
+          fontSize: 20, // Increased from 16
           color: colors.text,
           breakLine: true
         });
         
-        currentY += 1.0;
+        currentY += 1.2; // Increased spacing
       }
     }
   }
@@ -441,11 +440,11 @@ export const processGridContainers = (
           
           // Calculate position
           const x = col === 0 ? 0.5 : 5.5;
-          const y = currentY + (row * 2); // Each grid item is about 2 inches high
+          const y = currentY + (row * 2.2); // Increased row height
           
           // Add box shape
           slide.addShape('rect', {
-            x, y, w: 4.5, h: 1.7,
+            x, y, w: 4.5, h: 2.0, // Increased height
             fill: { color: colors.primary, transparency: 90 },
             line: { color: colors.primary, width: 1 }
           });
@@ -453,8 +452,8 @@ export const processGridContainers = (
           // Add title if available
           if (title) {
             slide.addText(title, {
-              x: x + 0.2, y: y + 0.1, w: 4.1, h: 0.4,
-              fontSize: 16,
+              x: x + 0.2, y: y + 0.1, w: 4.1, h: 0.5,
+              fontSize: 20, // Increased from 16
               bold: true,
               color: colors.primary
             });
@@ -463,9 +462,9 @@ export const processGridContainers = (
           // Add text if available
           if (text) {
             slide.addText(text, {
-              x: x + 0.2, y: y + (title ? 0.5 : 0.1),
-              w: 4.1, h: title ? 1.1 : 1.5,
-              fontSize: 14,
+              x: x + 0.2, y: y + (title ? 0.6 : 0.1),
+              w: 4.1, h: title ? 1.3 : 1.8, // Increased height
+              fontSize: 18, // Increased from 14
               color: colors.text,
               breakLine: true
             });
@@ -473,7 +472,7 @@ export const processGridContainers = (
         }
         
         // Update current Y position
-        currentY += rowCount * 2 + 0.3; // Add some extra space after grid
+        currentY += rowCount * 2.2 + 0.3; // Adjusted for increased row height
       }
     }
   }
