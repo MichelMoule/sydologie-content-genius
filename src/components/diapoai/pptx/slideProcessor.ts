@@ -15,7 +15,7 @@ import {
  */
 export const processSlideElement = (
   pptx: pptxgen,
-  slideElement: Element,
+  slideElement: any, // Changed from Element to any to resolve type mismatch
   colors: ThemeColors
 ): void => {
   // Create a new slide

@@ -45,7 +45,8 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       continue;
     }
     
-    processSlideElement(pptx, slideElement, colors);
+    // Use any type to avoid type conflicts between xmldom Element and DOM Element
+    processSlideElement(pptx, slideElement as any, colors);
   }
   
   // Use the correct interface for writeFile and cast the result appropriately

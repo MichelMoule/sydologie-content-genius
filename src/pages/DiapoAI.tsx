@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,13 +10,13 @@ import { Download, FileDown, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { convertHtmlToPptx, ThemeColors } from "@/components/diapoai/pptxExport";
 
-// Theme color interface
-interface ThemeColors {
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
-}
+// We're removing this duplicate interface since we're importing it above
+// interface ThemeColors {
+//   primary: string;
+//   secondary: string;
+//   background: string;
+//   text: string;
+// }
 
 const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
