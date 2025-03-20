@@ -29,9 +29,9 @@ export const processSlideElement = (
   const isSectionTitle = slideElement.getAttribute('class')?.includes('section-title');
   
   // Find headings
-  const h1Elements = slideElement.getElementsByTagName('h1');
-  const h2Elements = slideElement.getElementsByTagName('h2');
-  const h3Elements = slideElement.getElementsByTagName('h3');
+  const h1Elements = Array.from(slideElement.getElementsByTagName('h1'));
+  const h2Elements = Array.from(slideElement.getElementsByTagName('h2'));
+  const h3Elements = Array.from(slideElement.getElementsByTagName('h3'));
   
   // Add title if found
   if (h1Elements.length > 0) {
@@ -70,7 +70,7 @@ export const processSlideElement = (
     let contentY = h1Elements.length > 0 || h2Elements.length > 0 ? 2 : 0.5;
     
     // Get all div elements (needed for various custom elements)
-    const divElements = slideElement.getElementsByTagName('div');
+    const divElements = Array.from(slideElement.getElementsByTagName('div'));
     
     // Process feature panels (styled boxes with content)
     contentY = processFeaturePanels(slide, divElements, contentY, colors);
@@ -82,19 +82,19 @@ export const processSlideElement = (
     contentY = processGridContainers(slide, divElements, contentY, colors);
     
     // Process paragraph content
-    const paragraphs = slideElement.getElementsByTagName('p');
+    const paragraphs = Array.from(slideElement.getElementsByTagName('p'));
     contentY = processParagraphs(slide, paragraphs, contentY, colors.text);
     
     // Process lists
-    const ulElements = slideElement.getElementsByTagName('ul');
+    const ulElements = Array.from(slideElement.getElementsByTagName('ul'));
     contentY = processUnorderedLists(slide, ulElements, contentY, colors.text);
     
     // Process ordered lists
-    const olElements = slideElement.getElementsByTagName('ol');
+    const olElements = Array.from(slideElement.getElementsByTagName('ol'));
     contentY = processOrderedLists(slide, olElements, contentY, colors.text);
     
     // Process standalone SVG elements
-    const svgElements = slideElement.getElementsByTagName('svg');
+    const svgElements = Array.from(slideElement.getElementsByTagName('svg'));
     for (let j = 0; j < svgElements.length; j++) {
       const svgElement = svgElements[j];
       
@@ -125,7 +125,7 @@ export const processSlideElement = (
     }
     
     // Process canvas elements (likely Chart.js charts)
-    const canvasElements = slideElement.getElementsByTagName('canvas');
+    const canvasElements = Array.from(slideElement.getElementsByTagName('canvas'));
     contentY = processCanvasElements(slide, canvasElements, contentY, colors.secondary, colors.text);
   }
 };

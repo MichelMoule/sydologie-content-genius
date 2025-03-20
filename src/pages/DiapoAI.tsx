@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -448,6 +447,8 @@ const DiapoAI = () => {
       });
       
       const processedHtml = processSvgDiagrams(slidesHtml);
+      console.log('Processed HTML for PPT export (first 100 chars):', processedHtml.substring(0, 100));
+      
       const pptxBlob = await convertHtmlToPptx(processedHtml, colors);
       
       const url = window.URL.createObjectURL(pptxBlob);
@@ -566,3 +567,4 @@ const DiapoAI = () => {
 };
 
 export default DiapoAI;
+

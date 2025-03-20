@@ -35,3 +35,22 @@ export const parseHtml = (html: string) => {
   const parser = new DOMParser();
   return parser.parseFromString(`<html><body>${html}</body></html>`, 'text/html');
 };
+
+/**
+ * Helper to safely get elements by tag name and convert to array
+ * Works with both browser DOM and xmldom
+ */
+export const getElementsArrayByTagName = (element: Element, tagName: string): Element[] => {
+  const collection = element.getElementsByTagName(tagName);
+  const result: Element[] = [];
+  
+  // Handle both DOM collections and NodeList from xmldom
+  for (let i = 0; i < collection.length; i++) {
+    const item = collection.item(i);
+    if (item) {
+      result.push(item);
+    }
+  }
+  
+  return result;
+};
