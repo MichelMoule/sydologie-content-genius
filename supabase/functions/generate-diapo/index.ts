@@ -57,6 +57,10 @@ serve(async (req) => {
       userPrompt = `Content: ${content}\n\nOutline: ${JSON.stringify(outline)}`;
     }
 
+    console.log(`Making request to Azure OpenAI for step: ${step}`);
+    console.log(`System prompt: ${systemPrompt.substring(0, 100)}...`);
+    console.log(`User prompt (truncated): ${userPrompt.substring(0, 100)}...`);
+
     const response = await fetch(AZURE_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -75,14 +79,26 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
-        max_tokens: step === 'slides' ? 4000 : 800,
+        max_tokens: step === 'slides' ? 4096 : 800,
       }),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Azure OpenAI API error (${response.status}): ${errorText}`);
+      throw new Error(`Azure OpenAI API returned ${response.status}: ${errorText}`);
+    }
+
     const data = await response.json();
-    console.log('Azure OpenAI Response:', data);
+    console.log('Azure OpenAI Response status:', response.status);
+
+    if (!data || !data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected API response format:', JSON.stringify(data));
+      throw new Error('Invalid response format from Azure OpenAI API');
+    }
 
     let result = data.choices[0].message.content.trim();
+    console.log(`Result (truncated): ${result.substring(0, 100)}...`);
     
     if (step === 'outline') {
       try {

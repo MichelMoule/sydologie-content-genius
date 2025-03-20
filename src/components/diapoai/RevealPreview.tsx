@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
+import 'reveal.js/plugin/highlight/monokai.css';
 
 interface RevealPreviewProps {
   slidesHtml: string;
@@ -17,6 +18,9 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
       try {
         // Dynamic import of Reveal.js
         const Reveal = (await import('reveal.js')).default;
+        const Highlight = (await import('reveal.js/plugin/highlight/highlight')).default;
+        const Notes = (await import('reveal.js/plugin/notes/notes')).default;
+        const Markdown = (await import('reveal.js/plugin/markdown/markdown')).default;
         
         // Clear previous content
         containerRef.current.innerHTML = slidesHtml;
@@ -31,9 +35,11 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
           progress: true,
           center: true,
           hash: false,
+          plugins: [Highlight, Notes, Markdown]
         });
         
         await deck.initialize();
+        console.log('Reveal.js initialized successfully');
       } catch (error) {
         console.error('Error initializing Reveal.js:', error);
       }

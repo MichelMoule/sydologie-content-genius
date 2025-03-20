@@ -21,6 +21,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OutlineEditor from "./OutlineEditor";
+import { useToast } from "@/hooks/use-toast";
 
 export const formSchema = z.object({
   content: z.string().min(10, { message: "Le contenu est requis (minimum 10 caractères)" }),
@@ -37,6 +38,7 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
   const [outline, setOutline] = useState<any[] | null>(null);
   const [activeTab, setActiveTab] = useState("content");
   const [fileContent, setFileContent] = useState("");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,7 +53,11 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
 
     // Check if it's a docx file
     if (file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      alert("Veuillez télécharger un fichier .docx");
+      toast({
+        title: "Format non supporté",
+        description: "Veuillez télécharger un fichier .docx",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -68,20 +74,38 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
   const generateOutline = async (values: z.infer<typeof formSchema>) => {
     setIsGeneratingOutline(true);
     try {
+      console.log("Generating outline with content:", values.content.substring(0, 100) + "...");
+      
       const { data, error } = await supabase.functions.invoke('generate-diapo', {
         body: { content: values.content, step: 'outline' },
       });
 
       if (error) {
+        console.error("Supabase function error:", error);
         throw error;
+      }
+
+      console.log("Outline generated:", data);
+      
+      if (!data.outline) {
+        throw new Error("La réponse ne contient pas de plan valide");
       }
 
       setOutline(data.outline);
       onOutlineGenerated(data.outline);
       setActiveTab("outline");
+      
+      toast({
+        title: "Plan généré avec succès",
+        description: "Vous pouvez maintenant modifier le plan avant de générer le diaporama",
+      });
     } catch (error) {
       console.error("Error generating outline:", error);
-      alert("Une erreur est survenue lors de la génération du plan.");
+      toast({
+        title: "Erreur de génération",
+        description: "Une erreur est survenue lors de la génération du plan.",
+        variant: "destructive"
+      });
     } finally {
       setIsGeneratingOutline(false);
     }
@@ -89,12 +113,18 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
 
   const generateSlides = async () => {
     if (!outline) {
-      alert("Veuillez d'abord générer un plan.");
+      toast({
+        title: "Plan manquant",
+        description: "Veuillez d'abord générer un plan.",
+        variant: "destructive"
+      });
       return;
     }
 
     setIsGeneratingSlides(true);
     try {
+      console.log("Generating slides with outline:", outline);
+      
       const { data, error } = await supabase.functions.invoke('generate-diapo', {
         body: { 
           content: form.getValues("content"), 
@@ -104,14 +134,30 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
       });
 
       if (error) {
+        console.error("Supabase function error:", error);
         throw error;
+      }
+
+      console.log("Slides generated:", data);
+      
+      if (!data.slidesHtml) {
+        throw new Error("La réponse ne contient pas de contenu HTML valide");
       }
 
       onSlidesGenerated(data.slidesHtml);
       setActiveTab("preview");
+      
+      toast({
+        title: "Diaporama généré avec succès",
+        description: "Vous pouvez maintenant visualiser votre diaporama",
+      });
     } catch (error) {
       console.error("Error generating slides:", error);
-      alert("Une erreur est survenue lors de la génération des diapositives.");
+      toast({
+        title: "Erreur de génération",
+        description: "Une erreur est survenue lors de la génération des diapositives.",
+        variant: "destructive"
+      });
     } finally {
       setIsGeneratingSlides(false);
     }
