@@ -180,11 +180,11 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       }
       
       // Process SVG diagrams
-      const processSvgElement = (svgElement: Element, caption?: string) => {
+      const processSvgElement = (svgElement: any, caption?: string) => {
         try {
           // Use XMLSerializer to get the serialized SVG string
           const serializer = new XMLSerializer();
-          const svgString = serializer.serializeToString(svgElement as unknown as Node);
+          const svgString = serializer.serializeToString(svgElement as Node);
           
           if (svgString) {
             const dataUrl = svgToDataUrl(svgString);
@@ -223,7 +223,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
         let caption = '';
         const nextSibling = svgElement.nextSibling;
         if (nextSibling && nextSibling.nodeType === 1) {
-          const nextElement = nextSibling as unknown as Element;
+          const nextElement = nextSibling as any;
           if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
             caption = nextElement.textContent || '';
           }
@@ -233,7 +233,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       }
       
       // Process divs containing SVGs (for diagrams and charts)
-      const processDiagramDiv = (divElement: Element) => {
+      const processDiagramDiv = (divElement: any) => {
         // Extract SVG from div if it exists
         const nestedSvg = divElement.getElementsByTagName('svg')[0];
         if (nestedSvg) {
@@ -292,7 +292,7 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
           // Look for caption
           const nextSibling = canvasElement.nextSibling;
           if (nextSibling && nextSibling.nodeType === 1) {
-            const nextElement = nextSibling as unknown as Element;
+            const nextElement = nextSibling as any;
             if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
               slide.addText(nextElement.textContent || '', {
                 x: 0.5, y: contentY, w: '95%', h: 0.5,
