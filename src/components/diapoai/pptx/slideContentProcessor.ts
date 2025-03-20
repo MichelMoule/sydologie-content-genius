@@ -7,7 +7,8 @@ import {
   hasClass, 
   getTextContent,
   filterChildElementsByClass,
-  DOMElement
+  DOMElement,
+  DOMNode
 } from "./utils";
 
 /**
@@ -122,7 +123,8 @@ export const processSvgElement = (
 ): number => {
   try {
     const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(svgElement);
+    // Add type assertion to handle the DOMElement to Node conversion
+    const svgString = serializer.serializeToString(svgElement as unknown as Node);
     const dataUrl = svgToDataUrl(svgString);
     
     // Add SVG as image
@@ -166,7 +168,8 @@ export const processDiagramDiv = (
     if (svgElements.length > 0) {
       const svgElement = svgElements[0];
       const serializer = new XMLSerializer();
-      const svgString = serializer.serializeToString(svgElement);
+      // Add type assertion to handle the DOMElement to Node conversion
+      const svgString = serializer.serializeToString(svgElement as unknown as Node);
       const dataUrl = svgToDataUrl(svgString);
       
       // Add SVG as image
