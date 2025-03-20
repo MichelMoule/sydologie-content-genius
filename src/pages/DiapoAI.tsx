@@ -44,20 +44,83 @@ const DiapoAI = () => {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
     .reveal .slides { height: 100%; }
     body { 
       background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
       min-height: 100vh;
     }
-    .reveal h1, .reveal h2 { color: #1B4D3E; }
-    .reveal h3, .reveal h4 { color: #1B4D3E; }
-    .reveal .highlight { color: #FF9B7A; }
+    .reveal h1, .reveal h2 { color: #1B4D3E; font-weight: 700; margin-bottom: 0.5em; }
+    .reveal h3, .reveal h4 { color: #1B4D3E; font-weight: 600; }
+    .reveal .highlight { color: #FF9B7A; font-weight: 600; }
     .reveal .text-primary { color: #1B4D3E; }
     .reveal .text-secondary { color: #FF9B7A; }
-    .reveal blockquote { border-left: 4px solid #FF9B7A; padding-left: 1em; }
-    .reveal ul li { margin-bottom: 0.5em; }
-    .reveal ol li { margin-bottom: 0.5em; }
+    
+    /* Enhanced bullet points */
+    .reveal ul { list-style-type: none; margin-left: 0; }
+    .reveal ul li { 
+      position: relative; 
+      margin-bottom: 0.8em; 
+      padding-left: 1.5em; 
+    }
+    .reveal ul li:before {
+      content: "•"; 
+      color: #FF9B7A; 
+      font-weight: bold; 
+      font-size: 1.2em;
+      position: absolute;
+      left: 0;
+    }
+    
+    /* Numbered lists */
+    .reveal ol { 
+      counter-reset: li;
+      list-style: none;
+      padding-left: 1em;
+    }
+    .reveal ol li {
+      counter-increment: li;
+      margin-bottom: 0.8em;
+      position: relative;
+      padding-left: 1.5em;
+    }
+    .reveal ol li:before {
+      content: counter(li);
+      color: #1B4D3E;
+      font-weight: bold;
+      background: rgba(27,77,62,0.1);
+      border-radius: 50%;
+      width: 1.2em;
+      height: 1.2em;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      left: 0;
+    }
+    
+    /* Block quotes */
+    .reveal blockquote { 
+      border-left: 4px solid #FF9B7A; 
+      padding-left: 1em; 
+      font-style: italic;
+      background: rgba(255,155,122,0.1);
+      padding: 1em;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    /* Two-column layout */
+    .reveal .columns {
+      display: flex;
+      justify-content: space-between;
+      gap: 2em;
+    }
+    .reveal .column {
+      flex: 1;
+    }
+    
+    /* Image placeholders */
     .reveal .image-placeholder {
       background-color: #f0f0f0;
       border: 2px dashed #ccc;
@@ -68,17 +131,85 @@ const DiapoAI = () => {
       justify-content: center;
       margin: 20px auto;
       width: 80%;
+      position: relative;
     }
     .reveal .image-placeholder:after {
       content: "Image illustrative";
       color: #888;
       font-style: italic;
     }
+    
+    /* Diagram styling */
+    .reveal .diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1em auto;
+      width: 90%;
+    }
+    .reveal .process-flow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .reveal .process-step {
+      background: rgba(27,77,62,0.1);
+      border: 2px solid #1B4D3E;
+      border-radius: 8px;
+      padding: 0.5em 1em;
+      text-align: center;
+      min-width: 100px;
+      position: relative;
+    }
+    .reveal .process-step:not(:last-child):after {
+      content: "→";
+      position: absolute;
+      right: -1.5em;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #1B4D3E;
+      font-size: 1.5em;
+    }
+    
+    /* Tables */
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .reveal table th {
+      background-color: rgba(27,77,62,0.2);
+      color: #1B4D3E;
+      font-weight: bold;
+      text-align: left;
+      padding: 0.5em;
+      border: 1px solid rgba(27,77,62,0.3);
+    }
+    .reveal table td {
+      padding: 0.5em;
+      border: 1px solid rgba(27,77,62,0.2);
+    }
+    .reveal table tr:nth-child(even) {
+      background-color: rgba(27,77,62,0.05);
+    }
+    
+    /* Section title slides */
+    .reveal section.section-title {
+      background: linear-gradient(135deg, rgba(27,77,62,0.1) 0%, rgba(255,255,255,0.9) 100%);
+    }
+    
+    /* Title slide */
     .reveal section.title-slide {
       background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
     }
-    .reveal section.section-title {
-      background: linear-gradient(135deg, rgba(27,77,62,0.1) 0%, rgba(255,255,255,0.9) 100%);
+    
+    /* Horizontal divider */
+    .reveal hr {
+      border: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #1B4D3E, transparent);
+      margin: 1em 0;
     }
   </style>
 </head>
@@ -97,7 +228,10 @@ const DiapoAI = () => {
       center: true,
       hash: false,
       slideNumber: true,
-      plugins: [ RevealHighlight, RevealNotes, RevealMarkdown, RevealZoom, RevealMath ]
+      plugins: [ RevealHighlight, RevealNotes, RevealMarkdown, RevealZoom, RevealMath ],
+      autoAnimate: true,
+      transition: 'slide',
+      backgroundTransition: 'fade'
     });
   </script>
 </body>

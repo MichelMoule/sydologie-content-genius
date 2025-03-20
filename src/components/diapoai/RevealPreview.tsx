@@ -92,15 +92,29 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
             (heading as HTMLElement).style.color = '#1B4D3E';
           });
           
-          // Add subtle background to slide content
-          if (!slide.classList.contains('has-dark-background')) {
+          // Check for section title slides and add special styling
+          if (slide.classList.contains('section-title')) {
+            (slide as HTMLElement).style.background = 'linear-gradient(135deg, rgba(27,77,62,0.15) 0%, rgba(255,255,255,0.9) 100%)';
+            (slide as HTMLElement).style.borderRadius = '4px';
+          }
+          
+          // Check for title slide and add special styling
+          if (slide.classList.contains('title-slide')) {
+            (slide as HTMLElement).style.background = 'linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)';
+            (slide as HTMLElement).style.borderRadius = '4px';
+          }
+          
+          // Add subtle background to regular slides
+          if (!slide.classList.contains('has-dark-background') && 
+              !slide.classList.contains('section-title') && 
+              !slide.classList.contains('title-slide')) {
             (slide as HTMLElement).style.background = 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(240,240,240,1) 100%)';
             (slide as HTMLElement).style.borderRadius = '4px';
             (slide as HTMLElement).style.boxShadow = '0 4px 6px rgba(0,0,0,0.05)';
           }
         });
         
-        // Initialize Reveal.js
+        // Initialize Reveal.js with enhanced features
         const newDeck = new Reveal(containerRef.current, {
           embedded: true,
           margin: 0.1,
@@ -113,6 +127,8 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
           transition: transition,
           slideNumber: true,
           autoPlayMedia: true,
+          autoAnimate: true, // Enable auto-animate
+          backgroundTransition: 'fade',
           plugins: [Highlight, Notes, Markdown, Zoom, Math]
         });
         
