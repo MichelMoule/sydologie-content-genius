@@ -31,7 +31,8 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
           fontSize: 10, 
           align: 'right',
           fontFace: 'Arial',
-          opacity: 0.7
+          // Removed the unsupported 'opacity' property
+          transparentBackground: true // Using transparentBackground instead
         } 
       }}
     ],
