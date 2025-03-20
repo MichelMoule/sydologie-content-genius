@@ -35,11 +35,18 @@ export const tools = {
       description: "Créez des glossaires pour définir les termes clés",
       image: "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
       path: "/outils/glossaire"
+    },
+    {
+      id: 8,
+      name: "DiapoAI",
+      description: "Créez des présentations percutantes pour vos formations",
+      image: "/lovable-uploads/7dbee4f3-0134-4112-ab28-8b8b867c9b7a.png",
+      path: "/outils/diapoai"
     }
   ],
   analyse: [
     {
-      id: 8,
+      id: 9,
       name: "FeedbaIck",
       description: "Analysez les retours récoltés après vos formations",
       image: "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
