@@ -8,10 +8,25 @@ import { OutlineSection } from "@/components/diapoai/types";
 import { Button } from "@/components/ui/button";
 import { Download, FileDown, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { convertHtmlToPptx } from "@/components/diapoai/pptxExport";
+
+// Theme color interface
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  background: string;
+  text: string;
+}
 
 const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
   const [slidesHtml, setSlidesHtml] = useState<string | null>(null);
+  const [colors, setColors] = useState<ThemeColors>({
+    primary: "#1B4D3E",
+    secondary: "#FF9B7A",
+    background: "#FFFFFF",
+    text: "#333333"
+  });
   const { toast } = useToast();
 
   const handleOutlineGenerated = (generatedOutline: OutlineSection[]) => {
@@ -30,6 +45,10 @@ const DiapoAI = () => {
     });
   };
 
+  const handleColorChange = (newColors: ThemeColors) => {
+    setColors(newColors);
+  };
+
   const downloadHtml = () => {
     if (!slidesHtml) return;
 
@@ -46,16 +65,26 @@ const DiapoAI = () => {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary-color: ${colors.primary};
+      --secondary-color: ${colors.secondary};
+      --background-color: ${colors.background};
+      --text-color: ${colors.text};
+      --primary-color-rgb: ${hexToRgb(colors.primary)};
+      --secondary-color-rgb: ${hexToRgb(colors.secondary)};
+    }
+    
     .reveal .slides { height: 100%; }
     body { 
       background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
       min-height: 100vh;
+      color: var(--text-color);
     }
-    .reveal h1, .reveal h2 { color: #1B4D3E; font-weight: 700; margin-bottom: 0.5em; }
-    .reveal h3, .reveal h4 { color: #1B4D3E; font-weight: 600; }
-    .reveal .highlight { color: #FF9B7A; font-weight: 600; }
-    .reveal .text-primary { color: #1B4D3E; }
-    .reveal .text-secondary { color: #FF9B7A; }
+    .reveal h1, .reveal h2 { color: var(--primary-color); font-weight: 700; margin-bottom: 0.5em; }
+    .reveal h3, .reveal h4 { color: var(--primary-color); font-weight: 600; }
+    .reveal .highlight { color: var(--secondary-color); font-weight: 600; }
+    .reveal .text-primary { color: var(--primary-color); }
+    .reveal .text-secondary { color: var(--secondary-color); }
     
     /* Enhanced bullet points */
     .reveal ul { list-style-type: none; margin-left: 0; }
@@ -66,7 +95,7 @@ const DiapoAI = () => {
     }
     .reveal ul li:before {
       content: "•"; 
-      color: #FF9B7A; 
+      color: var(--secondary-color); 
       font-weight: bold; 
       font-size: 1.2em;
       position: absolute;
@@ -87,9 +116,9 @@ const DiapoAI = () => {
     }
     .reveal ol li:before {
       content: counter(li);
-      color: #1B4D3E;
+      color: var(--primary-color);
       font-weight: bold;
-      background: rgba(27,77,62,0.1);
+      background: rgba(var(--primary-color-rgb), 0.1);
       border-radius: 50%;
       width: 1.2em;
       height: 1.2em;
@@ -102,10 +131,10 @@ const DiapoAI = () => {
     
     /* Block quotes */
     .reveal blockquote { 
-      border-left: 4px solid #FF9B7A; 
+      border-left: 4px solid var(--secondary-color); 
       padding-left: 1em; 
       font-style: italic;
-      background: rgba(255,155,122,0.1);
+      background: rgba(var(--secondary-color-rgb), 0.1);
       padding: 1em;
       border-radius: 0 8px 8px 0;
     }
@@ -118,6 +147,22 @@ const DiapoAI = () => {
     }
     .reveal .column {
       flex: 1;
+    }
+    
+    /* SVG diagrams */
+    .reveal .svg-diagram {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      display: block;
+    }
+    
+    .reveal .diagram-caption {
+      text-align: center;
+      font-style: italic;
+      margin-top: 0.5em;
+      color: var(--text-color);
+      opacity: 0.8;
     }
     
     /* Image placeholders */
@@ -154,8 +199,8 @@ const DiapoAI = () => {
       width: 100%;
     }
     .reveal .process-step {
-      background: rgba(27,77,62,0.1);
-      border: 2px solid #1B4D3E;
+      background: rgba(var(--primary-color-rgb), 0.1);
+      border: 2px solid var(--primary-color);
       border-radius: 8px;
       padding: 0.5em 1em;
       text-align: center;
@@ -168,7 +213,7 @@ const DiapoAI = () => {
       right: -1.5em;
       top: 50%;
       transform: translateY(-50%);
-      color: #1B4D3E;
+      color: var(--primary-color);
       font-size: 1.5em;
     }
     
@@ -179,24 +224,24 @@ const DiapoAI = () => {
       margin: 1em 0;
     }
     .reveal table th {
-      background-color: rgba(27,77,62,0.2);
-      color: #1B4D3E;
+      background-color: rgba(var(--primary-color-rgb), 0.2);
+      color: var(--primary-color);
       font-weight: bold;
       text-align: left;
       padding: 0.5em;
-      border: 1px solid rgba(27,77,62,0.3);
+      border: 1px solid rgba(var(--primary-color-rgb), 0.3);
     }
     .reveal table td {
       padding: 0.5em;
-      border: 1px solid rgba(27,77,62,0.2);
+      border: 1px solid rgba(var(--primary-color-rgb), 0.2);
     }
     .reveal table tr:nth-child(even) {
-      background-color: rgba(27,77,62,0.05);
+      background-color: rgba(var(--primary-color-rgb), 0.05);
     }
     
     /* Section title slides */
     .reveal section.section-title {
-      background: linear-gradient(135deg, rgba(27,77,62,0.1) 0%, rgba(255,255,255,0.9) 100%);
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(255,255,255,0.9) 100%);
     }
     
     /* Title slide */
@@ -208,7 +253,7 @@ const DiapoAI = () => {
     .reveal hr {
       border: 0;
       height: 2px;
-      background: linear-gradient(to right, transparent, #1B4D3E, transparent);
+      background: linear-gradient(to right, transparent, var(--primary-color), transparent);
       margin: 1em 0;
     }
   </style>
@@ -254,6 +299,55 @@ const DiapoAI = () => {
     document.body.removeChild(a);
   };
 
+  const exportToPpt = async () => {
+    if (!slidesHtml) return;
+    
+    try {
+      toast({
+        title: "Conversion en cours",
+        description: "Création du fichier PowerPoint...",
+      });
+      
+      const pptxBlob = await convertHtmlToPptx(slidesHtml, colors);
+      
+      // Create download link
+      const url = window.URL.createObjectURL(pptxBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'diapoai-presentation.pptx';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Export terminé",
+        description: "Votre présentation PowerPoint a été téléchargée.",
+      });
+    } catch (error) {
+      console.error("Error exporting to PPT:", error);
+      toast({
+        title: "Erreur lors de l'export",
+        description: "Impossible de créer le fichier PowerPoint. Essayez le format HTML à la place.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Fonction utilitaire pour convertir une couleur hex en RGB
+  const hexToRgb = (hex: string): string => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return "0, 0, 0";
+    
+    const r = parseInt(result[1], 16);
+    const g = parseInt(result[2], 16);
+    const b = parseInt(result[3], 16);
+    
+    return `${r}, ${g}, ${b}`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col">
       <Navbar />
@@ -275,7 +369,8 @@ const DiapoAI = () => {
           <div className="grid gap-8">
             <DiapoAIForm 
               onOutlineGenerated={handleOutlineGenerated} 
-              onSlidesGenerated={handleSlidesGenerated} 
+              onSlidesGenerated={handleSlidesGenerated}
+              onColorsChanged={handleColorChange}
             />
             
             {slidesHtml && (
@@ -285,12 +380,22 @@ const DiapoAI = () => {
                     <Presentation className="h-5 w-5" />
                     Votre diaporama
                   </h3>
-                  <Button onClick={downloadHtml} variant="outline" className="border-sydologie-green text-sydologie-green hover:bg-sydologie-green/10">
-                    <FileDown className="mr-2 h-4 w-4" />
-                    Télécharger HTML
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={downloadHtml} variant="outline" className="border-sydologie-green text-sydologie-green hover:bg-sydologie-green/10">
+                      <FileDown className="mr-2 h-4 w-4" />
+                      HTML
+                    </Button>
+                    <Button onClick={exportToPpt} variant="default" className="bg-sydologie-green hover:bg-sydologie-green/90">
+                      <Download className="mr-2 h-4 w-4" />
+                      PowerPoint
+                    </Button>
+                  </div>
                 </div>
-                <RevealPreview slidesHtml={slidesHtml} />
+                <RevealPreview 
+                  slidesHtml={slidesHtml} 
+                  onExportPpt={exportToPpt}
+                  onColorChange={handleColorChange}
+                />
               </div>
             )}
           </div>

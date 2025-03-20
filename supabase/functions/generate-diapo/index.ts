@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { content, step, outline = null } = await req.json();
+    const { content, step, outline = null, colors = null } = await req.json();
 
     if (!content && step === 'outline') {
       throw new Error('Content is required for generating an outline');
@@ -26,6 +26,14 @@ serve(async (req) => {
     let systemPrompt = '';
     let userPrompt = '';
 
+    // Default SYDO colors that can be overridden
+    const themeColors = colors || {
+      primary: "#1B4D3E",
+      secondary: "#FF9B7A",
+      background: "#FFFFFF",
+      text: "#333333"
+    };
+
     if (step === 'outline') {
       systemPrompt = `You are an expert presentation designer specialized in creating educational content. 
       Your task is to analyze the provided training content and suggest a clear, logical presentation outline.
@@ -36,13 +44,13 @@ serve(async (req) => {
       
       userPrompt = content;
     } else if (step === 'slides') {
-      systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations.
+      systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations with advanced data visualization capabilities.
       Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
       For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
       Guidelines:
       - Use proper Reveal.js HTML format with sections and slides
-      - Include a title slide with a compelling title, subtitle, and SYDO brand colors (#1B4D3E for primary text, #FF9B7A for highlights)
+      - Include a title slide with a compelling title, subtitle, and brand colors (${themeColors.primary} for primary text, ${themeColors.secondary} for highlights)
       - For each section in the outline, create a section title slide with a visually distinct style (use class="section-title")
       - For each subsection, create content slides with relevant information from the provided content
       
@@ -50,14 +58,21 @@ serve(async (req) => {
       - Well-formatted bullet points using <ul> and <li> with proper indentation and styling
       - Numbered lists using <ol> and <li> where appropriate (for steps, processes)
       - Use <span class="highlight"> for important terms or keywords
-      - Create simple diagrams using HTML and CSS for:
-        - Process flows (using div elements with arrows)
-        - Comparison tables (using HTML tables with styled headers)
-        - Mind maps (using divs with connecting lines)
-      - Add visual dividers using <hr> with custom styling
+      
+      SVG Diagrams:
+      - Create SVG diagrams for processes, relationships, and concepts using inline SVG code
+      - Include the following types of SVG diagrams where appropriate:
+        1. Process flows with connected boxes and arrows
+        2. Comparison charts showing pros/cons or differences
+        3. Organizational hierarchies or mind maps
+        4. Simple bar or pie charts for data visualization
+        5. Venn diagrams for showing relationships
+      - Use the theme colors (${themeColors.primary}, ${themeColors.secondary}) in SVG elements
+      - Make SVGs responsive using viewBox attribute
+      - Add appropriate titles and labels to SVG elements
       
       Design techniques:
-      - Use data-background-gradient="linear-gradient(to right, #1B4D3E, #3a8573)" for section title slides
+      - Use data-background-gradient="linear-gradient(to right, ${themeColors.primary}, #3a8573)" for section title slides
       - Create two-column layouts using div with flex for comparing concepts
       - Use blockquotes with left border styling for important statements
       - Add image placeholders with descriptive captions for visuals
@@ -73,9 +88,10 @@ serve(async (req) => {
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>
+      Include SVG diagrams where they would enhance understanding of complex concepts.
       Do not include any explanatory text outside of the HTML.`;
       
-      userPrompt = `Content: ${content}\n\nOutline: ${JSON.stringify(outline)}`;
+      userPrompt = `Content: ${content}\n\nOutline: ${JSON.stringify(outline)}\n\nColors: ${JSON.stringify(themeColors)}`;
     }
 
     console.log(`Making request to Azure OpenAI for step: ${step}`);
@@ -138,14 +154,21 @@ serve(async (req) => {
       // For slides, just return the HTML content
       result = result.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
       
-      // Add enhanced CSS for SYDO styling
+      // Add enhanced CSS for styling with dynamic colors
       const styledResult = result.replace('<div class="reveal">', `<div class="reveal">
         <style>
-          .reveal h1, .reveal h2 { color: #1B4D3E; font-weight: 700; margin-bottom: 0.5em; }
-          .reveal h3, .reveal h4 { color: #1B4D3E; font-weight: 600; }
-          .reveal .highlight { color: #FF9B7A; font-weight: 600; }
-          .reveal .text-primary { color: #1B4D3E; }
-          .reveal .text-secondary { color: #FF9B7A; }
+          :root {
+            --primary-color: ${themeColors.primary};
+            --secondary-color: ${themeColors.secondary};
+            --background-color: ${themeColors.background};
+            --text-color: ${themeColors.text};
+          }
+          
+          .reveal h1, .reveal h2 { color: var(--primary-color); font-weight: 700; margin-bottom: 0.5em; }
+          .reveal h3, .reveal h4 { color: var(--primary-color); font-weight: 600; }
+          .reveal .highlight { color: var(--secondary-color); font-weight: 600; }
+          .reveal .text-primary { color: var(--primary-color); }
+          .reveal .text-secondary { color: var(--secondary-color); }
           
           /* Enhanced bullet points */
           .reveal ul { list-style-type: none; margin-left: 0; }
@@ -156,7 +179,7 @@ serve(async (req) => {
           }
           .reveal ul li:before {
             content: "•"; 
-            color: #FF9B7A; 
+            color: var(--secondary-color); 
             font-weight: bold; 
             font-size: 1.2em;
             position: absolute;
@@ -177,9 +200,9 @@ serve(async (req) => {
           }
           .reveal ol li:before {
             content: counter(li);
-            color: #1B4D3E;
+            color: var(--primary-color);
             font-weight: bold;
-            background: rgba(27,77,62,0.1);
+            background: rgba(var(--primary-color-rgb), 0.1);
             border-radius: 50%;
             width: 1.2em;
             height: 1.2em;
@@ -192,10 +215,10 @@ serve(async (req) => {
           
           /* Block quotes */
           .reveal blockquote { 
-            border-left: 4px solid #FF9B7A; 
+            border-left: 4px solid var(--secondary-color); 
             padding-left: 1em; 
             font-style: italic;
-            background: rgba(255,155,122,0.1);
+            background: rgba(var(--secondary-color-rgb), 0.1);
             padding: 1em;
             border-radius: 0 8px 8px 0;
           }
@@ -208,6 +231,22 @@ serve(async (req) => {
           }
           .reveal .column {
             flex: 1;
+          }
+          
+          /* SVG diagrams */
+          .reveal .svg-diagram {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: block;
+          }
+          
+          .reveal .diagram-caption {
+            text-align: center;
+            font-style: italic;
+            margin-top: 0.5em;
+            color: var(--text-color);
+            opacity: 0.8;
           }
           
           /* Image placeholders */
@@ -244,8 +283,8 @@ serve(async (req) => {
             width: 100%;
           }
           .reveal .process-step {
-            background: rgba(27,77,62,0.1);
-            border: 2px solid #1B4D3E;
+            background: rgba(var(--primary-color-rgb), 0.1);
+            border: 2px solid var(--primary-color);
             border-radius: 8px;
             padding: 0.5em 1em;
             text-align: center;
@@ -258,7 +297,7 @@ serve(async (req) => {
             right: -1.5em;
             top: 50%;
             transform: translateY(-50%);
-            color: #1B4D3E;
+            color: var(--primary-color);
             font-size: 1.5em;
           }
           
@@ -269,24 +308,24 @@ serve(async (req) => {
             margin: 1em 0;
           }
           .reveal table th {
-            background-color: rgba(27,77,62,0.2);
-            color: #1B4D3E;
+            background-color: rgba(var(--primary-color-rgb), 0.2);
+            color: var(--primary-color);
             font-weight: bold;
             text-align: left;
             padding: 0.5em;
-            border: 1px solid rgba(27,77,62,0.3);
+            border: 1px solid rgba(var(--primary-color-rgb), 0.3);
           }
           .reveal table td {
             padding: 0.5em;
-            border: 1px solid rgba(27,77,62,0.2);
+            border: 1px solid rgba(var(--primary-color-rgb), 0.2);
           }
           .reveal table tr:nth-child(even) {
-            background-color: rgba(27,77,62,0.05);
+            background-color: rgba(var(--primary-color-rgb), 0.05);
           }
           
           /* Section title slides */
           .reveal section.section-title {
-            background: linear-gradient(135deg, rgba(27,77,62,0.1) 0%, rgba(255,255,255,0.9) 100%);
+            background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(255,255,255,0.9) 100%);
           }
           
           /* Title slide */
@@ -298,8 +337,14 @@ serve(async (req) => {
           .reveal hr {
             border: 0;
             height: 2px;
-            background: linear-gradient(to right, transparent, #1B4D3E, transparent);
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
             margin: 1em 0;
+          }
+          
+          /* Calculate RGB values from hex for rgba usage */
+          :root {
+            --primary-color-rgb: ${hexToRgb(themeColors.primary)};
+            --secondary-color-rgb: ${hexToRgb(themeColors.secondary)};
           }
         </style>`);
       
@@ -315,3 +360,23 @@ serve(async (req) => {
     });
   }
 });
+
+// Helper function to convert hex color to RGB format for rgba()
+function hexToRgb(hex: string) {
+  // Remove the # if present
+  hex = hex.replace(/^#/, '');
+  
+  // Parse the hex values
+  let r, g, b;
+  if (hex.length === 3) {
+    r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+    g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+    b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+  } else {
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+  }
+  
+  return `${r}, ${g}, ${b}`;
+}

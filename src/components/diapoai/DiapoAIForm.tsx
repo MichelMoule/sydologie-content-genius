@@ -23,6 +23,14 @@ import { Label } from "@/components/ui/label";
 import OutlineEditor from "./OutlineEditor";
 import { useToast } from "@/hooks/use-toast";
 
+// Theme color interface
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  background: string;
+  text: string;
+}
+
 export const formSchema = z.object({
   content: z.string().min(10, { message: "Le contenu est requis (minimum 10 caractères)" }),
 });
@@ -30,14 +38,22 @@ export const formSchema = z.object({
 interface DiapoAIFormProps {
   onOutlineGenerated: (outline: any) => void;
   onSlidesGenerated: (slidesHtml: string) => void;
+  onColorsChanged?: (colors: ThemeColors) => void;
 }
 
-export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFormProps) => {
+export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsChanged }: DiapoAIFormProps) => {
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false);
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
   const [outline, setOutline] = useState<any[] | null>(null);
   const [activeTab, setActiveTab] = useState("content");
   const [fileContent, setFileContent] = useState("");
+  const [colors, setColors] = useState<ThemeColors>({
+    primary: "#1B4D3E",
+    secondary: "#FF9B7A",
+    background: "#FFFFFF",
+    text: "#333333"
+  });
+  
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -124,11 +140,13 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
     setIsGeneratingSlides(true);
     try {
       console.log("Generating slides with outline:", outline);
+      console.log("Using colors:", colors);
       
       const { data, error } = await supabase.functions.invoke('generate-diapo', {
         body: { 
           content: form.getValues("content"), 
           outline: outline, 
+          colors: colors,
           step: 'slides' 
         },
       });
@@ -165,6 +183,13 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated }: DiapoAIFo
 
   const updateOutline = (newOutline: any[]) => {
     setOutline(newOutline);
+  };
+
+  const updateColors = (newColors: ThemeColors) => {
+    setColors(newColors);
+    if (onColorsChanged) {
+      onColorsChanged(newColors);
+    }
   };
 
   return (

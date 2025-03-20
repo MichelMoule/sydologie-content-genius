@@ -4,16 +4,34 @@ import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
 import 'reveal.js/plugin/highlight/monokai.css';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, Download, PaintBucket } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface RevealPreviewProps {
   slidesHtml: string;
+  onExportPpt?: () => void;
+  onColorChange?: (colors: ThemeColors) => void;
+}
+
+// Theme color interface
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  background: string;
+  text: string;
 }
 
 // Available themes in reveal.js
@@ -41,11 +59,18 @@ const transitions = [
   { name: 'Zoom', value: 'zoom' },
 ];
 
-const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
+const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState('white');
   const [transition, setTransition] = useState('slide');
   const [deck, setDeck] = useState<any>(null);
+  const [themeColors, setThemeColors] = useState<ThemeColors>({
+    primary: "#1B4D3E",
+    secondary: "#FF9B7A",
+    background: "#FFFFFF",
+    text: "#333333"
+  });
+  const { toast } = useToast();
   
   // Load theme CSS dynamically
   useEffect(() => {
@@ -89,12 +114,12 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
           // Add SYDO color to headings
           const headings = slide.querySelectorAll('h1, h2, h3');
           headings.forEach(heading => {
-            (heading as HTMLElement).style.color = '#1B4D3E';
+            (heading as HTMLElement).style.color = themeColors.primary;
           });
           
           // Check for section title slides and add special styling
           if (slide.classList.contains('section-title')) {
-            (slide as HTMLElement).style.background = 'linear-gradient(135deg, rgba(27,77,62,0.15) 0%, rgba(255,255,255,0.9) 100%)';
+            (slide as HTMLElement).style.background = `linear-gradient(135deg, ${themeColors.primary}15 0%, rgba(255,255,255,0.9) 100%)`;
             (slide as HTMLElement).style.borderRadius = '4px';
           }
           
@@ -141,7 +166,22 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
     };
 
     loadReveal();
-  }, [slidesHtml]);
+  }, [slidesHtml, themeColors]);
+
+  const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
+    const newColors = { ...themeColors, [colorType]: color };
+    setThemeColors(newColors);
+    
+    // Notify parent component if callback exists
+    if (onColorChange) {
+      onColorChange(newColors);
+    }
+    
+    toast({
+      title: "Couleurs mises à jour",
+      description: "Les couleurs du diaporama ont été changées."
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -187,6 +227,102 @@ const RevealPreview = ({ slidesHtml }: RevealPreviewProps) => {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="flex items-center">
+              <PaintBucket className="mr-2 h-4 w-4" />
+              Couleurs
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">Personnalisation des couleurs</h4>
+                <p className="text-sm text-muted-foreground">
+                  Choisissez les couleurs de votre diaporama
+                </p>
+              </div>
+              <div className="grid gap-2">
+                <div className="grid grid-cols-3 items-center gap-2">
+                  <Label htmlFor="primaryColor">Couleur principale</Label>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <div 
+                      className="w-6 h-6 rounded-md border" 
+                      style={{ backgroundColor: themeColors.primary }}
+                    />
+                    <Input
+                      id="primaryColor"
+                      type="color"
+                      value={themeColors.primary}
+                      onChange={(e) => handleColorChange('primary', e.target.value)}
+                      className="w-full h-8"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 items-center gap-2">
+                  <Label htmlFor="secondaryColor">Couleur d'accent</Label>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <div 
+                      className="w-6 h-6 rounded-md border" 
+                      style={{ backgroundColor: themeColors.secondary }}
+                    />
+                    <Input
+                      id="secondaryColor"
+                      type="color"
+                      value={themeColors.secondary}
+                      onChange={(e) => handleColorChange('secondary', e.target.value)}
+                      className="w-full h-8"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 items-center gap-2">
+                  <Label htmlFor="textColor">Couleur du texte</Label>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <div 
+                      className="w-6 h-6 rounded-md border" 
+                      style={{ backgroundColor: themeColors.text }}
+                    />
+                    <Input
+                      id="textColor"
+                      type="color"
+                      value={themeColors.text}
+                      onChange={(e) => handleColorChange('text', e.target.value)}
+                      className="w-full h-8"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 items-center gap-2">
+                  <Label htmlFor="backgroundColor">Couleur de fond</Label>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <div 
+                      className="w-6 h-6 rounded-md border" 
+                      style={{ backgroundColor: themeColors.background }}
+                    />
+                    <Input
+                      id="backgroundColor"
+                      type="color"
+                      value={themeColors.background}
+                      onChange={(e) => handleColorChange('background', e.target.value)}
+                      className="w-full h-8"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {onExportPpt && (
+          <Button 
+            variant="outline" 
+            className="flex items-center"
+            onClick={onExportPpt}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exporter PPT
+          </Button>
+        )}
       </div>
       
       <div 
