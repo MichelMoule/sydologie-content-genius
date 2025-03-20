@@ -3,12 +3,15 @@ import pptxgen from "pptxgenjs";
 import { ThemeColors } from "./types";
 import { svgToDataUrl, getElementsArrayByTagName } from "./utils";
 
+// Define a type that can represent both browser and xmldom Element types
+type DOMElement = Element | import('@xmldom/xmldom').Element;
+
 /**
  * Process paragraphs for a slide
  */
 export const processParagraphs = (
   slide: pptxgen.Slide,
-  paragraphs: Element[],
+  paragraphs: DOMElement[],
   startY: number,
   textColor: string
 ): number => {
@@ -37,7 +40,7 @@ export const processParagraphs = (
  */
 export const processUnorderedLists = (
   slide: pptxgen.Slide,
-  ulElements: Element[],
+  ulElements: DOMElement[],
   startY: number,
   textColor: string
 ): number => {
@@ -73,7 +76,7 @@ export const processUnorderedLists = (
  */
 export const processOrderedLists = (
   slide: pptxgen.Slide,
-  olElements: Element[],
+  olElements: DOMElement[],
   startY: number,
   textColor: string
 ): number => {
@@ -109,7 +112,7 @@ export const processOrderedLists = (
  */
 export const processSvgElement = (
   slide: pptxgen.Slide,
-  svgElement: Element,
+  svgElement: DOMElement,
   startY: number,
   caption: string
 ): number => {
@@ -150,7 +153,7 @@ export const processSvgElement = (
  */
 export const processDiagramDiv = (
   slide: pptxgen.Slide,
-  divElement: Element,
+  divElement: DOMElement,
   startY: number
 ): number => {
   try {
@@ -173,8 +176,8 @@ export const processDiagramDiv = (
       let caption = '';
       const captionElements = Array.from(divElement.childNodes).filter(node => 
         node.nodeType === 1 && 
-        (node as Element).classList && 
-        (node as Element).classList.contains('diagram-caption')
+        (node as DOMElement).classList && 
+        (node as DOMElement).classList.contains('diagram-caption')
       );
       
       if (captionElements.length > 0) {

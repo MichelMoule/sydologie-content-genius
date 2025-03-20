@@ -51,13 +51,14 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
   // Process each slide
   for (let i = 0; i < slideElements.length; i++) {
     const slideElement = slideElements.item(i);
+    if (!slideElement) continue;
     
     // Skip nested sections (vertical slides in Reveal.js)
     if (slideElement.parentNode && slideElement.parentNode.nodeName.toLowerCase() === 'section') {
       continue;
     }
     
-    // Process the slide element
+    // Process the slide element - no need for type assertion as processSlideElement accepts both types now
     processSlideElement(pptx, slideElement, colors);
   }
   

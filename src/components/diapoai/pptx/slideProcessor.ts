@@ -13,12 +13,15 @@ import {
   processGridContainers
 } from "./slideContentProcessor";
 
+// Define a type that can represent both browser and xmldom Element types
+type DOMElement = Element | import('@xmldom/xmldom').Element;
+
 /**
  * Processes a slide element and adds content to PowerPoint slide
  */
 export const processSlideElement = (
   pptx: pptxgen,
-  slideElement: Element, // Using Element type to resolve type mismatch
+  slideElement: DOMElement, // Using a union type to handle both DOM Element types
   colors: ThemeColors
 ): void => {
   // Create a new slide
@@ -29,9 +32,9 @@ export const processSlideElement = (
   const isSectionTitle = slideElement.getAttribute('class')?.includes('section-title');
   
   // Find headings - using proper type assertions
-  const h1Elements = Array.from(slideElement.getElementsByTagName('h1')).map(el => el as Element);
-  const h2Elements = Array.from(slideElement.getElementsByTagName('h2')).map(el => el as Element);
-  const h3Elements = Array.from(slideElement.getElementsByTagName('h3')).map(el => el as Element);
+  const h1Elements = Array.from(slideElement.getElementsByTagName('h1')).map(el => el as DOMElement);
+  const h2Elements = Array.from(slideElement.getElementsByTagName('h2')).map(el => el as DOMElement);
+  const h3Elements = Array.from(slideElement.getElementsByTagName('h3')).map(el => el as DOMElement);
   
   // Add title if found
   if (h1Elements.length > 0) {
@@ -70,7 +73,7 @@ export const processSlideElement = (
     let contentY = h1Elements.length > 0 || h2Elements.length > 0 ? 2 : 0.5;
     
     // Get all div elements (needed for various custom elements)
-    const divElements = Array.from(slideElement.getElementsByTagName('div')).map(el => el as Element);
+    const divElements = Array.from(slideElement.getElementsByTagName('div')).map(el => el as DOMElement);
     
     // Process feature panels (styled boxes with content)
     contentY = processFeaturePanels(slide, divElements, contentY, colors);
@@ -82,19 +85,19 @@ export const processSlideElement = (
     contentY = processGridContainers(slide, divElements, contentY, colors);
     
     // Process paragraph content
-    const paragraphs = Array.from(slideElement.getElementsByTagName('p')).map(el => el as Element);
+    const paragraphs = Array.from(slideElement.getElementsByTagName('p')).map(el => el as DOMElement);
     contentY = processParagraphs(slide, paragraphs, contentY, colors.text);
     
     // Process lists
-    const ulElements = Array.from(slideElement.getElementsByTagName('ul')).map(el => el as Element);
+    const ulElements = Array.from(slideElement.getElementsByTagName('ul')).map(el => el as DOMElement);
     contentY = processUnorderedLists(slide, ulElements, contentY, colors.text);
     
     // Process ordered lists
-    const olElements = Array.from(slideElement.getElementsByTagName('ol')).map(el => el as Element);
+    const olElements = Array.from(slideElement.getElementsByTagName('ol')).map(el => el as DOMElement);
     contentY = processOrderedLists(slide, olElements, contentY, colors.text);
     
     // Process standalone SVG elements
-    const svgElements = Array.from(slideElement.getElementsByTagName('svg')).map(el => el as Element);
+    const svgElements = Array.from(slideElement.getElementsByTagName('svg')).map(el => el as DOMElement);
     for (let j = 0; j < svgElements.length; j++) {
       const svgElement = svgElements[j];
       
@@ -102,7 +105,7 @@ export const processSlideElement = (
       let caption = '';
       const nextSibling = svgElement.nextSibling;
       if (nextSibling && nextSibling.nodeType === 1) {
-        const nextElement = nextSibling as Element;
+        const nextElement = nextSibling as DOMElement;
         if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
           caption = nextElement.textContent || '';
         }
@@ -125,7 +128,7 @@ export const processSlideElement = (
     }
     
     // Process canvas elements (likely Chart.js charts)
-    const canvasElements = Array.from(slideElement.getElementsByTagName('canvas')).map(el => el as Element);
+    const canvasElements = Array.from(slideElement.getElementsByTagName('canvas')).map(el => el as DOMElement);
     contentY = processCanvasElements(slide, canvasElements, contentY, colors.secondary, colors.text);
   }
 };

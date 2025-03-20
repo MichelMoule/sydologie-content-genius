@@ -1,6 +1,9 @@
 
 import { DOMParser } from '@xmldom/xmldom';
 
+// Define a type that can represent both browser and xmldom Element types
+type DOMElement = Element | import('@xmldom/xmldom').Element;
+
 /**
  * Extracts text content from HTML
  */
@@ -40,15 +43,15 @@ export const parseHtml = (html: string) => {
  * Helper to safely get elements by tag name and convert to array
  * Works with both browser DOM and xmldom
  */
-export const getElementsArrayByTagName = (element: Element, tagName: string): Element[] => {
+export const getElementsArrayByTagName = (element: DOMElement, tagName: string): DOMElement[] => {
   const collection = element.getElementsByTagName(tagName);
-  const result: Element[] = [];
+  const result: DOMElement[] = [];
   
   // Handle both DOM collections and NodeList from xmldom
   for (let i = 0; i < collection.length; i++) {
     const item = collection.item(i);
     if (item) {
-      result.push(item);
+      result.push(item as DOMElement);
     }
   }
   
