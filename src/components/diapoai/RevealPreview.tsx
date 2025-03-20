@@ -92,6 +92,48 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
     }
   }, [theme, transition, deck]);
 
+  // Dynamically load the plugins scripts
+  useEffect(() => {
+    const loadPluginsScripts = async () => {
+      // Function to load a script
+      const loadScript = (src: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+          document.head.appendChild(script);
+        });
+      };
+
+      try {
+        // Load SVG.js required for the Animate plugin
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.2/svg.min.js');
+        
+        // Load Chart.js required for the Chart plugin
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js');
+        
+        // Load the LoadContent plugin (required for Animate plugin)
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/loadcontent/plugin.js');
+        
+        // Load the Animate plugin
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/animate/plugin.js');
+        
+        // Load the Anything plugin
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/anything/plugin.js');
+        
+        // Load the Chart plugin
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/chart/plugin.js');
+        
+        console.log('All plugins loaded successfully');
+      } catch (error) {
+        console.error('Error loading plugin scripts:', error);
+      }
+    };
+
+    loadPluginsScripts();
+  }, []);
+
   useEffect(() => {
     const loadReveal = async () => {
       if (!containerRef.current) return;
@@ -139,7 +181,22 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
           }
         });
         
-        // Initialize Reveal.js with enhanced features
+        // Check if the plugin globals are available
+        const RevealLoadContent = (window as any).RevealLoadContent;
+        const RevealAnimate = (window as any).RevealAnimate;
+        const RevealAnything = (window as any).RevealAnything;
+        const RevealChart = (window as any).RevealChart;
+
+        // Collect available plugins
+        const plugins = [Highlight, Notes, Markdown, Zoom, Math];
+        
+        // Add loaded plugins if they exist
+        if (RevealLoadContent) plugins.push(RevealLoadContent);
+        if (RevealAnimate) plugins.push(RevealAnimate);
+        if (RevealAnything) plugins.push(RevealAnything);
+        if (RevealChart) plugins.push(RevealChart);
+        
+        // Initialize Reveal.js with enhanced features and plugins
         const newDeck = new Reveal(containerRef.current, {
           embedded: true,
           margin: 0.1,
@@ -154,18 +211,42 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
           autoPlayMedia: true,
           autoAnimate: true, // Enable auto-animate
           backgroundTransition: 'fade',
-          plugins: [Highlight, Notes, Markdown, Zoom, Math]
+          plugins: plugins,
+          // Plugin specific configuration
+          animate: {
+            autoplay: true // Auto play animations
+          },
+          anything: {
+            // Default config for anything plugin
+          },
+          chart: {
+            defaults: {
+              color: themeColors.text,
+              scale: {
+                beginAtZero: true,
+                grid: { color: `${themeColors.primary}33` }
+              },
+            },
+            line: { borderColor: [themeColors.primary, themeColors.secondary] },
+            bar: { backgroundColor: [themeColors.primary, themeColors.secondary] },
+            pie: { backgroundColor: [[themeColors.primary, themeColors.secondary, `${themeColors.primary}88`, `${themeColors.secondary}88`]] }
+          }
         });
         
         await newDeck.initialize();
         setDeck(newDeck);
-        console.log('Reveal.js initialized successfully');
+        console.log('Reveal.js initialized successfully with plugins');
       } catch (error) {
         console.error('Error initializing Reveal.js:', error);
       }
     };
 
-    loadReveal();
+    // Wait a brief moment to ensure plugins are loaded
+    const timer = setTimeout(() => {
+      loadReveal();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [slidesHtml, themeColors]);
 
   const handleColorChange = (colorType: keyof ThemeColors, color: string) => {

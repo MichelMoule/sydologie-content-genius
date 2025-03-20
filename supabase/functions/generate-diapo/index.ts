@@ -44,7 +44,7 @@ serve(async (req) => {
       
       userPrompt = content;
     } else if (step === 'slides') {
-      systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations with advanced data visualization capabilities.
+      systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations with advanced data visualization and animation capabilities.
       Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
       For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
@@ -58,6 +58,47 @@ serve(async (req) => {
       - Well-formatted bullet points using <ul> and <li> with proper indentation and styling
       - Numbered lists using <ol> and <li> where appropriate (for steps, processes)
       - Use <span class="highlight"> for important terms or keywords
+      
+      Data Visualization & Animation:
+      The presentation supports three powerful plugins that you should use:
+      
+      1. SVG Animations (using the 'animate' plugin):
+      - Add SVG animations using a div with the 'data-animate' attribute
+      - Structure like this:
+        <div data-animate>
+          <svg>...</svg>
+          <!--
+          {
+            "setup": [{ "element": "#element-id", "modifier": "function", "parameters": [values] }],
+            "animation": [{ "element": "#element-id", "modifier": "function", "parameters": [values] }]
+          }
+          -->
+        </div>
+      
+      2. Charts (using the 'chart' plugin):
+      - Add charts using a canvas with the 'data-chart' attribute set to the chart type (bar, line, pie)
+      - Structure like this:
+        <canvas data-chart="bar">
+          <!-- JSON configuration for the chart -->
+          <!--
+          {
+            "data": {
+              "labels": ["Label1", "Label2", "Label3"],
+              "datasets": [{ "data": [10, 20, 30], "label": "Dataset 1" }]
+            }
+          }
+          -->
+        </canvas>
+        OR
+        <canvas data-chart="line">
+          Dataset 1, 10, 20, 30
+          Dataset 2, 5, 15, 25
+          <!-- Optional JSON configuration -->
+        </canvas>
+      
+      3. Custom Elements (using the 'anything' plugin):
+      - Create custom interactive elements with a class name and JSON configuration
+      - The class identifies what type of element it is, and the JSON configures it
       
       SVG Diagrams:
       - Create SVG diagrams for processes, relationships, and concepts using inline SVG code
@@ -88,7 +129,7 @@ serve(async (req) => {
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>
-      Include SVG diagrams where they would enhance understanding of complex concepts.
+      Include SVG diagrams and charts where they would enhance understanding of complex concepts.
       Do not include any explanatory text outside of the HTML.`;
       
       userPrompt = `Content: ${content}\n\nOutline: ${JSON.stringify(outline)}\n\nColors: ${JSON.stringify(themeColors)}`;

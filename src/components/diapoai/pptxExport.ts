@@ -180,15 +180,13 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       }
       
       // Process SVG diagrams
-      const svgElements = slideElement.getElementsByTagName('svg');
-      for (let j = 0; j < svgElements.length; j++) {
-        const svgElement = svgElements[j];
-        // Use XMLSerializer to get the serialized SVG string
-        const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svgElement as unknown as Node);
-        
-        if (svgString) {
-          try {
+      const processSvgElement = (svgElement: Element, caption?: string) => {
+        try {
+          // Use XMLSerializer to get the serialized SVG string
+          const serializer = new XMLSerializer();
+          const svgString = serializer.serializeToString(svgElement as unknown as Node);
+          
+          if (svgString) {
             const dataUrl = svgToDataUrl(svgString);
             slide.addImage({ 
               data: dataUrl, 
@@ -199,66 +197,111 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
             });
             contentY += 4.5;
             
-            // Look for caption
-            const nextSibling = svgElement.nextSibling;
-            if (nextSibling && nextSibling.nodeType === 1) {
-              const nextElement = nextSibling as unknown as Element;
-              if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
-                const captionText = nextElement.textContent || '';
-                slide.addText(captionText, {
-                  x: 0.5, y: contentY, w: '95%', h: 0.5,
-                  fontSize: 14,
-                  color: colors.text,
-                  italic: true,
-                  align: 'center'
-                });
-                contentY += 0.7;
-              }
+            // Add caption if provided
+            if (caption) {
+              slide.addText(caption, {
+                x: 0.5, y: contentY, w: '95%', h: 0.5,
+                fontSize: 14,
+                color: colors.text,
+                italic: true,
+                align: 'center'
+              });
+              contentY += 0.7;
             }
-          } catch (e) {
-            console.error('Error processing SVG:', e);
+          }
+        } catch (e) {
+          console.error('Error processing SVG:', e);
+        }
+      };
+      
+      // Process standalone SVG elements
+      const svgElements = slideElement.getElementsByTagName('svg');
+      for (let j = 0; j < svgElements.length; j++) {
+        const svgElement = svgElements[j];
+        
+        // Look for caption
+        let caption = '';
+        const nextSibling = svgElement.nextSibling;
+        if (nextSibling && nextSibling.nodeType === 1) {
+          const nextElement = nextSibling as unknown as Element;
+          if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
+            caption = nextElement.textContent || '';
           }
         }
+        
+        processSvgElement(svgElement, caption);
       }
-
-      // Check for div with class diagram or svg-diagram
+      
+      // Process divs containing SVGs (for diagrams and charts)
+      const processDiagramDiv = (divElement: Element) => {
+        // Extract SVG from div if it exists
+        const nestedSvg = divElement.getElementsByTagName('svg')[0];
+        if (nestedSvg) {
+          // Look for caption within the div
+          const captionElements = divElement.getElementsByClassName('diagram-caption');
+          const caption = captionElements.length > 0 ? captionElements[0].textContent || '' : '';
+          
+          processSvgElement(nestedSvg, caption);
+        } else {
+          // If no SVG exists but there is a data-chart attribute, it might be a Chart.js visualization
+          // Unfortunately, we can't directly convert Chart.js to PowerPoint charts
+          // So we'll add a text placeholder
+          if (divElement.getAttribute('data-chart')) {
+            slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
+              x: 0.5, y: contentY, w: '95%', h: 0.5,
+              fontSize: 16,
+              color: colors.secondary,
+              italic: true,
+              align: 'center'
+            });
+            contentY += 1.5;
+          }
+        }
+      };
+      
+      // Check for divs with class diagram, svg-diagram or data-animate
       const diagramDivs = slideElement.getElementsByTagName('div');
       for (let j = 0; j < diagramDivs.length; j++) {
         const divElement = diagramDivs[j];
-        if (divElement.getAttribute('class')?.includes('diagram') || 
-            divElement.getAttribute('class')?.includes('svg-diagram')) {
-          // Extract SVG from div if it exists
-          const nestedSvg = divElement.getElementsByTagName('svg')[0];
-          if (nestedSvg) {
-            try {
-              const serializer = new XMLSerializer();
-              const svgString = serializer.serializeToString(nestedSvg as unknown as Node);
-              const dataUrl = svgToDataUrl(svgString);
-              
-              slide.addImage({ 
-                data: dataUrl, 
-                x: 0.5, 
-                y: contentY, 
-                w: 9,
-                h: 4
+        if (
+          divElement.getAttribute('class')?.includes('diagram') || 
+          divElement.getAttribute('class')?.includes('svg-diagram') ||
+          divElement.hasAttribute('data-animate') ||
+          divElement.hasAttribute('data-chart')
+        ) {
+          processDiagramDiv(divElement);
+        }
+      }
+      
+      // Process canvas elements (likely Chart.js charts)
+      const canvasElements = slideElement.getElementsByTagName('canvas');
+      for (let j = 0; j < canvasElements.length; j++) {
+        const canvasElement = canvasElements[j];
+        
+        // If canvas has data-chart attribute, it's a Chart.js chart
+        if (canvasElement.hasAttribute('data-chart')) {
+          slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
+            x: 0.5, y: contentY, w: '95%', h: 0.5,
+            fontSize: 16,
+            color: colors.secondary,
+            italic: true,
+            align: 'center'
+          });
+          contentY += 1.5;
+          
+          // Look for caption
+          const nextSibling = canvasElement.nextSibling;
+          if (nextSibling && nextSibling.nodeType === 1) {
+            const nextElement = nextSibling as unknown as Element;
+            if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
+              slide.addText(nextElement.textContent || '', {
+                x: 0.5, y: contentY, w: '95%', h: 0.5,
+                fontSize: 14,
+                color: colors.text,
+                italic: true,
+                align: 'center'
               });
-              contentY += 4.5;
-              
-              // Look for caption within the div
-              const captionElements = divElement.getElementsByClassName('diagram-caption');
-              if (captionElements.length > 0) {
-                const captionText = captionElements[0].textContent || '';
-                slide.addText(captionText, {
-                  x: 0.5, y: contentY, w: '95%', h: 0.5,
-                  fontSize: 14,
-                  color: colors.text,
-                  italic: true,
-                  align: 'center'
-                });
-                contentY += 0.7;
-              }
-            } catch (e) {
-              console.error('Error processing nested SVG:', e);
+              contentY += 0.7;
             }
           }
         }
