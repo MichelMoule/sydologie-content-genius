@@ -27,7 +27,7 @@ export const processSvgElement = (slide: pptxgen.Slide, svgElement: any, content
       if (caption) {
         slide.addText(caption, {
           x: 0.5, y: contentY, w: '95%', h: 0.5,
-          fontSize: 12, // Reduced font size
+          fontSize: 11, // Reduced from 12
           color: '#333333',
           italic: true,
           align: 'center'
@@ -58,7 +58,7 @@ export const processDiagramDiv = (slide: pptxgen.Slide, divElement: any, content
     if (divElement.getAttribute('data-chart')) {
       slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 14, // Reduced font size
+        fontSize: 12, // Reduced from 14
         color: '#FF9B7A',
         italic: true,
         align: 'center'
@@ -78,7 +78,7 @@ export const processParagraphs = (slide: pptxgen.Slide, paragraphs: HTMLCollecti
     if (text.trim()) {
       slide.addText(text, {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 16, // Reduced font size from 18 to 16
+        fontSize: 14, // Further reduced font size from 16 to 14
         color: textColor,
         align: 'left'
       });
@@ -101,12 +101,12 @@ export const processUnorderedLists = (slide: pptxgen.Slide, ulElements: HTMLColl
     
     if (listContent.length > 0) {
       slide.addText(listContent, {
-        x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
-        fontSize: 16, // Reduced font size from 18 to 16
+        x: 0.5, y: contentY, w: '95%', h: 0.45 * listContent.length, // Reduced height
+        fontSize: 14, // Further reduced font size from 16 to 14
         color: textColor,
         bullet: { type: 'bullet' }
       });
-      contentY += 0.5 * listContent.length; // Reduced spacing
+      contentY += 0.45 * listContent.length + 0.2; // Reduced spacing plus small gap
     }
   }
   return contentY;
@@ -125,12 +125,12 @@ export const processOrderedLists = (slide: pptxgen.Slide, olElements: HTMLCollec
     
     if (listContent.length > 0) {
       slide.addText(listContent, {
-        x: 0.5, y: contentY, w: '95%', h: 0.5 * listContent.length,
-        fontSize: 16, // Reduced font size from 18 to 16
+        x: 0.5, y: contentY, w: '95%', h: 0.45 * listContent.length, // Reduced height
+        fontSize: 14, // Further reduced font size from 16 to 14
         color: textColor,
         bullet: { type: 'number' }
       });
-      contentY += 0.5 * listContent.length; // Reduced spacing
+      contentY += 0.45 * listContent.length + 0.2; // Reduced spacing plus small gap
     }
   }
   return contentY;
@@ -153,21 +153,21 @@ export const processFeaturePanels = (slide: pptxgen.Slide, divElements: HTMLColl
       // Add a colored rectangle for the panel
       slide.addShape('rect', { 
         x: 0.5, y: contentY, 
-        w: 9, h: 0.7, // Reduced height from 0.8 to 0.7
+        w: 9, h: 0.6, // Further reduced height from 0.7 to 0.6
         fill: { color: lightenHex(colors.primary, 0.9) },
-        line: { color: colors.primary, width: 2 },
-        rectRadius: 8
+        line: { color: colors.primary, width: 1.5 }, // Reduced border width
+        rectRadius: 6 // Reduced radius
       });
       
       // Add the text content
       slide.addText(text, {
-        x: 0.7, y: contentY + 0.1, w: 8.6, h: 0.5, // Reduced height from 0.6 to 0.5
-        fontSize: 16, // Reduced font size from 18 to 16
+        x: 0.7, y: contentY + 0.1, w: 8.6, h: 0.4, // Further reduced height
+        fontSize: 14, // Further reduced font size from 16 to 14
         color: colors.text,
         bold: true
       });
       
-      contentY += 0.9; // Reduced spacing from 1.0 to 0.9
+      contentY += 0.8; // Reduced spacing from 0.9 to 0.8
     }
   }
   
@@ -197,16 +197,16 @@ export const processTimelineItems = (slide: pptxgen.Slide, divElements: HTMLColl
       // Add the number circle
       slide.addShape('ellipse', {
         x: 0.5, y: contentY,
-        w: 0.5, h: 0.5,
+        w: 0.45, h: 0.45, // Reduced circle size
         fill: { color: colors.primary }
       });
       
       // Add the number
       slide.addText(number, {
         x: 0.5, y: contentY,
-        w: 0.5, h: 0.5,
+        w: 0.45, h: 0.45, // Reduced text box size
         color: 'FFFFFF',
-        fontSize: 14,
+        fontSize: 12, // Reduced from 14
         bold: true,
         align: 'center',
         valign: 'middle'
@@ -214,22 +214,22 @@ export const processTimelineItems = (slide: pptxgen.Slide, divElements: HTMLColl
       
       // Add the content text
       slide.addText(contentText, {
-        x: 1.2, y: contentY,
-        w: 8.3, h: 0.7, // Reduced height from 0.8 to 0.7
-        fontSize: 14, // Reduced font size from 16 to 14
+        x: 1.1, y: contentY, // Moved slightly left
+        w: 8.4, h: 0.6, // Reduced height and adjusted width
+        fontSize: 13, // Further reduced font size
         color: colors.text
       });
       
       // If not the last item, add a vertical line
       if (j < timelineItems.length - 1) {
         slide.addShape('line', {
-          x: 0.75, y: contentY + 0.5,
-          w: 0, h: 0.5,
+          x: 0.725, y: contentY + 0.45, // Adjusted position
+          w: 0, h: 0.35, // Reduced line length
           line: { color: colors.primary, width: 1, dashType: 'dash' }
         });
       }
       
-      contentY += 1.1; // Reduced spacing from 1.2 to 1.1
+      contentY += 0.9; // Reduced spacing from 1.1 to 0.9
     }
   }
   
@@ -255,9 +255,9 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
       const rows = Math.ceil(itemCount / 2);
       
       // Calculate dimensions for each grid item
-      const itemWidth = 4.3; // Slightly reduced from 4.4
-      const itemHeight = 1.4; // Reduced from 1.5
-      const itemSpacing = 0.2;
+      const itemWidth = 4.25; // Further reduced from 4.3
+      const itemHeight = 1.3; // Further reduced from 1.4
+      const itemSpacing = 0.25; // Slightly increased from 0.2
       
       for (let j = 0; j < gridItems.length; j++) {
         const item = gridItems[j];
@@ -276,22 +276,22 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
           w: itemWidth, h: itemHeight,
           fill: { color: lightenHex(colors.primary, 0.9) },
           line: { color: colors.primary, width: 1 },
-          rectRadius: 5
+          rectRadius: 4 // Reduced from 5
         });
         
         // Add title
         if (title) {
           slide.addText(title, {
             x: itemX + 0.1, y: itemY + 0.1,
-            w: itemWidth - 0.2, h: 0.4,
-            fontSize: 12, // Reduced from 14
+            w: itemWidth - 0.2, h: 0.35, // Reduced height
+            fontSize: 11, // Further reduced from 12
             color: colors.primary,
             bold: true
           });
           
           // Add separator line
           slide.addShape('line', {
-            x: itemX + 0.1, y: itemY + 0.5,
+            x: itemX + 0.1, y: itemY + 0.45, // Adjusted position
             w: itemWidth - 0.2, h: 0,
             line: { color: colors.secondary, width: 1 }
           });
@@ -299,9 +299,9 @@ export const processGridContainers = (slide: pptxgen.Slide, divElements: HTMLCol
         
         // Add content
         slide.addText(content, {
-          x: itemX + 0.1, y: itemY + 0.6,
-          w: itemWidth - 0.2, h: itemHeight - 0.7,
-          fontSize: 11, // Reduced from 12
+          x: itemX + 0.1, y: itemY + 0.5, // Adjusted position
+          w: itemWidth - 0.2, h: itemHeight - 0.6, // Adjusted height
+          fontSize: 10, // Further reduced from 11
           color: colors.text
         });
       }
@@ -325,7 +325,7 @@ export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTML
     if (canvasElement.hasAttribute('data-chart')) {
       slide.addText('Graphique interactif (visible uniquement dans le HTML)', {
         x: 0.5, y: contentY, w: '95%', h: 0.5,
-        fontSize: 14, // Reduced from 16
+        fontSize: 12, // Reduced from 14
         color: secondaryColor,
         italic: true,
         align: 'center'
@@ -339,7 +339,7 @@ export const processCanvasElements = (slide: pptxgen.Slide, canvasElements: HTML
         if (nextElement.classList && nextElement.classList.contains('diagram-caption')) {
           slide.addText(nextElement.textContent || '', {
             x: 0.5, y: contentY, w: '95%', h: 0.5,
-            fontSize: 12, // Reduced from 14
+            fontSize: 11, // Reduced from 12
             color: textColor,
             italic: true,
             align: 'center'

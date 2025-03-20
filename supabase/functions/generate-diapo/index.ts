@@ -48,70 +48,80 @@ serve(async (req) => {
       Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
       For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
-      IMPORTANT: You MUST vary the presentation formats based on the content type. DO NOT use the same format for all slides.
+      CRITICALLY IMPORTANT: You MUST INTELLIGENTLY VARY the presentation formats based on the SPECIFIC CONTENT TYPE. You should analyze the content of each slide and choose the MOST APPROPRIATE format. DO NOT use the same format for all slides or alternate formats mechanically.
       
-      INTELLIGENTLY CHOOSE between these formats based on content:
-      1. Use bullet points for general lists and simple concepts
-      2. Use timeline items for sequential processes, historical events, or steps
-      3. Use feature panels for highlighting important points or takeaways
-      4. Use grid layouts for comparing items or presenting related concepts
-      5. Use diagrams for relationships, processes, and workflows
+      For example:
+      - Use bullet points for concepts, features, advantages, or simple lists
+      - Use timeline items for sequential processes, historical events, chronological steps, or evolution of concepts
+      - Use feature panels for highlighting critical information, key takeaways, warnings, or important definitions
+      - Use grid layouts for comparing options, presenting related concepts side by side, or showing classifications
+      - Use tables for structured data, comparisons with multiple attributes, or matrices
+      - Use diagrams for relationships, processes, workflows, or hierarchies
       
-      Guidelines:
+      SELECTION CRITERIA FOR FORMATS:
+      1. BULLET POINTS: Use for general lists, simple concepts, features, or characteristics
+         - Best for: Features, advantages, quick facts, short items without hierarchy
+         - Example content: "Benefits of our approach", "Key characteristics", "Components"
+      
+      2. TIMELINE ITEMS: Use for sequential or chronological content
+         - Best for: Steps, historical evolution, procedures, sequential processes
+         - Example content: "Historical development", "Step-by-step process", "Implementation phases"
+      
+      3. FEATURE PANELS: Use for highlighting important points, warnings or takeaways
+         - Best for: Key definitions, important warnings, standout information, memorable quotes
+         - Example content: "Definition of key terms", "Critical warnings", "Remember this"
+      
+      4. GRID LAYOUTS: Use for comparing items or presenting related concepts
+         - Best for: Comparing options, showing classifications, presenting paired concepts
+         - Example content: "Approach comparison", "Types of methodologies", "Category overview"
+      
+      5. TABLES: Use for structured data with multiple attributes
+         - Best for: Detailed comparisons, data with multiple columns, matrices
+         - Example content: "Feature comparison chart", "Results table", "Multi-attribute analysis"
+      
+      6. DIAGRAMS: Use for showing relationships or processes
+         - Best for: Workflows, organizational structures, concept relationships, hierarchies
+         - Example content: "Process flow", "Organizational structure", "Concept map"
+      
+      Keep these presentation guidelines in mind:
       - Use proper Reveal.js HTML format with sections and slides
       - Include a title slide with a compelling title, subtitle, and brand colors (${themeColors.primary} for primary text, ${themeColors.secondary} for highlights)
       - For each section in the outline, create a section title slide with a visually distinct style (use class="section-title")
       - For each subsection, create content slides with relevant information from the provided content
-      - Font sizes should be slightly reduced from default (h1: 36px, h2: 32px, body: 16px)
+      - Font sizes should be reduced from default (h1: 32px, h2: 28px, h3: 24px, body: 14px)
       
       Visual Design Elements (VARY THESE BY CONTENT TYPE):
-      1. Feature panels for important points (use when highlighting key concepts):
-         - Use div elements with class="feature-panel" for important points
-         - Apply soft background colors based on the primary color theme
-         - Example: <div class="feature-panel">Entrepreneurs et dirigeants</div>
+      1. Feature panels for important points:
+         <div class="feature-panel">Important concept or definition</div>
       
-      2. Timeline items for sequential processes (use for steps or chronological content):
-         - Use div with class="timeline-item" containing a numbered icon and content
-         - Example: 
-           <div class="timeline-item">
-             <div class="timeline-number">1</div>
-             <div class="timeline-content">
-               <h3>Titre de l'étape</h3>
-               <p>Description de l'étape</p>
-             </div>
+      2. Timeline items for sequential processes:
+         <div class="timeline-item">
+           <div class="timeline-number">1</div>
+           <div class="timeline-content">
+             <h3>Step Title</h3>
+             <p>Step description</p>
            </div>
+         </div>
       
-      3. Grid layouts for comparing options (use for comparing items side by side):
-         - Use div with class="grid-container" containing multiple "grid-item" divs
-         - Example:
-           <div class="grid-container">
-             <div class="grid-item">
-               <h3>Option 1</h3>
-               <p>Description de l'option 1</p>
-             </div>
-             <div class="grid-item">
-               <h3>Option 2</h3>
-               <p>Description de l'option 2</p>
-             </div>
+      3. Grid layouts for comparing options:
+         <div class="grid-container">
+           <div class="grid-item">
+             <h3>Option 1</h3>
+             <p>Description 1</p>
            </div>
+           <div class="grid-item">
+             <h3>Option 2</h3>
+             <p>Description 2</p>
+           </div>
+         </div>
       
-      Standard elements to include:
-      - Well-formatted bullet points using <ul> and <li> with proper styling
-      - Numbered lists using <ol> and <li> where appropriate (for steps, processes)
-      - Use <span class="highlight"> for important terms or keywords
+      4. Standard formatting elements:
+         - Bullet points using <ul> and <li> for simple lists
+         - Numbered lists using <ol> and <li> for ordered procedures
+         - Use <span class="highlight"> for important terms
+         - Tables using <table>, <tr>, <th>, <td> for structured data
       
-      Data Visualization & Animation:
-      - Include SVG charts and diagrams using the built-in plugins
-      - Use the 'chart' plugin for data visualization where appropriate
-      - Create simple SVG diagrams for concepts and processes
-      
-      Design techniques:
-      - Use data-background-gradient="linear-gradient(to right, ${themeColors.primary}, #3a8573)" for section title slides
-      - Create two-column layouts using div with class="columns" containing div with class="column"
-      - Use blockquotes with left border styling for important statements
-      - Add image placeholders with descriptive captions for visuals
-      
-      REMEMBER: INTELLIGENTLY VARY THE PRESENTATION FORMATS BASED ON THE CONTENT. Don't use just one format throughout.
+      REMEMBER: INTELLIGENTLY ANALYZE the content of each slide to choose the most appropriate presentation format. Each slide's content should dictate its format, not any mechanical alternation of styles.
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>
@@ -203,52 +213,52 @@ serve(async (req) => {
           .reveal .feature-panel {
             background-color: var(--light-primary);
             color: var(--text-color);
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border-left: 5px solid var(--primary-color);
-            font-size: 1.1em;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 12px 0;
+            border-left: 4px solid var(--primary-color);
+            font-size: 0.95em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
           }
           
           /* Timeline/numbered items */
           .reveal .timeline-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             position: relative;
           }
           
           .reveal .timeline-number {
             background-color: var(--primary-color);
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.1em;
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            margin-right: 15px;
-            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-right: 12px;
+            margin-top: 4px;
             position: relative;
             z-index: 2;
           }
           
           .reveal .timeline-content {
             flex: 1;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
           }
           
           .reveal .timeline-item:not(:last-child):after {
             content: "";
             position: absolute;
-            left: 20px;
-            top: 45px;
-            bottom: -15px;
+            left: 18px;
+            top: 36px;
+            bottom: -12px;
             width: 2px;
             background-color: var(--primary-color);
             opacity: 0.3;
@@ -259,38 +269,39 @@ serve(async (req) => {
           .reveal .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 20px 0;
+            gap: 16px;
+            margin: 16px 0;
           }
           
           .reveal .grid-item {
             background-color: var(--light-primary);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
           }
           
           .reveal .grid-item h3 {
             margin-top: 0;
             color: var(--primary-color);
-            font-size: 1.3em;
+            font-size: 1.15em;
             border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
           }
           
           /* Enhanced bullet points */
           .reveal ul { list-style-type: none; margin-left: 0; }
           .reveal ul li { 
             position: relative; 
-            margin-bottom: 0.8em; 
-            padding-left: 1.5em; 
+            margin-bottom: 0.7em; 
+            padding-left: 1.3em; 
+            font-size: 0.95em;
           }
           .reveal ul li:before {
             content: "•"; 
             color: var(--secondary-color); 
             font-weight: bold; 
-            font-size: 1.2em;
+            font-size: 1.1em;
             position: absolute;
             left: 0;
           }
@@ -299,13 +310,14 @@ serve(async (req) => {
           .reveal ol { 
             counter-reset: li;
             list-style: none;
-            padding-left: 1em;
+            padding-left: 0.8em;
           }
           .reveal ol li {
             counter-increment: li;
-            margin-bottom: 0.8em;
+            margin-bottom: 0.7em;
             position: relative;
-            padding-left: 1.5em;
+            padding-left: 1.3em;
+            font-size: 0.95em;
           }
           .reveal ol li:before {
             content: counter(li);
@@ -313,8 +325,8 @@ serve(async (req) => {
             font-weight: bold;
             background: rgba(var(--primary-color-rgb), 0.1);
             border-radius: 50%;
-            width: 1.2em;
-            height: 1.2em;
+            width: 1.1em;
+            height: 1.1em;
             display: inline-flex;
             justify-content: center;
             align-items: center;
@@ -322,11 +334,34 @@ serve(async (req) => {
             left: 0;
           }
           
+          /* Tables */
+          .reveal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+            font-size: 0.9em;
+          }
+          .reveal table th {
+            background-color: rgba(var(--primary-color-rgb), 0.15);
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: left;
+            padding: 8px;
+            border: 1px solid rgba(var(--primary-color-rgb), 0.25);
+          }
+          .reveal table td {
+            padding: 8px;
+            border: 1px solid rgba(var(--primary-color-rgb), 0.15);
+          }
+          .reveal table tr:nth-child(even) {
+            background-color: rgba(var(--primary-color-rgb), 0.05);
+          }
+          
           /* Two-column layout */
           .reveal .columns {
             display: flex;
             justify-content: space-between;
-            gap: 2em;
+            gap: 1.5em;
           }
           .reveal .column {
             flex: 1;
@@ -334,13 +369,14 @@ serve(async (req) => {
           
           /* Block quotes */
           .reveal blockquote { 
-            border-left: 4px solid var(--secondary-color); 
-            padding: 1em 1.5em;
+            border-left: 3px solid var(--secondary-color); 
+            padding: 0.8em 1.2em;
             font-style: italic;
             background: var(--light-secondary);
-            border-radius: 0 8px 8px 0;
-            margin: 1em 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 0 6px 6px 0;
+            margin: 0.8em 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.95em;
           }
           
           /* Section title slides */
@@ -358,7 +394,24 @@ serve(async (req) => {
             border: 0;
             height: 2px;
             background: linear-gradient(to right, transparent, var(--primary-color), transparent);
-            margin: 1em 0;
+            margin: 0.8em 0;
+          }
+          
+          /* SVG diagrams */
+          .reveal .svg-diagram {
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto;
+            display: block;
+          }
+          
+          .reveal .diagram-caption {
+            text-align: center;
+            font-style: italic;
+            margin-top: 0.4em;
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 0.9em;
           }
           
           /* Calculate RGB values from hex for rgba usage */
@@ -366,6 +419,13 @@ serve(async (req) => {
             --primary-color-rgb: ${hexToRgb(themeColors.primary)};
             --secondary-color-rgb: ${hexToRgb(themeColors.secondary)};
           }
+          
+          /* Global font size adjustments */
+          .reveal { font-size: 95%; }
+          .reveal h1 { font-size: 1.8em; }
+          .reveal h2 { font-size: 1.5em; }
+          .reveal h3 { font-size: 1.3em; }
+          .reveal p { font-size: 0.95em; }
         </style>`);
       
       return new Response(JSON.stringify({ slidesHtml: styledResult }), {

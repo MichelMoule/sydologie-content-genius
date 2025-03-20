@@ -21,9 +21,21 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
     title: 'SYDO_MASTER',
     background: { color: colors.background },
     objects: [
-      { 'line': { x: 0, y: '90%', w: '100%', h: 0, line: { color: colors.primary, width: 1 } } }
+      { 'line': { x: 0, y: '90%', w: '100%', h: 0, line: { color: colors.primary, width: 1 } } },
+      // Subtle logo or branding element in bottom right corner
+      { 'text': { 
+        text: 'SYDO', 
+        options: { 
+          x: '90%', y: '93%', w: '10%', h: 0.3, 
+          color: colors.primary, 
+          fontSize: 10, 
+          align: 'right',
+          fontFace: 'Arial',
+          opacity: 0.7
+        } 
+      }}
     ],
-    slideNumber: { x: '95%', y: '95%', color: colors.primary }
+    slideNumber: { x: '95%', y: '95%', color: colors.primary, fontSize: 10 }
   });
   
   // Parse the HTML content
