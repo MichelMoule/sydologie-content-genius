@@ -36,19 +36,26 @@ serve(async (req) => {
       
       userPrompt = content;
     } else if (step === 'slides') {
-      systemPrompt = `You are an expert presentation designer specialized in creating educational content.
+      systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations.
       Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
       For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
       Guidelines:
       - Use proper Reveal.js HTML format with sections and slides
-      - Include a title slide with a compelling title based on the content
-      - For each section in the outline, create a section title slide
+      - Include a title slide with a compelling title, SYDO brand colors (#1B4D3E for primary text, #FF9B7A for highlights)
+      - For each section in the outline, create a section title slide with a visually distinct style
       - For each subsection, create content slides with relevant information from the provided content
       - Use appropriate formatting for headers, bullet points, and emphasis
-      - Keep text concise on each slide (maximum 40 words per slide)
+      - Keep text concise on each slide (maximum 35 words per slide)
+      - Use HTML and CSS to create visual interest:
+        - Apply background gradients where appropriate (linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%))
+        - Add well-spaced lists with proper indentation and bullet styling
+        - Include image placeholders (<div class="image-placeholder"></div>) where visuals would enhance content
+        - Use blockquotes for important statements
+        - Apply color highlights for key terms using SYDO colors
       - Include presenter notes with more detailed information and speaking points
-      - Add transition suggestions where appropriate
+      - Add data-transition attributes to suggest appropriate transitions
+      - Use <span> elements with color styling for emphasis
       
       Return ONLY the complete HTML for the Reveal.js presentation.
       The HTML should start with <div class="reveal"> and end with </div>
@@ -116,7 +123,43 @@ serve(async (req) => {
     } else {
       // For slides, just return the HTML content
       result = result.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
-      return new Response(JSON.stringify({ slidesHtml: result }), {
+      
+      // Add some custom CSS for SYDO styling
+      const styledResult = result.replace('<div class="reveal">', `<div class="reveal">
+        <style>
+          .reveal h1, .reveal h2 { color: #1B4D3E; }
+          .reveal h3, .reveal h4 { color: #1B4D3E; }
+          .reveal .highlight { color: #FF9B7A; }
+          .reveal .text-primary { color: #1B4D3E; }
+          .reveal .text-secondary { color: #FF9B7A; }
+          .reveal blockquote { border-left: 4px solid #FF9B7A; padding-left: 1em; }
+          .reveal ul li { margin-bottom: 0.5em; }
+          .reveal ol li { margin-bottom: 0.5em; }
+          .reveal .image-placeholder {
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            width: 80%;
+          }
+          .reveal .image-placeholder:after {
+            content: "Image illustrative";
+            color: #888;
+            font-style: italic;
+          }
+          .reveal section.title-slide {
+            background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
+          }
+          .reveal section.section-title {
+            background: linear-gradient(135deg, rgba(27,77,62,0.1) 0%, rgba(255,255,255,0.9) 100%);
+          }
+        </style>`);
+      
+      return new Response(JSON.stringify({ slidesHtml: styledResult }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
