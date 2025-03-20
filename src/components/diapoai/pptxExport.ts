@@ -1,4 +1,3 @@
-
 import pptxgen from "pptxgenjs";
 import { DOMParser } from '@xmldom/xmldom';
 
@@ -175,9 +174,9 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       for (let j = 0; j < svgElements.length; j++) {
         const svgElement = svgElements[j];
         // Use XMLSerializer to get the serialized SVG string
-        // Fix: Cast svgElement to Node type, which is what XMLSerializer expects
+        // Fix: Cast svgElement to unknown first, then to Node to satisfy TypeScript
         const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svgElement as Node);
+        const svgString = serializer.serializeToString(svgElement as unknown as Node);
         
         if (svgString) {
           try {
@@ -215,8 +214,6 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
   }
   
   // Use the correct interface for writeFile and cast the result appropriately
-  // pptxgenjs actually returns a Promise<string | Blob | Buffer> depending on the outputType
-  // Since we know we're requesting a Blob, we can safely cast the result
   const pptxBlob = await pptx.writeFile() as unknown as Blob;
   return pptxBlob;
 };
