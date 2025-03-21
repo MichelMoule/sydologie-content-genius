@@ -19,7 +19,7 @@ import {
   processFeaturePanels,
   processTimelineItems,
   processGridContainers
-} from "./slideContentProcessor";
+} from "./contentProcessors";
 
 /**
  * Processes a slide element and adds content to PowerPoint slide
