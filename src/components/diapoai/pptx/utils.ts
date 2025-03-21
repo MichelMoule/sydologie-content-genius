@@ -115,6 +115,8 @@ export const getTextContent = (element: DOMElement): string => {
     const node = element.childNodes[i];
     if (node.nodeType === 3) { // Text node
       text += node.nodeValue || '';
+    } else if (node.nodeType === 1) { // Element node
+      text += getTextContent(node as DOMElement);
     }
   }
   

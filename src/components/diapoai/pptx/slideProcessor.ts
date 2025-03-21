@@ -6,7 +6,8 @@ import {
   hasClass, 
   getTextContent,
   filterChildElementsByClass,
-  DOMElement
+  DOMElement,
+  DOMNode
 } from "./utils";
 import { 
   processParagraphs, 

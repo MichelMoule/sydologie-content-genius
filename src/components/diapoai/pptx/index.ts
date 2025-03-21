@@ -1,7 +1,7 @@
 
 import pptxgen from "pptxgenjs";
 import { ThemeColors } from "./types";
-import { parseHtml, DOMElement } from "./utils";
+import { parseHtml, DOMElement, DOMNode } from "./utils";
 import { processSlideElement } from "./slideProcessor";
 
 /**
