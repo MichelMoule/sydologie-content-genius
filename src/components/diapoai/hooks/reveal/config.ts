@@ -10,9 +10,19 @@ export const createRevealConfig = (transition: string) => {
     hash: false,
     transition: transition,
     slideNumber: true,
-    embedded: false,
+    embedded: true, // Mode intégré pour empêcher le comportement plein écran
     width: '100%',
     height: '100%',
-    margin: 0.1
+    margin: 0.1,
+    // Désactiver les raccourcis clavier qui peuvent interférer avec le défilement
+    keyboard: {
+      // Désactiver la touche espace pour éviter les conflits avec le défilement
+      32: null,
+    },
+    // Limiter la capture d'événements à l'intérieur du conteneur Reveal
+    touch: {
+      captureHorizontalSwipe: true,
+      captureVerticalSwipe: false
+    }
   };
 };

@@ -1,5 +1,6 @@
 
 import { forwardRef, useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string }>(
   ({ slidesHtml }, ref) => {
@@ -15,16 +16,18 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
     }, [slidesHtml, ref]);
 
     return (
-      <div 
-        ref={ref} 
-        className="bg-white reveal border rounded-lg overflow-hidden shadow-lg"
-        style={{ height: '700px', width: '100%', position: 'relative' }}
-      >
-        <div className="slides">
-          <section>
-            <h2>Chargement du diaporama...</h2>
-            <p>La prévisualisation apparaîtra dans quelques instants.</p>
-          </section>
+      <div className="relative w-full overflow-hidden">
+        <div 
+          ref={ref} 
+          className="bg-white reveal border rounded-lg overflow-hidden shadow-lg"
+          style={{ height: '600px', width: '100%', position: 'relative' }}
+        >
+          <div className="slides">
+            <section>
+              <h2>Chargement du diaporama...</h2>
+              <p>La prévisualisation apparaîtra dans quelques instants.</p>
+            </section>
+          </div>
         </div>
       </div>
     );

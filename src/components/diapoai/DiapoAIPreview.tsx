@@ -4,6 +4,7 @@ import { Download, FileDown } from "lucide-react";
 import RevealPreview from "./RevealPreview";
 import { ThemeColors } from "./pptx/types";
 import { Presentation } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DiapoAIPreviewProps {
   slidesHtml: string | null;

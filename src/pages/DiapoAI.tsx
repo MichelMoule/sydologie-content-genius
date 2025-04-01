@@ -11,6 +11,7 @@ import { processSvgDiagrams } from "@/components/diapoai/utils/SvgProcessor";
 import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { DiapoAIPreview } from "@/components/diapoai/DiapoAIPreview";
 import { HtmlExporter } from "@/components/diapoai/exporters/HtmlExporter";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
@@ -87,7 +88,7 @@ const DiapoAI = () => {
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
         <div className="max-w-5xl mx-auto">
           <DiapoAIHeader />
 
