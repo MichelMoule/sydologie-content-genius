@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { ThemeColors } from '../pptx/types';
 
@@ -91,8 +92,29 @@ export const useRevealInit = (
           return;
         }
         
-        // Clear previous content and add the new slides
-        slidesContainer.innerHTML = slidesHtml;
+        // Nettoyer les diapositives existantes
+        slidesContainer.innerHTML = '';
+        
+        // Créer un DOM temporaire pour analyser le HTML des diapositives
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = slidesHtml;
+        
+        // Récupérer les balises section qui représentent les diapositives
+        const sectionElements = tempDiv.querySelectorAll('section');
+        
+        if (sectionElements.length === 0) {
+          console.log("Aucune section trouvée dans le HTML, on l'utilise comme une seule diapo");
+          // Si pas de sections trouvées, considérer le contenu comme une seule diapositive
+          const newSection = document.createElement('section');
+          newSection.innerHTML = slidesHtml;
+          slidesContainer.appendChild(newSection);
+        } else {
+          console.log(`${sectionElements.length} sections trouvées, injection des diapositives individuelles`);
+          // Injecter chaque section comme une diapositive
+          sectionElements.forEach(section => {
+            slidesContainer.appendChild(section.cloneNode(true));
+          });
+        }
         
         // Add SYDO styling to slides
         const slides = containerRef.current.querySelectorAll('.slides section');
@@ -140,9 +162,14 @@ export const useRevealInit = (
         if (RevealAnything) plugins.push(RevealAnything);
         if (RevealChart) plugins.push(RevealChart);
         
+        // Destroy existing deck if any
+        if (deck) {
+          deck.destroy();
+        }
+        
         // Initialize Reveal.js with enhanced features and plugins
         const newDeck = new Reveal(containerRef.current, {
-          embedded: true,
+          embedded: false, // Changed to false to allow full functionality
           margin: 0.1,
           height: 700,
           width: 960,
@@ -153,12 +180,12 @@ export const useRevealInit = (
           transition: transition,
           slideNumber: true,
           autoPlayMedia: true,
-          autoAnimate: true, // Enable auto-animate
+          autoAnimate: true,
           backgroundTransition: 'fade',
           plugins: plugins,
           // Plugin specific configuration
           animate: {
-            autoplay: true // Auto play animations
+            autoplay: true
           },
           anything: {
             // Default config for anything plugin
