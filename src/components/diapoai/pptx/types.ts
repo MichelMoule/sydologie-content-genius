@@ -25,4 +25,14 @@ declare module 'pptxgenjs' {
     fill?: { color: string };
     bold?: boolean;
   }
+
+  // Extend TextPropsOptions interface to add missing properties
+  interface TextPropsOptions {
+    // Add the properties that TypeScript is complaining about
+    borderColor?: string;
+    borderPt?: number;
+    borderLeftColor?: string;
+    borderLeftPt?: number;
+    italic?: boolean;
+  }
 }

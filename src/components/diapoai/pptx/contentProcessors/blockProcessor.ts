@@ -35,8 +35,8 @@ export const processBlocks = (
         fontFace: 'Courier New',
         color: textColor,
         fill: { color: '#f0f0f0' },
-        borderColor: '#cccccc',  // Use borderColor instead of border
-        borderPt: 1,             // Use borderPt instead of border
+        borderColor: '#cccccc',  // Now defined in our extended type
+        borderPt: 1,             // Now defined in our extended type
         valign: 'top',
         margin: [0.2, 0.2, 0.2, 0.2]
       });
@@ -54,12 +54,12 @@ export const processBlocks = (
         fontSize: 18,
         fontFace: 'Arial',
         color: textColor,
-        italic: true,            // Use italic directly instead of fontStyle
+        italic: true,            // Now defined in our extended type
         fill: { color: secondaryColor + '15' }, // Very light secondary color
-        borderColor: 'transparent', // Use borderColor instead of border
-        borderPt: 0,               // Use borderPt instead of border
-        borderLeftColor: secondaryColor, // Use borderLeftColor instead of borderLeft
-        borderLeftPt: 3,           // Use borderLeftPt instead of borderLeft
+        borderColor: 'transparent', // Now defined in our extended type
+        borderPt: 0,               // Now defined in our extended type
+        borderLeftColor: secondaryColor, // Now defined in our extended type
+        borderLeftPt: 3,           // Now defined in our extended type
         valign: 'middle',
         margin: [0, 0, 0, 0.3]
       });
