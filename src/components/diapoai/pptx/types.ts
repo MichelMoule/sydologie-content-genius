@@ -26,7 +26,28 @@ declare module 'pptxgenjs' {
     bold?: boolean;
   }
   
-  // Ensure we're extending the correct interface that's actually used by the library
+  // This is the key interface used by pptxgenjs for text options
+  interface AddTextProps {
+    x?: number | string;
+    y?: number | string;
+    w?: number | string;
+    h?: number | string;
+    fontSize?: number;
+    fontFace?: string;
+    color?: string;
+    bold?: boolean;
+    italic?: boolean;
+    valign?: 'top' | 'middle' | 'bottom';
+    align?: 'left' | 'center' | 'right';
+    margin?: number | [number, number, number, number];
+    fill?: { color: string };
+    borderColor?: string;
+    borderPt?: number;
+    borderLeftColor?: string;
+    borderLeftPt?: number;
+  }
+  
+  // Extend the ITextOpts interface which is used internally by the library
   interface ITextOpts {
     borderColor?: string;
     borderPt?: number;
@@ -35,12 +56,24 @@ declare module 'pptxgenjs' {
     italic?: boolean;
   }
   
-  // Also extend the slide.addText options interface
+  // Also extend TextPropsOptions which is used by slide.addText
   interface TextPropsOptions {
+    x?: number | string;
+    y?: number | string;
+    w?: number | string;
+    h?: number | string;
+    fontFace?: string;
+    fontSize?: number;
+    color?: string;
+    valign?: string;
+    align?: string;
+    margin?: number | number[];
+    fill?: { color: string };
     borderColor?: string;
     borderPt?: number;
     borderLeftColor?: string;
     borderLeftPt?: number;
     italic?: boolean;
+    bold?: boolean;
   }
 }
