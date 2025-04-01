@@ -27,10 +27,10 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
   });
   const { toast } = useToast();
   
-  // Initialize Reveal.js with simplified hook
+  // Initialiser Reveal.js
   const { deck } = useRevealInit(containerRef, slidesHtml, themeColors, transition);
 
-  // Show toast when preview is ready
+  // Afficher un toast quand la prévisualisation est prête
   useEffect(() => {
     if (deck) {
       toast({
@@ -40,7 +40,7 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
     }
   }, [deck, toast]);
 
-  // Handle color changes
+  // Gérer les changements de couleurs
   const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
     const newColors = { ...themeColors, [colorType]: color };
     setThemeColors(newColors);
@@ -69,7 +69,7 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
         onExportPpt={onExportPpt}
       />
       
-      <SlidesContainer ref={containerRef} />
+      <SlidesContainer ref={containerRef} slidesHtml={slidesHtml} />
       
       <div className="text-sm text-muted-foreground mt-2">
         <p>Utilisez les flèches du clavier ou cliquez sur les côtés pour naviguer entre les diapositives.</p>
