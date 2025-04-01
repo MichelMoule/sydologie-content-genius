@@ -56,24 +56,8 @@ declare module 'pptxgenjs' {
     italic?: boolean;
   }
   
-  // Properly extend TextPropsOptions to include all properties from AddTextProps
-  interface TextPropsOptions {
-    x?: number | string;
-    y?: number | string;
-    w?: number | string;
-    h?: number | string;
-    fontSize?: number;
-    fontFace?: string;
-    color?: string;
-    bold?: boolean;
-    italic?: boolean;
-    valign?: 'top' | 'middle' | 'bottom';
-    align?: 'left' | 'center' | 'right';
-    margin?: number | [number, number, number, number];
-    fill?: { color: string };
-    borderColor?: string;
-    borderPt?: number;
-    borderLeftColor?: string;
-    borderLeftPt?: number;
+  // Make TextPropsOptions inherit all properties from AddTextProps
+  interface TextPropsOptions extends AddTextProps {
+    // Additional properties specific to TextPropsOptions can be added here
   }
 }
