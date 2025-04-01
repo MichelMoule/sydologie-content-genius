@@ -13,6 +13,7 @@ export const useRevealInit = (
   const isScriptLoaded = useRef(false);
   const isInitializing = useRef(false);
   const slidesRef = useRef(slidesHtml);
+  const initAttempts = useRef(0);
 
   // Keep track of the latest slidesHtml without triggering re-renders
   useEffect(() => {
@@ -56,6 +57,11 @@ export const useRevealInit = (
         
         if (newDeck) {
           setDeck(newDeck);
+          initAttempts.current = 0; // Reset attempt counter on success
+        } else if (initAttempts.current < 3) {
+          // If initialization failed, retry up to 3 times
+          initAttempts.current++;
+          setTimeout(initializeRevealInstance, 300 * initAttempts.current); // Increasing delay
         }
       } finally {
         isInitializing.current = false;
@@ -71,6 +77,22 @@ export const useRevealInit = (
       clearTimeout(timer);
     };
   }, [containerRef, slidesHtml, themeColors, transition]);
+
+  // Add a sync mechanism to handle navigation issues
+  useEffect(() => {
+    if (deck) {
+      const syncTimer = setTimeout(() => {
+        try {
+          deck.sync();
+          deck.slide(0); // Ensure we start at the first slide
+        } catch (e) {
+          console.warn('Error syncing Reveal.js deck:', e);
+        }
+      }, 500);
+      
+      return () => clearTimeout(syncTimer);
+    }
+  }, [deck]);
 
   // Clean up on unmount
   useEffect(() => {

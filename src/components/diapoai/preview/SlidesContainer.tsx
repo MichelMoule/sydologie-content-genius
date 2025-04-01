@@ -12,6 +12,21 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
         if (slidesContainer) {
           slidesContainer.innerHTML = slidesHtml;
           
+          // Check if sections exist and ensure they're proper slides
+          const sections = slidesContainer.querySelectorAll('section');
+          if (sections.length === 0) {
+            // If no sections, wrap content in a section
+            slidesContainer.innerHTML = `<section>${slidesHtml}</section>`;
+          } else {
+            // Ensure each section is a direct child of slides
+            sections.forEach(section => {
+              if (section.parentElement !== slidesContainer) {
+                slidesContainer.appendChild(section.cloneNode(true));
+                section.remove();
+              }
+            });
+          }
+          
           // Add custom styles to ensure content stays together
           const style = document.createElement('style');
           style.textContent = `
@@ -19,11 +34,18 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
               height: auto !important;
               min-height: 500px;
               padding: 20px !important;
+              display: flex !important;
+              flex-direction: column !important;
+            }
+            .reveal .slides h1,
+            .reveal .slides h2,
+            .reveal .slides h3 {
+              margin-bottom: 0.3em !important;
             }
             .reveal .slides h1 + p,
             .reveal .slides h2 + p,
             .reveal .slides h3 + p {
-              margin-top: 0.2em !important;
+              margin-top: 0 !important;
             }
             .reveal .slides h1 + ul,
             .reveal .slides h2 + ul,
@@ -31,15 +53,20 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
             .reveal .slides h1 + ol,
             .reveal .slides h2 + ol,
             .reveal .slides h3 + ol {
-              margin-top: 0.2em !important;
+              margin-top: 0 !important;
             }
             .reveal .slides p {
-              margin-bottom: 0.8em !important;
+              margin-bottom: 0.5em !important;
             }
             .reveal .slides ul, 
             .reveal .slides ol {
               display: block !important;
-              margin-bottom: 0.8em !important;
+              margin-bottom: 0.5em !important;
+            }
+            .reveal .slides section > * {
+              margin-left: 0 !important;
+              margin-right: 0 !important;
+              width: 100% !important;
             }
           `;
           container.current.appendChild(style);
