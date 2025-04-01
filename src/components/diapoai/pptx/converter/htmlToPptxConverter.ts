@@ -3,13 +3,14 @@ import pptxgen from "pptxgenjs";
 import { ThemeColors } from "../types";
 import { parseHtml, DOMElement } from "../utils";
 import { processSlideElement } from "../slideProcessor";
+import { setupPresentation } from "../setup/presentationSetup";
 
 /**
  * Converts HTML content to PPTX format
  */
 export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors): Promise<Blob> => {
-  // Create a new presentation
-  const pptx = new pptxgen();
+  // Create a new presentation with the proper setup
+  const pptx = setupPresentation(colors);
   
   try {
     // Parse the HTML content
@@ -22,6 +23,8 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       throw new Error('No slide content found');
     }
     
+    console.log(`Found ${slideElements.length} slide elements`);
+    
     // Process each slide
     for (let i = 0; i < slideElements.length; i++) {
       const slideElement = slideElements.item(i);
@@ -31,6 +34,8 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       if (slideElement.parentNode && slideElement.parentNode.nodeName.toLowerCase() === 'section') {
         continue;
       }
+      
+      console.log(`Processing slide ${i + 1}`);
       
       // Process the slide element using our DOMElement type
       processSlideElement(pptx, slideElement as DOMElement, colors);

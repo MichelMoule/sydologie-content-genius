@@ -42,6 +42,9 @@ export const processSlideElement = (
   const h2Elements = getElementsArrayByTagName(slideElement, 'h2');
   const h3Elements = getElementsArrayByTagName(slideElement, 'h3');
   
+  // Track if we've processed main headers for this slide
+  let mainHeaderProcessed = false;
+  
   // Add title if found
   if (h1Elements.length > 0) {
     const titleText = getTextContent(h1Elements[0]);
@@ -52,6 +55,7 @@ export const processSlideElement = (
       bold: true,
       align: isTitle || isSectionTitle ? 'center' : 'left'
     });
+    mainHeaderProcessed = true;
   } else if (h2Elements.length > 0) {
     const titleText = getTextContent(h2Elements[0]);
     slide.addText(titleText, {
@@ -61,10 +65,11 @@ export const processSlideElement = (
       bold: true,
       align: isSectionTitle ? 'center' : 'left'
     });
+    mainHeaderProcessed = true;
   }
   
   // Add subtitle if exists and is title slide
-  if (isTitle && h2Elements.length > 0) {
+  if (isTitle && h2Elements.length > 0 && mainHeaderProcessed) {
     const subtitleText = getTextContent(h2Elements[0]);
     slide.addText(subtitleText, { 
       x: 0.5, y: 1.8, w: '95%', h: 0.8, 
@@ -76,7 +81,7 @@ export const processSlideElement = (
   
   // Process content based on slide type
   if (!isTitle && !isSectionTitle) {
-    let contentY = h1Elements.length > 0 || h2Elements.length > 0 ? 2 : 0.5;
+    let contentY = mainHeaderProcessed ? 2 : 0.5;
     
     // Get all div elements (needed for various custom elements)
     const divElements = getElementsArrayByTagName(slideElement, 'div');

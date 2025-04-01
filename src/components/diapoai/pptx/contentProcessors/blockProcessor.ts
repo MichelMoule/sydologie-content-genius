@@ -33,7 +33,8 @@ export const processBlocks = (
         bullet: false,
         indentLevel: 1,
         fill: { color: `${accentColor}20` }, // Light background
-        border: { type: 'solid', pt: 1, color: accentColor, left: true },
+        borderColor: accentColor,
+        borderLeftPt: 3,
         margin: [0, 0, 0, 10]
       });
       
@@ -46,7 +47,8 @@ export const processBlocks = (
         fontFace: 'Courier New',
         color: textColor, 
         fill: { color: '#F0F0F0' }, // Light gray background for code
-        border: { type: 'solid', pt: 1, color: '#CCCCCC' },
+        borderColor: '#CCCCCC',
+        borderPt: 1,
         margin: [5, 5, 5, 5]
       });
       
