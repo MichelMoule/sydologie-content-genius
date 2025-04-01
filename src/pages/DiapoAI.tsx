@@ -76,6 +76,7 @@ const DiapoAI = () => {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap">
   
   <!-- Load SVG.js required for the Animate plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.2/svg.min.js"></script>
@@ -95,20 +96,39 @@ const DiapoAI = () => {
       --light-secondary: ${lightenColor(colors.secondary, 0.9)};
     }
     
-    .reveal .slides { height: 100%; }
-    body { 
+    body, .reveal { 
+      font-family: 'DM Sans', sans-serif;
       background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
       min-height: 100vh;
       color: var(--text-color);
     }
-    .reveal h1, .reveal h2 { color: var(--primary-color); font-weight: 700; margin-bottom: 0.5em; }
-    .reveal h3, .reveal h4 { color: var(--primary-color); font-weight: 600; }
+    
+    .reveal .slides { height: 100%; }
+    
+    .reveal h1, .reveal h2 { 
+      font-family: 'DM Sans', sans-serif;
+      color: var(--primary-color); 
+      font-weight: 700; 
+      margin-bottom: 0.5em; 
+    }
+    
+    .reveal h3, .reveal h4 { 
+      font-family: 'DM Sans', sans-serif;
+      color: var(--primary-color); 
+      font-weight: 600; 
+    }
+    
+    .reveal p, .reveal li, .reveal blockquote {
+      font-family: 'DM Sans', sans-serif;
+    }
+    
     .reveal .highlight { color: var(--secondary-color); font-weight: 600; }
     .reveal .text-primary { color: var(--primary-color); }
     .reveal .text-secondary { color: var(--secondary-color); }
     
     /* Feature panels - styled boxes with content */
     .reveal .feature-panel {
+      font-family: 'DM Sans', sans-serif;
       background-color: var(--light-primary);
       color: var(--text-color);
       padding: 15px 20px;
@@ -121,6 +141,7 @@ const DiapoAI = () => {
     
     /* Timeline/numbered items */
     .reveal .timeline-item {
+      font-family: 'DM Sans', sans-serif;
       display: flex;
       align-items: flex-start;
       margin-bottom: 30px;
@@ -149,18 +170,6 @@ const DiapoAI = () => {
     .reveal .timeline-content {
       flex: 1;
       padding-bottom: 10px;
-    }
-    
-    .reveal .timeline-item:not(:last-child):after {
-      content: "";
-      position: absolute;
-      left: 20px;
-      top: 45px;
-      bottom: -15px;
-      width: 2px;
-      background-color: var(--primary-color);
-      opacity: 0.3;
-      z-index: 1;
     }
     
     /* Grid layout */
@@ -508,7 +517,7 @@ const DiapoAI = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
@@ -517,8 +526,8 @@ const DiapoAI = () => {
             <div className="flex items-center gap-3">
               <Presentation className="h-8 w-8 text-sydologie-green" />
               <div>
-                <h1 className="text-3xl font-bold text-sydologie-green mb-2">DiapoAI</h1>
-                <p className="text-lg text-gray-700">
+                <h1 className="text-3xl font-bold text-sydologie-green mb-2 font-dmsans">DiapoAI</h1>
+                <p className="text-lg text-gray-700 font-dmsans">
                   Créez des présentations percutantes pour vos formations en quelques minutes
                 </p>
               </div>
@@ -535,16 +544,16 @@ const DiapoAI = () => {
             {slidesHtml && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold text-sydologie-green flex items-center gap-2">
+                  <h3 className="text-xl font-semibold text-sydologie-green flex items-center gap-2 font-dmsans">
                     <Presentation className="h-5 w-5" />
                     Votre diaporama
                   </h3>
                   <div className="flex gap-2">
-                    <Button onClick={downloadHtml} variant="outline" className="border-sydologie-green text-sydologie-green hover:bg-sydologie-green/10">
+                    <Button onClick={downloadHtml} variant="outline" className="border-sydologie-green text-sydologie-green hover:bg-sydologie-green/10 font-dmsans">
                       <FileDown className="mr-2 h-4 w-4" />
                       HTML
                     </Button>
-                    <Button onClick={exportToPpt} variant="default" className="bg-sydologie-green hover:bg-sydologie-green/90">
+                    <Button onClick={exportToPpt} variant="default" className="bg-sydologie-green hover:bg-sydologie-green/90 font-dmsans">
                       <Download className="mr-2 h-4 w-4" />
                       PowerPoint
                     </Button>
