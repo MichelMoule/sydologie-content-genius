@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ThemeColors } from '../pptx/types';
 
@@ -22,7 +21,7 @@ export const useRevealInit = (
       document.head.appendChild(link);
     }
     
-    link.href = `https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/${transition}.css`;
+    link.href = `https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css`;
     
     // Update Reveal.js configuration if it's already initialized
     if (deck) {
@@ -85,8 +84,15 @@ export const useRevealInit = (
         const Zoom = (await import('reveal.js/plugin/zoom/zoom')).default;
         const Math = (await import('reveal.js/plugin/math/math')).default;
         
-        // Clear previous content
-        containerRef.current.innerHTML = slidesHtml;
+        // Get the slides container
+        const slidesContainer = containerRef.current.querySelector('.slides');
+        if (!slidesContainer) {
+          console.error('Slides container not found');
+          return;
+        }
+        
+        // Clear previous content and add the new slides
+        slidesContainer.innerHTML = slidesHtml;
         
         // Add SYDO styling to slides
         const slides = containerRef.current.querySelectorAll('.slides section');
