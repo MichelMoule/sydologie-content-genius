@@ -12,52 +12,55 @@ export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors)
     
     // Make sure the slide content is structured properly
     if (slide.children.length > 0) {
-      // Apply colors to headings with larger font sizes
+      // Apply colors to headings with appropriate font sizes but reduced margins
       const h1Elements = slide.querySelectorAll('h1');
       h1Elements.forEach(heading => {
         (heading as HTMLElement).style.color = colors.primary;
-        (heading as HTMLElement).style.fontSize = '2.8em'; // Increased font size
-        (heading as HTMLElement).style.marginBottom = '0.3em'; // Keep content close
-        (heading as HTMLElement).style.marginTop = '0.2em';
+        (heading as HTMLElement).style.fontSize = '2.5em'; // Slightly reduced for more content
+        (heading as HTMLElement).style.marginBottom = '0.2em'; // Reduced spacing
+        (heading as HTMLElement).style.marginTop = '0.1em'; // Reduced spacing
       });
       
       const h2Elements = slide.querySelectorAll('h2');
       h2Elements.forEach(heading => {
         (heading as HTMLElement).style.color = colors.primary;
-        (heading as HTMLElement).style.fontSize = '2.3em'; // Increased font size
-        (heading as HTMLElement).style.marginBottom = '0.3em'; // Keep content close
-        (heading as HTMLElement).style.marginTop = '0.2em';
+        (heading as HTMLElement).style.fontSize = '2.0em'; // Slightly reduced for more content
+        (heading as HTMLElement).style.marginBottom = '0.2em'; // Reduced spacing
+        (heading as HTMLElement).style.marginTop = '0.1em'; // Reduced spacing
       });
       
       const h3Elements = slide.querySelectorAll('h3');
       h3Elements.forEach(heading => {
         (heading as HTMLElement).style.color = colors.primary;
-        (heading as HTMLElement).style.fontSize = '1.9em';
-        (heading as HTMLElement).style.marginBottom = '0.2em'; // Keep content close
-        (heading as HTMLElement).style.marginTop = '0.1em';
+        (heading as HTMLElement).style.fontSize = '1.7em'; // Slightly reduced for more content
+        (heading as HTMLElement).style.marginBottom = '0.15em'; // Reduced spacing
+        (heading as HTMLElement).style.marginTop = '0.1em'; // Reduced spacing
       });
     }
     
-    // Ensure paragraphs stay close to headings
+    // Ensure paragraphs stay VERY close to headings
     const paragraphs = slide.querySelectorAll('p');
     paragraphs.forEach(p => {
-      (p as HTMLElement).style.marginTop = '0.2em';
-      (p as HTMLElement).style.marginBottom = '0.4em';
-      (p as HTMLElement).style.fontSize = '1.6em'; // Larger text for better readability
+      (p as HTMLElement).style.marginTop = '0.1em'; // Minimized spacing
+      (p as HTMLElement).style.marginBottom = '0.2em'; // Minimized spacing
+      (p as HTMLElement).style.fontSize = '1.3em'; // Slightly smaller for more content per slide
+      (p as HTMLElement).style.lineHeight = '1.3'; // Tighter line height
     });
     
-    // Ensure lists stay close to headings
+    // Ensure lists stay close to headings with tighter spacing
     const lists = slide.querySelectorAll('ul, ol');
     lists.forEach(list => {
-      (list as HTMLElement).style.marginTop = '0.2em';
-      (list as HTMLElement).style.marginBottom = '0.4em';
+      (list as HTMLElement).style.marginTop = '0.1em'; // Minimized spacing
+      (list as HTMLElement).style.marginBottom = '0.2em'; // Minimized spacing
+      (list as HTMLElement).style.paddingLeft = '1.5em'; // Reduced indent
     });
     
-    // Make list items more readable
+    // Make list items more compact
     const listItems = slide.querySelectorAll('li');
     listItems.forEach(item => {
-      (item as HTMLElement).style.fontSize = '1.5em';
-      (item as HTMLElement).style.marginBottom = '0.2em';
+      (item as HTMLElement).style.fontSize = '1.3em'; // Slightly smaller
+      (item as HTMLElement).style.marginBottom = '0.1em'; // Minimized spacing
+      (item as HTMLElement).style.lineHeight = '1.3'; // Tighter line height
     });
     
     // Apply styles specific to slide classes

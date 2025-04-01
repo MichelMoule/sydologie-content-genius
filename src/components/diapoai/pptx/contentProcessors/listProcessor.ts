@@ -23,16 +23,17 @@ export const processUnorderedLists = (
       
       if (text.trim()) {
         slide.addText(`• ${text}`, {
-          x: 0.7, y: currentY, w: '90%', h: 0.6,
-          fontSize: 20,
+          x: 0.7, y: currentY, w: '90%', h: 0.4, // Hauteur réduite
+          fontSize: 18, // Taille réduite
           color: textColor,
-          breakLine: true
+          breakLine: true,
+          lineSpacing: 0.9 // Lignes plus rapprochées
         });
-        currentY += 0.6;
+        currentY += 0.45; // Espacement réduit entre éléments de liste
       }
     }
     
-    currentY += 0.3;
+    currentY += 0.2; // Réduit l'espace après une liste
   }
   
   return currentY;
@@ -59,16 +60,17 @@ export const processOrderedLists = (
       
       if (text.trim()) {
         slide.addText(`${j + 1}. ${text}`, {
-          x: 0.7, y: currentY, w: '90%', h: 0.6,
-          fontSize: 20,
+          x: 0.7, y: currentY, w: '90%', h: 0.4, // Hauteur réduite
+          fontSize: 18, // Taille réduite
           color: textColor,
-          breakLine: true
+          breakLine: true,
+          lineSpacing: 0.9 // Lignes plus rapprochées
         });
-        currentY += 0.6;
+        currentY += 0.45; // Espacement réduit entre éléments de liste
       }
     }
     
-    currentY += 0.3;
+    currentY += 0.2; // Réduit l'espace après une liste
   }
   
   return currentY;

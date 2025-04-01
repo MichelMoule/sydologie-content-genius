@@ -10,63 +10,88 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
       if (container.current && slidesHtml) {
         const slidesContainer = container.current.querySelector('.slides');
         if (slidesContainer) {
-          slidesContainer.innerHTML = slidesHtml;
+          // Process the HTML to ensure it has proper slide structure
+          let processedHtml = slidesHtml;
           
-          // Check if sections exist and ensure they're proper slides
-          const sections = slidesContainer.querySelectorAll('section');
-          if (sections.length === 0) {
-            // If no sections, wrap content in a section
-            slidesContainer.innerHTML = `<section>${slidesHtml}</section>`;
-          } else {
-            // Ensure each section is a direct child of slides
-            sections.forEach(section => {
-              if (section.parentElement !== slidesContainer) {
-                slidesContainer.appendChild(section.cloneNode(true));
-                section.remove();
-              }
-            });
+          // If no section tags exist, wrap content in sections
+          if (!processedHtml.includes('<section')) {
+            processedHtml = `<section>${processedHtml}</section>`;
           }
           
-          // Add custom styles to ensure content stays together
+          // Update the slides container with processed HTML
+          slidesContainer.innerHTML = processedHtml;
+          
+          // Add custom styles to ensure content stays together on slides
+          // and to maximize text density
           const style = document.createElement('style');
           style.textContent = `
             .reveal .slides section {
               height: auto !important;
-              min-height: 500px;
+              min-height: 450px;
               padding: 20px !important;
               display: flex !important;
               flex-direction: column !important;
+              overflow-y: visible !important;
+              position: relative !important;
             }
+            
             .reveal .slides h1,
             .reveal .slides h2,
             .reveal .slides h3 {
-              margin-bottom: 0.3em !important;
+              margin-bottom: 0.2em !important;
+              margin-top: 0.1em !important;
+              line-height: 1.2 !important;
             }
-            .reveal .slides h1 + p,
-            .reveal .slides h2 + p,
-            .reveal .slides h3 + p {
+            
+            .reveal .slides h1 + *,
+            .reveal .slides h2 + *,
+            .reveal .slides h3 + * {
               margin-top: 0 !important;
             }
-            .reveal .slides h1 + ul,
-            .reveal .slides h2 + ul,
-            .reveal .slides h3 + ul,
-            .reveal .slides h1 + ol,
-            .reveal .slides h2 + ol,
-            .reveal .slides h3 + ol {
-              margin-top: 0 !important;
-            }
+            
             .reveal .slides p {
-              margin-bottom: 0.5em !important;
+              margin-bottom: 0.3em !important;
+              margin-top: 0.1em !important;
+              line-height: 1.3 !important;
             }
+            
             .reveal .slides ul, 
             .reveal .slides ol {
               display: block !important;
-              margin-bottom: 0.5em !important;
+              margin-bottom: 0.3em !important;
+              margin-top: 0.1em !important;
+              padding-left: 1.5em !important;
             }
+            
+            .reveal .slides li {
+              margin-bottom: 0.1em !important;
+              line-height: 1.3 !important;
+            }
+            
             .reveal .slides section > * {
               margin-left: 0 !important;
               margin-right: 0 !important;
               width: 100% !important;
+            }
+            
+            .reveal .slides blockquote {
+              margin: 0.3em 0 !important;
+              padding: 0.5em !important;
+            }
+            
+            /* Force content to remain in the same slide */
+            .reveal .present {
+              display: flex !important;
+              flex-direction: column !important;
+              align-items: flex-start !important;
+              justify-content: flex-start !important;
+              text-align: left !important;
+            }
+            
+            /* Ensure content wrapping for better text density */
+            .reveal .slides section * {
+              max-width: 100% !important;
+              word-wrap: break-word !important;
             }
           `;
           container.current.appendChild(style);

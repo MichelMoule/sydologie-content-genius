@@ -18,13 +18,18 @@ export const processParagraphs = (
     const text = getTextContent(paragraph);
     
     if (text.trim()) {
+      // Réduire la hauteur et augmenter la largeur pour plus de texte par diapo
       slide.addText(text, {
-        x: 0.5, y: currentY, w: '95%', h: 0.6,
-        fontSize: 20,
+        x: 0.5, 
+        y: currentY, 
+        w: '95%', 
+        h: 0.5, // Réduit pour permettre plus de contenu
+        fontSize: 18, // Légèrement plus petit pour plus de texte
         color: textColor,
-        breakLine: true
+        breakLine: true,
+        lineSpacing: 0.9 // Lignes plus rapprochées
       });
-      currentY += 0.7;
+      currentY += 0.55; // Avancer moins pour permettre plus de contenu par diapo
     }
   }
   
