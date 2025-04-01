@@ -58,6 +58,10 @@ declare module 'pptxgenjs' {
   
   // Make TextPropsOptions inherit all properties from AddTextProps
   interface TextPropsOptions extends AddTextProps {
-    // Additional properties specific to TextPropsOptions can be added here
+    borderColor?: string;
+    borderPt?: number;
+    borderLeftColor?: string;
+    borderLeftPt?: number;
+    italic?: boolean;
   }
 }

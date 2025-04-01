@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download, FileDown } from "lucide-react";
 import RevealPreview from "./RevealPreview";
 import { ThemeColors } from "./pptx/types";
+import { Presentation } from "lucide-react";
 
 interface DiapoAIPreviewProps {
   slidesHtml: string | null;
@@ -47,6 +48,3 @@ export const DiapoAIPreview = ({
     </div>
   );
 };
-
-// Import Presentation from lucide-react for the component that uses it
-import { Presentation } from "lucide-react";
