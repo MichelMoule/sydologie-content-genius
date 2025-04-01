@@ -26,7 +26,7 @@ import {
  * Processes a slide element and adds content to PowerPoint slide
  */
 export const processSlideElement = (
-  pptx: pptxgenjs,
+  pptx: pptxgen,
   slideElement: DOMElement,
   colors: ThemeColors
 ): void => {
