@@ -7,3 +7,5 @@ export * from "./canvasProcessor";
 export * from "./featureProcessor";
 export * from "./timelineProcessor";
 export * from "./gridProcessor";
+export * from "./tableProcessor";
+export * from "./blockProcessor";

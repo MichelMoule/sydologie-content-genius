@@ -18,7 +18,9 @@ import {
   processCanvasElements,
   processFeaturePanels,
   processTimelineItems,
-  processGridContainers
+  processGridContainers,
+  processTables,
+  processBlocks
 } from "./contentProcessors";
 
 /**
@@ -100,6 +102,16 @@ export const processSlideElement = (
     // Process ordered lists
     const olElements = getElementsArrayByTagName(slideElement, 'ol');
     contentY = processOrderedLists(slide, olElements, contentY, colors.text);
+    
+    // Process tables
+    const tableElements = getElementsArrayByTagName(slideElement, 'table');
+    contentY = processTables(slide, tableElements, contentY, colors.primary, colors.text);
+    
+    // Process blockquotes and code blocks
+    const blockquoteElements = getElementsArrayByTagName(slideElement, 'blockquote');
+    const preElements = getElementsArrayByTagName(slideElement, 'pre');
+    const blockElements = [...blockquoteElements, ...preElements];
+    contentY = processBlocks(slide, blockElements, contentY, colors.secondary, colors.text);
     
     // Process standalone SVG elements
     const svgElements = getElementsArrayByTagName(slideElement, 'svg');

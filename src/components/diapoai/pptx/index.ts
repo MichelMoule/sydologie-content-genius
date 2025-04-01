@@ -37,33 +37,39 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
     slideNumber: { x: '95%', y: '95%', color: colors.primary, fontSize: 10 }
   });
   
-  // Parse the HTML content
-  const dom = parseHtml(slidesHtml);
-  
-  // Find all slide sections
-  const slideElements = dom.getElementsByTagName('section');
-  
-  if (!slideElements || slideElements.length === 0) {
-    throw new Error('No slide content found');
-  }
-  
-  // Process each slide
-  for (let i = 0; i < slideElements.length; i++) {
-    const slideElement = slideElements.item(i);
-    if (!slideElement) continue;
+  try {
+    // Parse the HTML content
+    const dom = parseHtml(slidesHtml);
     
-    // Skip nested sections (vertical slides in Reveal.js)
-    if (slideElement.parentNode && slideElement.parentNode.nodeName.toLowerCase() === 'section') {
-      continue;
+    // Find all slide sections
+    const slideElements = dom.getElementsByTagName('section');
+    
+    if (!slideElements || slideElements.length === 0) {
+      throw new Error('No slide content found');
     }
     
-    // Process the slide element using our DOMElement type
-    processSlideElement(pptx, slideElement as DOMElement, colors);
+    // Process each slide
+    for (let i = 0; i < slideElements.length; i++) {
+      const slideElement = slideElements.item(i);
+      if (!slideElement) continue;
+      
+      // Skip nested sections (vertical slides in Reveal.js)
+      if (slideElement.parentNode && slideElement.parentNode.nodeName.toLowerCase() === 'section') {
+        continue;
+      }
+      
+      // Process the slide element using our DOMElement type
+      processSlideElement(pptx, slideElement as DOMElement, colors);
+    }
+    
+    // Use the correct interface for writeFile and cast the result appropriately
+    const pptxBlob = await pptx.writeFile({ outputType: 'blob' }) as Blob;
+    console.log("PPTX generation successful");
+    return pptxBlob;
+  } catch (error) {
+    console.error("Error in convertHtmlToPptx:", error);
+    throw error;
   }
-  
-  // Use the correct interface for writeFile and cast the result appropriately
-  const pptxBlob = await pptx.writeFile() as unknown as Blob;
-  return pptxBlob;
 };
 
 // Re-export types

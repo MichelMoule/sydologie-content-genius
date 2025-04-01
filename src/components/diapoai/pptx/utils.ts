@@ -1,4 +1,3 @@
-
 import { DOMParser } from '@xmldom/xmldom';
 
 // Define a type that can represent both browser and xmldom Element types
@@ -81,17 +80,16 @@ export const hasClass = (element: DOMElement, className: string): boolean => {
  * Safe way to filter child nodes that are elements by class
  * Works with both browser DOM and xmldom nodes
  */
-export const filterChildElementsByClass = (element: DOMElement, className: string): DOMElement[] => {
+export const filterChildElementsByClass = (parent: DOMElement, className: string): DOMElement[] => {
   const result: DOMElement[] = [];
+  if (!parent || !parent.childNodes) return result;
   
-  // Convert childNodes to array safely
-  for (let i = 0; i < element.childNodes.length; i++) {
-    const child = element.childNodes[i];
-    // Check that it's an element node (nodeType 1)
-    if (child.nodeType === 1) {
-      const childElement = child as DOMElement;
-      if (hasClass(childElement, className)) {
-        result.push(childElement);
+  for (let i = 0; i < parent.childNodes.length; i++) {
+    const child = parent.childNodes[i];
+    if (child.nodeType === 1) { // ELEMENT_NODE
+      const element = child as DOMElement;
+      if (hasClass(element, className)) {
+        result.push(element);
       }
     }
   }
@@ -100,23 +98,28 @@ export const filterChildElementsByClass = (element: DOMElement, className: strin
 };
 
 /**
- * Gets the text content safely from any DOM element
- * Works with both browser DOM and xmldom elements
+ * Gets text content from an element and its children
  */
 export const getTextContent = (element: DOMElement): string => {
-  // Direct access for browser DOM
-  if ('textContent' in element && element.textContent !== null) {
+  if (!element) return '';
+
+  // Try to use native textContent if available
+  if (element.textContent !== undefined && element.textContent !== null) {
     return element.textContent;
   }
-  
-  // For xmldom elements, manually concatenate text nodes
+
+  // Fallback for elements without native textContent
   let text = '';
-  for (let i = 0; i < element.childNodes.length; i++) {
-    const node = element.childNodes[i];
-    if (node.nodeType === 3) { // Text node
-      text += node.nodeValue || '';
-    } else if (node.nodeType === 1) { // Element node
-      text += getTextContent(node as DOMElement);
+  
+  // Get direct text of this node
+  if (element.childNodes) {
+    for (let i = 0; i < element.childNodes.length; i++) {
+      const child = element.childNodes[i];
+      if (child.nodeType === 3) { // TEXT_NODE
+        text += child.nodeValue || '';
+      } else if (child.nodeType === 1) { // ELEMENT_NODE
+        text += getTextContent(child as DOMElement);
+      }
     }
   }
   
