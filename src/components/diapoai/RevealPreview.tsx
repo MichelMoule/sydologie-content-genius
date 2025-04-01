@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
 import 'reveal.js/plugin/highlight/monokai.css';
@@ -29,7 +29,17 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
   const { toast } = useToast();
   
   // Initialize Reveal.js
-  useRevealInit(containerRef, slidesHtml, themeColors, transition);
+  const { deck } = useRevealInit(containerRef, slidesHtml, themeColors, transition);
+
+  // Effect to notify when preview is ready
+  useEffect(() => {
+    if (deck) {
+      toast({
+        title: "Prévisualisation prête",
+        description: "Utilisez les flèches ou cliquez pour naviguer entre les diapositives."
+      });
+    }
+  }, [deck, toast]);
 
   const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
     const newColors = { ...themeColors, [colorType]: color };
@@ -61,6 +71,10 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
       />
       
       <SlidesContainer ref={containerRef} />
+      
+      <div className="text-sm text-muted-foreground mt-2">
+        <p>Utilisez les flèches du clavier ou cliquez sur les côtés pour naviguer entre les diapositives.</p>
+      </div>
     </div>
   );
 };

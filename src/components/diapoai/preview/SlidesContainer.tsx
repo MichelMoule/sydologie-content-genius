@@ -10,12 +10,12 @@ export const SlidesContainer = forwardRef<HTMLDivElement>((_, ref) => {
     <div 
       ref={ref} 
       className="reveal border rounded-lg overflow-hidden shadow-lg"
-      style={{ height: '700px', width: '100%' }}
+      style={{ height: '700px', width: '100%', position: 'relative' }}
     >
       <div className="slides">
-        {/* Les diapositives seront injectées ici par useRevealInit */}
         <section>
-          <p className="text-center text-gray-500">Chargement du diaporama...</p>
+          <h2>Chargement du diaporama...</h2>
+          <p>La prévisualisation apparaîtra dans quelques instants.</p>
         </section>
       </div>
     </div>
