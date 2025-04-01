@@ -11,6 +11,36 @@ export const useRevealInit = (
   const [deck, setDeck] = useState<any>(null);
   const hasInitialized = useRef(false);
   const isDestroying = useRef(false);
+  const scriptLoadingInProgress = useRef(false);
+
+  // Safely destroy an existing deck
+  const safeDestroyDeck = () => {
+    const Reveal = (window as any).Reveal;
+    if (!Reveal || isDestroying.current) return;
+    
+    try {
+      isDestroying.current = true;
+      console.log('Attempting to safely destroy Reveal instance');
+      
+      // Get all instances and destroy them
+      const revealElement = document.querySelector('.reveal');
+      if (revealElement) {
+        // Clear inner HTML to prevent lingering event handlers
+        const slidesContainer = revealElement.querySelector('.slides');
+        if (slidesContainer) {
+          slidesContainer.innerHTML = '<section><h2>Chargement du diaporama...</h2><p>La prévisualisation apparaîtra dans quelques instants.</p></section>';
+        }
+      }
+      
+      // Reset the state
+      setDeck(null);
+      hasInitialized.current = false;
+    } catch (error) {
+      console.error('Error during deck destruction:', error);
+    } finally {
+      isDestroying.current = false;
+    }
+  };
 
   // Load theme CSS dynamically
   useEffect(() => {
@@ -26,239 +56,178 @@ export const useRevealInit = (
     
     link.href = `https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css`;
     
-    // Update Reveal.js configuration if it's already initialized
-    if (deck) {
+    // Update configuration if deck exists
+    if (deck && typeof deck.configure === 'function') {
       try {
         deck.configure({ transition });
       } catch (error) {
         console.error('Error updating transition:', error);
       }
     }
+    
+    return () => {};
   }, [transition, deck]);
 
-  // Safely destroy the deck if it exists
-  const safeDestroyDeck = (deckInstance: any) => {
-    if (!deckInstance || isDestroying.current) return;
-    
-    isDestroying.current = true;
-    try {
-      // Check if the deck has the required properties before destroying
-      if (typeof deckInstance.destroy === 'function') {
-        deckInstance.destroy();
-      }
-    } catch (error) {
-      console.error('Error safely destroying deck:', error);
-    } finally {
-      isDestroying.current = false;
-    }
-  };
-
-  // Dynamically load the plugins scripts
-  useEffect(() => {
-    const loadPluginsScripts = async () => {
-      // Function to load a script
-      const loadScript = (src: string): Promise<void> => {
-        return new Promise((resolve, reject) => {
-          if (document.querySelector(`script[src="${src}"]`)) {
-            resolve();
-            return;
-          }
-          
-          const script = document.createElement('script');
-          script.src = src;
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-          document.head.appendChild(script);
-        });
-      };
-
-      try {
-        // Load reveal.js core script first and wait for it to complete
-        console.log('Loading Reveal.js core script');
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js');
-        console.log('Reveal.js core script loaded');
-        
-        // Ensure Reveal is available in window
-        if (!(window as any).Reveal) {
-          console.error('Reveal.js not found in window object after loading script');
-          return;
-        }
-        
-        // Load all necessary plugins in sequence
-        console.log('Loading plugins scripts');
-        
-        // Load Reveal plugins first
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/notes/notes.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/math/math.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/zoom/zoom.js');
-        
-        // Then load external dependencies that plugins might need
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.2/svg.min.js');
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js');
-        
-        console.log('All necessary scripts loaded');
-        
-        // Now initialize Reveal directly (without trying to create a basic deck first)
-        if (!hasInitialized.current) {
-          console.log('Proceeding to initialization');
-          initializeReveal();
-        }
-      } catch (error) {
-        console.error('Error loading scripts:', error);
-      }
-    };
-
-    if (!hasInitialized.current) {
-      loadPluginsScripts();
-    }
-    
-    // Cleanup function
-    return () => {
-      if (deck) {
-        console.log('Cleanup: Destroying existing Reveal instance');
-        safeDestroyDeck(deck);
-      }
-    };
-  }, []);
-
-  // Main function to initialize Reveal.js with the slides content
+  // Initialize Reveal
   const initializeReveal = async () => {
     if (!containerRef.current || hasInitialized.current) return;
     
     try {
-      console.log('Starting to initialize Reveal.js');
-      
-      // Import Reveal.js
+      console.log('Starting Reveal.js initialization');
       const Reveal = (window as any).Reveal;
+      
       if (!Reveal) {
         console.error('Reveal.js not found in window object');
         return;
       }
       
-      // Get the slides container
+      // Get slides container
       const slidesContainer = containerRef.current.querySelector('.slides');
       if (!slidesContainer) {
         console.error('Slides container not found');
         return;
       }
       
-      // Clear existing slides
+      // Clear and prepare slides content
       slidesContainer.innerHTML = '';
       
-      console.log('Processing slides HTML');
-      
-      // Process the HTML content to separate individual slides
+      // Process slides HTML
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = slidesHtml;
       
-      // Look for section elements which represent individual slides
+      // Add slides to container
       const sectionElements = tempDiv.querySelectorAll('section');
       
       if (sectionElements.length === 0) {
-        console.log('No section elements found, creating a single slide');
+        console.log('No sections found, creating a single slide');
         const newSection = document.createElement('section');
         newSection.innerHTML = slidesHtml;
         slidesContainer.appendChild(newSection);
       } else {
-        console.log(`Found ${sectionElements.length} slides, adding them individually`);
+        console.log(`Found ${sectionElements.length} slides, adding them`);
         sectionElements.forEach(section => {
           slidesContainer.appendChild(section.cloneNode(true));
         });
       }
       
-      // Apply theme colors to slides
-      const slides = containerRef.current.querySelectorAll('.slides section');
-      slides.forEach(slide => {
-        // Add theme colors to headings
-        const headings = slide.querySelectorAll('h1, h2, h3');
-        headings.forEach(heading => {
-          (heading as HTMLElement).style.color = themeColors.primary;
-        });
-        
-        // Apply special styling to different slide types
-        if (slide.classList.contains('section-title')) {
-          (slide as HTMLElement).style.background = `linear-gradient(135deg, ${themeColors.primary}15 0%, rgba(255,255,255,0.9) 100%)`;
-          (slide as HTMLElement).style.borderRadius = '4px';
-        }
-        
-        if (slide.classList.contains('title-slide')) {
-          (slide as HTMLElement).style.background = 'linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)';
-          (slide as HTMLElement).style.borderRadius = '4px';
-        }
-        
-        // Add subtle background to regular slides
-        if (!slide.classList.contains('has-dark-background') && 
-            !slide.classList.contains('section-title') && 
-            !slide.classList.contains('title-slide')) {
-          (slide as HTMLElement).style.background = 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(240,240,240,1) 100%)';
-          (slide as HTMLElement).style.borderRadius = '4px';
-          (slide as HTMLElement).style.boxShadow = '0 4px 6px rgba(0,0,0,0.05)';
-        }
-      });
+      // Apply theme colors
+      applyThemeColors(containerRef.current, themeColors);
       
-      // Safely destroy any existing instance
-      if (deck) {
-        safeDestroyDeck(deck);
-      }
-      
-      // Initialize standard plugins
-      const plugins = [];
-      if ((window as any).RevealHighlight) plugins.push((window as any).RevealHighlight);
-      if ((window as any).RevealMarkdown) plugins.push((window as any).RevealMarkdown);
-      if ((window as any).RevealNotes) plugins.push((window as any).RevealNotes);
-      if ((window as any).RevealMath) plugins.push((window as any).RevealMath);
-      if ((window as any).RevealZoom) plugins.push((window as any).RevealZoom);
-      
-      console.log('Initializing new Reveal instance with configuration');
-      // Configure and initialize Reveal.js
-      const newDeck = new Reveal(containerRef.current, {
+      // Create new instance with simple configuration
+      console.log('Initializing new Reveal instance');
+      const config = {
         embedded: false,
-        margin: 0.1,
-        height: 700,
-        width: 960,
         controls: true,
         progress: true,
         center: true,
         hash: false,
         transition: transition,
         slideNumber: true,
-        autoPlayMedia: true,
-        autoAnimate: true,
-        backgroundTransition: 'fade',
-        plugins: plugins,
-      });
+        plugins: [] // Simplified plugin handling
+      };
       
-      console.log('Calling initialize on Reveal instance');
+      const newDeck = new Reveal(containerRef.current, config);
       await newDeck.initialize();
       console.log('Reveal.js initialized successfully');
       
-      // Set the new deck state
       setDeck(newDeck);
       hasInitialized.current = true;
-      
     } catch (error) {
-      console.error('Error in initializeReveal:', error);
+      console.error('Error initializing Reveal:', error);
+      hasInitialized.current = false;
     }
   };
 
-  // Effect to re-initialize when slides content changes
-  useEffect(() => {
-    if (containerRef.current && slidesHtml) {
-      console.log('Slides HTML changed, re-initializing');
-      hasInitialized.current = false;
+  // Apply theme colors to slides
+  const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors) => {
+    const slides = container.querySelectorAll('.slides section');
+    slides.forEach(slide => {
+      // Style headings
+      const headings = slide.querySelectorAll('h1, h2, h3');
+      headings.forEach(heading => {
+        (heading as HTMLElement).style.color = colors.primary;
+      });
       
-      // Safely destroy any existing instance before re-initializing
-      if (deck) {
-        safeDestroyDeck(deck);
+      // Style slide based on class
+      if (slide.classList.contains('section-title')) {
+        (slide as HTMLElement).style.background = `linear-gradient(135deg, ${colors.primary}15 0%, rgba(255,255,255,0.9) 100%)`;
+        (slide as HTMLElement).style.borderRadius = '4px';
+      } else if (slide.classList.contains('title-slide')) {
+        (slide as HTMLElement).style.background = 'linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)';
+        (slide as HTMLElement).style.borderRadius = '4px';
+      } else if (!slide.classList.contains('has-dark-background')) {
+        (slide as HTMLElement).style.background = 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(240,240,240,1) 100%)';
+        (slide as HTMLElement).style.borderRadius = '4px';
+        (slide as HTMLElement).style.boxShadow = '0 4px 6px rgba(0,0,0,0.05)';
       }
+    });
+  };
+
+  // Load necessary scripts
+  useEffect(() => {
+    const loadScripts = async () => {
+      if (scriptLoadingInProgress.current) return;
+      scriptLoadingInProgress.current = true;
       
-      // Wait for any async operations to complete
-      setTimeout(() => {
-        initializeReveal();
-      }, 100);
+      try {
+        console.log('Loading Reveal.js scripts');
+        // Load Reveal.js core first
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js');
+        
+        // Proceed with initialization after script is loaded
+        setTimeout(() => {
+          initializeReveal();
+          scriptLoadingInProgress.current = false;
+        }, 100);
+      } catch (error) {
+        console.error('Error loading scripts:', error);
+        scriptLoadingInProgress.current = false;
+      }
+    };
+    
+    // Load a script and return a promise
+    const loadScript = (src: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+          resolve();
+          return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        document.head.appendChild(script);
+      });
+    };
+    
+    // Start loading scripts if not initialized
+    if (!hasInitialized.current) {
+      loadScripts();
     }
+    
+    // Cleanup function
+    return () => {
+      if (hasInitialized.current) {
+        safeDestroyDeck();
+      }
+    };
+  }, []);
+
+  // Reinitialize when content changes
+  useEffect(() => {
+    if (!containerRef.current || !slidesHtml) return;
+    
+    console.log('Slides HTML changed, reinitializing');
+    safeDestroyDeck();
+    
+    // Reset state
+    hasInitialized.current = false;
+    
+    // Wait a bit before reinitializing
+    setTimeout(() => {
+      initializeReveal();
+    }, 300);
   }, [slidesHtml, themeColors, transition]);
 
   return { deck };

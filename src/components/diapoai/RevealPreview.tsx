@@ -2,7 +2,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
-import 'reveal.js/plugin/highlight/monokai.css';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeColors } from './pptx/types';
 import { themes, transitions } from './types/revealTypes';
@@ -28,10 +27,10 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
   });
   const { toast } = useToast();
   
-  // Initialize Reveal.js
+  // Initialize Reveal.js with simplified hook
   const { deck } = useRevealInit(containerRef, slidesHtml, themeColors, transition);
 
-  // Effect to notify when preview is ready
+  // Show toast when preview is ready
   useEffect(() => {
     if (deck) {
       toast({
@@ -41,11 +40,11 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
     }
   }, [deck, toast]);
 
+  // Handle color changes
   const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
     const newColors = { ...themeColors, [colorType]: color };
     setThemeColors(newColors);
     
-    // Notify parent component if callback exists
     if (onColorChange) {
       onColorChange(newColors);
     }
@@ -74,6 +73,7 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
       
       <div className="text-sm text-muted-foreground mt-2">
         <p>Utilisez les flèches du clavier ou cliquez sur les côtés pour naviguer entre les diapositives.</p>
+        <p>Les diapositives sont chargées mais peuvent apparaître vides jusqu'à ce que vous naviguiez.</p>
       </div>
     </div>
   );
