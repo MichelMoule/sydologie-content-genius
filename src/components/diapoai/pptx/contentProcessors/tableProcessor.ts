@@ -59,8 +59,8 @@ export const processTables = (
       const tableWidth = 9;
       const colWidth = tableWidth / numColumns;
       
-      // Options for the table
-      const tableOptions: pptxgen.TableOptions = {
+      // Options for the table - using a regular object instead of TableOptions
+      const tableOptions = {
         x: 0.5, 
         y: currentY,
         w: tableWidth,

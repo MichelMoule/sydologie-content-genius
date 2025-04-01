@@ -62,8 +62,11 @@ export const convertHtmlToPptx = async (slidesHtml: string, colors: ThemeColors)
       processSlideElement(pptx, slideElement as DOMElement, colors);
     }
     
-    // Use the correct interface for writeFile and cast the result appropriately
-    const pptxBlob = await pptx.writeFile({ outputType: 'blob' }) as Blob;
+    // Use the correct interface for writeFile
+    // Cast the result to Blob since we know the output will be a Blob
+    const pptxData = await pptx.writeFile({ fileName: 'presentation.pptx' }) as unknown as ArrayBuffer;
+    const pptxBlob = new Blob([pptxData], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+    
     console.log("PPTX generation successful");
     return pptxBlob;
   } catch (error) {
