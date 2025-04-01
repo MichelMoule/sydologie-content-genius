@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { ThemeColors } from '../pptx/types';
 import { loadRevealCss, loadRevealScript } from './reveal/loaders';
@@ -12,8 +11,15 @@ export const useRevealInit = (
 ) => {
   const [deck, setDeck] = useState<any>(null);
   const isScriptLoaded = useRef(false);
+  const isInitializing = useRef(false);
+  const slidesRef = useRef(slidesHtml);
 
-  // Load the necessary Reveal.js resources
+  // Keep track of the latest slidesHtml without triggering re-renders
+  useEffect(() => {
+    slidesRef.current = slidesHtml;
+  }, [slidesHtml]);
+
+  // Load the necessary Reveal.js resources only once
   useEffect(() => {
     loadRevealCss();
     
@@ -28,38 +34,43 @@ export const useRevealInit = (
     }
   }, []);
 
-  // Initialize or update Reveal when content changes
+  // Initialize Reveal.js only when content or config changes
   useEffect(() => {
     const initializeRevealInstance = async () => {
-      if (!containerRef.current || !slidesHtml || !isScriptLoaded.current) return;
+      if (!containerRef.current || !slidesHtml || !isScriptLoaded.current || isInitializing.current) return;
       
-      // If an existing deck is present, destroy it safely
-      if (deck) {
-        safeDestroyReveal(deck);
-      }
+      isInitializing.current = true;
       
-      // Wait a moment for DOM to be ready after content changes
-      const newDeck = await initializeReveal(
-        containerRef.current,
-        themeColors,
-        transition
-      );
-      
-      if (newDeck) {
-        setDeck(newDeck);
+      try {
+        // If an existing deck is present, destroy it safely
+        if (deck) {
+          safeDestroyReveal(deck);
+        }
+        
+        // Initialize new deck
+        const newDeck = await initializeReveal(
+          containerRef.current,
+          themeColors,
+          transition
+        );
+        
+        if (newDeck) {
+          setDeck(newDeck);
+        }
+      } finally {
+        isInitializing.current = false;
       }
     };
 
-    // Small delay to ensure DOM is ready
+    // Use a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       initializeRevealInstance();
     }, 300);
 
     return () => {
       clearTimeout(timer);
-      // No need to destroy deck here, we'll handle it in the next initialization
     };
-  }, [containerRef, slidesHtml, themeColors, transition, deck]);
+  }, [containerRef, slidesHtml, themeColors, transition]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -68,7 +79,7 @@ export const useRevealInit = (
         safeDestroyReveal(deck);
       }
     };
-  }, [deck]);
+  }, []);
 
   return { deck };
 };

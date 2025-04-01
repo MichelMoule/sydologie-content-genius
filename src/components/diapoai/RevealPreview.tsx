@@ -26,13 +26,15 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
     text: "#333333"
   });
   const { toast } = useToast();
+  const toastShownRef = useRef(false);
   
   // Initialiser Reveal.js
   const { deck } = useRevealInit(containerRef, slidesHtml, themeColors, transition);
 
-  // Afficher un toast quand la prévisualisation est prête
+  // Afficher un toast quand la prévisualisation est prête - but only once
   useEffect(() => {
-    if (deck) {
+    if (deck && !toastShownRef.current) {
+      toastShownRef.current = true;
       toast({
         title: "Prévisualisation prête",
         description: "Utilisez les flèches ou cliquez pour naviguer entre les diapositives."
