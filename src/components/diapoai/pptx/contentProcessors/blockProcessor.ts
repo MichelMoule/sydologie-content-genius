@@ -1,3 +1,4 @@
+
 import pptxgen from "pptxgenjs";
 import { DOMElement } from "../utils";
 import { getTextContent } from "../utils";
@@ -25,7 +26,7 @@ export const processBlocks = (
     // Determine if it's a blockquote or code block and style accordingly
     if (tagName === 'blockquote') {
       slide.addText(text, {
-        x: 0.5, y: currentY, w: '90%', h: 'auto',
+        x: 0.5, y: currentY, w: '90%', h: 1.5,
         fontSize: 18,
         color: textColor,
         italic: true,
@@ -40,7 +41,7 @@ export const processBlocks = (
     } else if (tagName === 'pre') {
       // Format as code block with monospace font
       slide.addText(text, {
-        x: 0.5, y: currentY, w: '90%', h: 'auto',
+        x: 0.5, y: currentY, w: '90%', h: 1.5,
         fontSize: 14,
         fontFace: 'Courier New',
         color: textColor, 
