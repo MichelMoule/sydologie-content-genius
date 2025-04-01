@@ -17,7 +17,7 @@ export interface TextProps {
   options?: object;
 }
 
-// Additional pptxgenjs type definitions if necessary
+// Additional pptxgenjs type definitions
 declare module 'pptxgenjs' {
   interface TableCellProps {
     text?: string;
@@ -26,8 +26,8 @@ declare module 'pptxgenjs' {
     bold?: boolean;
   }
 
-  // Extend TextPropsOptions interface to add missing properties
-  interface TextPropsOptions {
+  // Properly extend TextPropsOptions interface
+  interface ITextOpts {
     // Add the properties that TypeScript is complaining about
     borderColor?: string;
     borderPt?: number;
