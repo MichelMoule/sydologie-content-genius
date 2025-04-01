@@ -57,23 +57,8 @@ declare module 'pptxgenjs' {
   }
   
   // Also extend TextPropsOptions which is used by slide.addText
-  interface TextPropsOptions {
-    x?: number | string;
-    y?: number | string;
-    w?: number | string;
-    h?: number | string;
-    fontFace?: string;
-    fontSize?: number;
-    color?: string;
-    valign?: string;
-    align?: string;
-    margin?: number | number[];
-    fill?: { color: string };
-    borderColor?: string;
-    borderPt?: number;
-    borderLeftColor?: string;
-    borderLeftPt?: number;
-    italic?: boolean;
-    bold?: boolean;
+  interface TextPropsOptions extends AddTextProps {
+    // TextPropsOptions now inherits all properties from AddTextProps,
+    // which includes borderColor, borderPt, borderLeftColor, borderLeftPt, etc.
   }
 }
