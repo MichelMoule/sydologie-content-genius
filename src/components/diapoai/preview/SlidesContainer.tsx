@@ -5,7 +5,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div 
       ref={ref} 
-      className="reveal border rounded-lg overflow-hidden shadow-lg"
+      className="bg-white reveal border rounded-lg overflow-hidden shadow-lg"
       style={{ height: '700px', width: '100%', position: 'relative' }}
     >
       <div className="slides">
