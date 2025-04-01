@@ -1,71 +1,55 @@
-
 import pptxgen from "pptxgenjs";
-import { DOMElement, getTextContent } from "../utils";
+import { DOMElement } from "../utils";
+import { getTextContent } from "../utils";
 
 /**
- * Process blockquotes and code blocks for PowerPoint
+ * Process blockquotes and code blocks on the slide
  */
 export const processBlocks = (
-  slide: pptxgen.Slide,
-  blockElements: DOMElement[],
-  startY: number,
-  secondaryColor: string,
+  slide: pptxgen.Slide, 
+  blockElements: DOMElement[], 
+  startY: number, 
+  accentColor: string,
   textColor: string
 ): number => {
   let currentY = startY;
   
   for (let i = 0; i < blockElements.length; i++) {
     const blockElement = blockElements[i];
+    const tagName = blockElement.tagName.toLowerCase();
+    
+    // Get text content
     const text = getTextContent(blockElement);
+    if (!text) continue;
     
-    if (!text.trim()) continue;
-    
-    // Different styling for different types of blocks
-    const isCodeBlock = blockElement.tagName.toLowerCase() === 'pre';
-    const isBlockquote = blockElement.tagName.toLowerCase() === 'blockquote';
-    
-    if (isCodeBlock) {
-      // Style for code blocks
+    // Determine if it's a blockquote or code block and style accordingly
+    if (tagName === 'blockquote') {
       slide.addText(text, {
-        x: 0.8, 
-        y: currentY, 
-        w: 8.4, 
-        h: Math.min(4, 0.15 * text.split('\n').length + 1),
+        x: 0.5, y: currentY, w: '90%', h: 'auto',
+        fontSize: 18,
+        color: textColor,
+        italic: true,
+        bullet: false,
+        indentLevel: 1,
+        fill: { color: `${accentColor}20` }, // Light background
+        border: { type: 'solid', pt: 1, color: accentColor, left: true },
+        margin: [0, 0, 0, 10]
+      });
+      
+      currentY += 1.5; // Add some extra space after blockquotes
+    } else if (tagName === 'pre') {
+      // Format as code block with monospace font
+      slide.addText(text, {
+        x: 0.5, y: currentY, w: '90%', h: 'auto',
         fontSize: 14,
         fontFace: 'Courier New',
-        color: textColor,
-        fill: { color: '#f0f0f0' },
-        borderColor: '#cccccc',  // Using our extended type
-        borderPt: 1,             // Using our extended type
-        valign: 'top',
-        margin: [0.2, 0.2, 0.2, 0.2]
+        color: textColor, 
+        fill: { color: '#F0F0F0' }, // Light gray background for code
+        border: { type: 'solid', pt: 1, color: '#CCCCCC' },
+        margin: [5, 5, 5, 5]
       });
       
-      // Update Y position - height depends on content
-      currentY += Math.min(4.2, 0.15 * text.split('\n').length + 1.2);
-    } 
-    else if (isBlockquote) {
-      // Style for blockquotes
-      slide.addText(text, {
-        x: 1, 
-        y: currentY, 
-        w: 8, 
-        h: Math.min(3, 0.2 * text.split('\n').length + 0.8),
-        fontSize: 18,
-        fontFace: 'Arial',
-        color: textColor,
-        italic: true,            // Using our extended type
-        fill: { color: secondaryColor + '15' }, // Very light secondary color
-        borderColor: 'transparent', // Using our extended type
-        borderPt: 0,               // Using our extended type
-        borderLeftColor: secondaryColor, // Using our extended type
-        borderLeftPt: 3,           // Using our extended type
-        valign: 'middle',
-        margin: [0, 0, 0, 0.3]
-      });
-      
-      // Update Y position - height depends on content
-      currentY += Math.min(3.2, 0.2 * text.split('\n').length + 1);
+      currentY += 2; // Add space after code blocks
     }
   }
   
