@@ -11,6 +11,38 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
         const slidesContainer = container.current.querySelector('.slides');
         if (slidesContainer) {
           slidesContainer.innerHTML = slidesHtml;
+          
+          // Add custom styles to ensure content stays together
+          const style = document.createElement('style');
+          style.textContent = `
+            .reveal .slides section {
+              height: auto !important;
+              min-height: 500px;
+              padding: 20px !important;
+            }
+            .reveal .slides h1 + p,
+            .reveal .slides h2 + p,
+            .reveal .slides h3 + p {
+              margin-top: 0.2em !important;
+            }
+            .reveal .slides h1 + ul,
+            .reveal .slides h2 + ul,
+            .reveal .slides h3 + ul,
+            .reveal .slides h1 + ol,
+            .reveal .slides h2 + ol,
+            .reveal .slides h3 + ol {
+              margin-top: 0.2em !important;
+            }
+            .reveal .slides p {
+              margin-bottom: 0.8em !important;
+            }
+            .reveal .slides ul, 
+            .reveal .slides ol {
+              display: block !important;
+              margin-bottom: 0.8em !important;
+            }
+          `;
+          container.current.appendChild(style);
         }
       }
     }, [slidesHtml, ref]);
