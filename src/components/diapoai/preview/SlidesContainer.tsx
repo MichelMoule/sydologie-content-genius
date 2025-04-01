@@ -1,10 +1,6 @@
 
 import { forwardRef } from "react";
 
-interface SlidesContainerProps {
-  ref: React.RefObject<HTMLDivElement>;
-}
-
 export const SlidesContainer = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div 

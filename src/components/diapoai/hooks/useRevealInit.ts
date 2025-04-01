@@ -27,7 +27,11 @@ export const useRevealInit = (
     
     // Update Reveal.js configuration if it's already initialized
     if (deck) {
-      deck.configure({ transition });
+      try {
+        deck.configure({ transition });
+      } catch (error) {
+        console.error('Error updating transition:', error);
+      }
     }
   }, [transition, deck]);
 
@@ -51,43 +55,83 @@ export const useRevealInit = (
       };
 
       try {
-        // Load reveal.js core script first
+        // Load reveal.js core script first and wait for it to complete
+        console.log('Loading Reveal.js core script');
         await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js');
+        console.log('Reveal.js core script loaded');
         
-        // Load SVG.js required for the Animate plugin
+        // Ensure Reveal is available in window
+        if (!(window as any).Reveal) {
+          console.error('Reveal.js not found in window object after loading script');
+          return;
+        }
+        
+        // Initialize Reveal with basic configuration first, before loading plugins
+        // This ensures that Reveal.getConfig() is available for plugins
+        console.log('Initializing Reveal with basic configuration');
+        const basicDeck = new (window as any).Reveal(containerRef.current, {
+          embedded: false,
+          margin: 0.1,
+          height: 700,
+          width: 960,
+          controls: true,
+          progress: true,
+          center: true,
+          hash: false,
+          transition: transition,
+          slideNumber: true,
+        });
+        
+        // Load the plugins but don't initialize them yet
+        console.log('Loading plugins scripts');
+        
+        // Load Reveal plugins first
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/notes/notes.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/math/math.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/zoom/zoom.js');
+        
+        // Then load external dependencies that plugins might need
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.2/svg.min.js');
-        
-        // Load Chart.js required for the Chart plugin
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js');
         
-        // Load the LoadContent plugin (required for Animate plugin)
+        // Now load the custom plugins, ensuring Reveal.js is initialized first
         await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/loadcontent/plugin.js');
-        
-        // Load the Animate plugin
-        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/animate/plugin.js');
-        
-        // Load the Anything plugin
         await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/anything/plugin.js');
-        
-        // Load the Chart plugin
         await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/chart/plugin.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/animate/plugin.js');
         
         console.log('All scripts loaded successfully');
         
-        // Initialize Reveal after all scripts are loaded
+        // Destroy the basic deck as we'll create a full one now
+        try {
+          basicDeck.destroy();
+        } catch (error) {
+          console.error('Error destroying basic deck:', error);
+        }
+        
+        // Now initialize Reveal with full configuration and content
+        console.log('Proceeding to full initialization');
         initializeReveal();
       } catch (error) {
         console.error('Error loading plugin scripts:', error);
       }
     };
 
-    loadPluginsScripts();
+    if (!hasInitialized.current) {
+      loadPluginsScripts();
+    }
     
     // Cleanup function
     return () => {
       if (deck) {
         console.log('Destroying existing Reveal instance');
-        deck.destroy();
+        try {
+          deck.destroy();
+        } catch (error) {
+          console.error('Error destroying deck:', error);
+        }
       }
     };
   }, []);
@@ -167,33 +211,38 @@ export const useRevealInit = (
         }
       });
       
-      // Check if plugins are available
-      const RevealHighlight = (window as any).RevealHighlight;
-      const RevealMarkdown = (window as any).RevealMarkdown;
-      const RevealNotes = (window as any).RevealNotes;
-      const RevealMath = (window as any).RevealMath;
-      const RevealZoom = (window as any).RevealZoom;
-      const RevealLoadContent = (window as any).RevealLoadContent;
-      const RevealAnimate = (window as any).RevealAnimate;
-      const RevealAnything = (window as any).RevealAnything;
-      const RevealChart = (window as any).RevealChart;
-      
       // Collect available plugins
-      const plugins = [];
+      const RevealPlugins = {
+        RevealHighlight: (window as any).RevealHighlight,
+        RevealMarkdown: (window as any).RevealMarkdown,
+        RevealNotes: (window as any).RevealNotes,
+        RevealMath: (window as any).RevealMath,
+        RevealZoom: (window as any).RevealZoom,
+      };
       
-      if (RevealHighlight) plugins.push(RevealHighlight);
-      if (RevealMarkdown) plugins.push(RevealMarkdown);
-      if (RevealNotes) plugins.push(RevealNotes);
-      if (RevealMath) plugins.push(RevealMath);
-      if (RevealZoom) plugins.push(RevealZoom);
-      if (RevealLoadContent) plugins.push(RevealLoadContent);
-      if (RevealAnimate) plugins.push(RevealAnimate);
-      if (RevealAnything) plugins.push(RevealAnything);
-      if (RevealChart) plugins.push(RevealChart);
+      // We need to add these manually to avoid the error
+      const CustomPlugins = [
+        { id: 'loadcontent', src: 'https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/loadcontent/plugin.js' },
+        { id: 'animate', src: 'https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/animate/plugin.js' },
+        { id: 'anything', src: 'https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/anything/plugin.js' },
+        { id: 'chart', src: 'https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/chart/plugin.js' }
+      ];
+      
+      // Collect core plugins that loaded successfully
+      const plugins = [];
+      if (RevealPlugins.RevealHighlight) plugins.push(RevealPlugins.RevealHighlight);
+      if (RevealPlugins.RevealMarkdown) plugins.push(RevealPlugins.RevealMarkdown);
+      if (RevealPlugins.RevealNotes) plugins.push(RevealPlugins.RevealNotes);
+      if (RevealPlugins.RevealMath) plugins.push(RevealPlugins.RevealMath);
+      if (RevealPlugins.RevealZoom) plugins.push(RevealPlugins.RevealZoom);
       
       console.log('Destroying any existing Reveal instance');
       if (deck) {
-        deck.destroy();
+        try {
+          deck.destroy();
+        } catch (error) {
+          console.error('Error destroying existing Reveal instance:', error);
+        }
       }
       
       console.log('Initializing new Reveal instance with configuration');
@@ -213,30 +262,37 @@ export const useRevealInit = (
         autoAnimate: true,
         backgroundTransition: 'fade',
         plugins: plugins,
-        // Plugin specific configuration
-        animate: {
-          autoplay: true
-        },
-        anything: {
-          // Default config for anything plugin
-        },
-        chart: {
-          defaults: {
-            color: themeColors.text,
-            scale: {
-              beginAtZero: true,
-              grid: { color: `${themeColors.primary}33` }
-            },
-          },
-          line: { borderColor: [themeColors.primary, themeColors.secondary] },
-          bar: { backgroundColor: [themeColors.primary, themeColors.secondary] },
-          pie: { backgroundColor: [[themeColors.primary, themeColors.secondary, `${themeColors.primary}88`, `${themeColors.secondary}88`]] }
-        }
       });
       
       console.log('Calling initialize on Reveal instance');
       newDeck.initialize().then(() => {
         console.log('Reveal.js initialized successfully');
+        
+        // After initialization, we'll manually add the custom plugins
+        // This approach helps avoid the "getConfig is not a function" error
+        console.log('Adding custom plugins after initialization');
+        
+        // We need to modify the window.RevealAnimate initialization
+        // to not call Reveal.getConfig() directly
+        try {
+          if ((window as any).RevealAnimate) {
+            (window as any).RevealAnimate.init(newDeck);
+            console.log('RevealAnimate plugin added manually');
+          }
+          
+          if ((window as any).RevealAnything) {
+            (window as any).RevealAnything.init(newDeck);
+            console.log('RevealAnything plugin added manually');
+          }
+          
+          if ((window as any).RevealChart) {
+            (window as any).RevealChart.init(newDeck);
+            console.log('RevealChart plugin added manually');
+          }
+        } catch (error) {
+          console.error('Error initializing custom plugins:', error);
+        }
+        
         setDeck(newDeck);
         hasInitialized.current = true;
       }).catch((error: any) => {
