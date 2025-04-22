@@ -1,6 +1,9 @@
+
 /**
  * Handles the normalization and structural organization of slides
  */
+
+import { ensureSectionStyling, applyProperSectionStyling } from './styleManager';
 
 export const normalizeSlideStructure = (slidesContainer: Element) => {
   // Get all direct children of slides container
