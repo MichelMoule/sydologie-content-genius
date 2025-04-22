@@ -48,13 +48,13 @@ export const createRevealConfig = (transition: string) => {
     showNotes: false,
     disableLayout: false,
     
-    // Paramètres pour éviter les problèmes de flux de rendu
-    history: false,
-    overview: false,
-    pause: false,
-    respondToHashChanges: false,
+    // IMPORTANT: Empêche le contenu d'être coupé entre les diapositives
+    shuffle: false,
+    loop: false,
+    rtl: false,
+    navigationMode: 'default',
     
-    // Important: désactive les fonctionnalités qui pourraient masquer du contenu
+    // Désactive les fonctionnalités qui peuvent causer des problèmes d'affichage
     hideInactiveCursor: false,
     hideCursorTime: 0,
     
@@ -63,6 +63,10 @@ export const createRevealConfig = (transition: string) => {
     preloadIframes: true,
     
     // PDF specific settings
-    pdfPageHeightOffset: -1
+    pdfPageHeightOffset: -1,
+    
+    // Garantir que tout le contenu reste visible
+    center: false,
+    fit: true
   };
 };

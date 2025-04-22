@@ -13,44 +13,47 @@ export const processParagraphs = (
 ): number => {
   let currentY = startY;
   
-  // Regrouper les paragraphes pour un meilleur agencement
-  const maxParasPerGroup = 3;
-  for (let i = 0; i < paragraphs.length; i += maxParasPerGroup) {
-    let combinedText = "";
-    
-    // Combiner jusqu'à maxParasPerGroup paragraphes
-    for (let j = 0; j < maxParasPerGroup && i + j < paragraphs.length; j++) {
-      const paragraph = paragraphs[i + j];
-      const text = getTextContent(paragraph);
-      
-      if (text.trim()) {
-        combinedText += (combinedText ? '\n\n' : '') + text;
-      }
+  // Si aucun paragraphe, rien à faire
+  if (paragraphs.length === 0) return currentY;
+  
+  // Fusionner tous les paragraphes en un seul bloc de texte complet
+  let allText = "";
+  
+  // Collecter tout le texte
+  for (let i = 0; i < paragraphs.length; i++) {
+    const text = getTextContent(paragraphs[i]);
+    if (text.trim()) {
+      allText += (allText ? '\n\n' : '') + text;
     }
+  }
+  
+  if (allText.trim()) {
+    // Calculer la hauteur dynamiquement en fonction du texte
+    // Plus de texte = plus d'espace nécessaire
+    const textLength = allText.length;
     
-    if (combinedText.trim()) {
-      // Ajouter le groupe de paragraphes comme un seul bloc de texte
-      // avec une hauteur adaptative basée sur la longueur du texte
-      const textLength = combinedText.length;
-      const dynamicHeight = Math.max(0.35, Math.min(1.5, textLength / 300));
-      
-      slide.addText(combinedText, {
-        x: 0.4, 
-        y: currentY, 
-        w: '96%',
-        h: dynamicHeight,
-        fontSize: 16,
-        color: textColor,
-        breakLine: true,
-        lineSpacing: 0.85,
-        margin: [0, 0, 0, 0],
-        valign: 'top',
-        wrap: true
-      });
-      
-      // Avancer la position Y de façon proportionnelle au texte ajouté
-      currentY += dynamicHeight + 0.1;
-    }
+    // Estimation de la hauteur nécessaire (1 caractère ≈ 0.0008 unité de hauteur)
+    // avec un minimum de 0.4 et un maximum de 4.5
+    const dynamicHeight = Math.max(0.4, Math.min(4.5, textLength * 0.0008));
+    
+    // Ajouter tout le texte d'un coup pour éviter la fragmentation
+    slide.addText(allText, {
+      x: 0.4, 
+      y: currentY, 
+      w: '92%',
+      h: dynamicHeight,
+      fontSize: 14,
+      color: textColor,
+      breakLine: true,
+      lineSpacing: 0.9,
+      margin: [0, 0, 0, 0],
+      valign: 'top',
+      wrap: true,
+      bullet: false,
+    });
+    
+    // Avancer la position Y
+    currentY += dynamicHeight + 0.15;
   }
   
   return currentY;

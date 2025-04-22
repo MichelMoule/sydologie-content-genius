@@ -50,24 +50,24 @@ export const processSlideElement = (
   if (h1Elements.length > 0) {
     const titleText = getTextContent(h1Elements[0]);
     slide.addText(titleText, {
-      x: 0.5, y: contentY, w: '95%', h: 1,
-      fontSize: isTitle ? 44 : (isSectionTitle ? 40 : 36), // Increased font sizes
+      x: 0.5, y: contentY, w: '95%', h: 0.9,
+      fontSize: isTitle ? 44 : (isSectionTitle ? 40 : 36),
       color: colors.primary,
       bold: true,
       align: isTitle || isSectionTitle ? 'center' : 'left'
     });
-    contentY += 1.2; // Move content position down after adding the title
+    contentY += 1.0; // Reduced space after title
     mainHeaderProcessed = true;
   } else if (h2Elements.length > 0) {
     const titleText = getTextContent(h2Elements[0]);
     slide.addText(titleText, {
-      x: 0.5, y: contentY, w: '95%', h: 1,
-      fontSize: isSectionTitle ? 40 : 32, // Increased font sizes
+      x: 0.5, y: contentY, w: '95%', h: 0.9,
+      fontSize: isSectionTitle ? 40 : 32,
       color: colors.primary,
       bold: true,
       align: isSectionTitle ? 'center' : 'left'
     });
-    contentY += 1.0; // Move content position down after adding the title
+    contentY += 0.9; // Reduced space after title
     mainHeaderProcessed = true;
   }
   
@@ -75,25 +75,25 @@ export const processSlideElement = (
   if (isTitle && h2Elements.length > 0 && mainHeaderProcessed) {
     const subtitleText = getTextContent(h2Elements[0]);
     slide.addText(subtitleText, { 
-      x: 0.5, y: contentY, w: '95%', h: 0.8, 
-      fontSize: 28, // Increased from 22
+      x: 0.5, y: contentY, w: '95%', h: 0.7, 
+      fontSize: 28,
       color: colors.secondary,
       align: 'center'
     });
-    contentY += 1.0; // Move content position down after adding subtitle
+    contentY += 0.8; // Reduced space after subtitle
   }
   
   // Process remaining h3 headers if they exist (as subheadings within the slide)
   if (h3Elements.length > 0 && !isSectionTitle) {
     const subheadingText = getTextContent(h3Elements[0]);
     slide.addText(subheadingText, {
-      x: 0.5, y: contentY, w: '95%', h: 0.7,
-      fontSize: 28,
+      x: 0.5, y: contentY, w: '95%', h: 0.6,
+      fontSize: 26,
       color: colors.primary,
       bold: true,
       align: 'left'
     });
-    contentY += 0.8; // Add some space after the subheading
+    contentY += 0.7; // Reduced space after subheading
   }
   
   // Always process content, regardless of slide type
@@ -109,7 +109,7 @@ export const processSlideElement = (
   // Process grid containers (2x2 or other grid layouts)
   contentY = processGridContainers(slide, divElements, contentY, colors);
   
-  // Process paragraph content
+  // Process paragraph content - maintenant avec un traitement optimal pour une meilleure densité
   const paragraphs = getElementsArrayByTagName(slideElement, 'p');
   contentY = processParagraphs(slide, paragraphs, contentY, colors.text);
   

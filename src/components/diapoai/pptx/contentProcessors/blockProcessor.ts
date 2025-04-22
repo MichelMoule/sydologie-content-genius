@@ -23,9 +23,9 @@ export const processBlocks = (
     const text = getTextContent(blockElement);
     if (!text) continue;
     
-    // Calculer une hauteur dynamique basée sur la longueur du texte
+    // Calculer une hauteur plus généreuse basée sur la longueur du texte
     const textLength = text.length;
-    const dynamicHeight = Math.max(0.6, Math.min(2.0, textLength / 200));
+    const dynamicHeight = Math.max(0.6, Math.min(3.0, textLength * 0.001));
     
     // Determine if it's a blockquote or code block and style accordingly
     if (tagName === 'blockquote') {
@@ -33,7 +33,7 @@ export const processBlocks = (
         x: 0.5, y: currentY, 
         w: '92%', 
         h: dynamicHeight,
-        fontSize: 15,
+        fontSize: 14,
         color: textColor,
         italic: true,
         bullet: false,
@@ -41,7 +41,7 @@ export const processBlocks = (
         fill: { color: `${accentColor}20` },
         line: { color: accentColor, width: 0, dashType: 'solid', beginArrowType: 'none', endArrowType: 'none' },
         margin: [0, 0, 0, 5],
-        lineSpacing: 0.85,
+        lineSpacing: 0.9,
         valign: 'top',
         wrap: true
       });
@@ -52,14 +52,14 @@ export const processBlocks = (
       slide.addText(text, {
         x: 0.5, y: currentY, 
         w: '92%', 
-        h: Math.max(0.8, Math.min(2.5, textLength / 150)),
-        fontSize: 11,
+        h: Math.max(0.8, Math.min(3.0, textLength * 0.001)),
+        fontSize: 12,
         fontFace: 'Courier New',
         color: textColor, 
         fill: { color: '#F0F0F0' },
         line: { color: '#CCCCCC', width: 1 },
         margin: [2, 2, 2, 2],
-        lineSpacing: 0.82,
+        lineSpacing: 0.85,
         valign: 'top',
         wrap: true
       });

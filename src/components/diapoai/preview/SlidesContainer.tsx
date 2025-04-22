@@ -33,7 +33,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
             style.textContent = `
               .reveal .slides section {
                 height: auto !important;
-                min-height: 440px;
+                min-height: 450px;
                 padding: 15px !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -44,9 +44,9 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
               .reveal .slides h1,
               .reveal .slides h2,
               .reveal .slides h3 {
-                margin-bottom: 0.15em !important;
-                margin-top: 0.05em !important;
-                line-height: 1.1 !important;
+                margin-bottom: 0.3em !important;
+                margin-top: 0.1em !important;
+                line-height: 1.2 !important;
               }
               
               .reveal .slides h1 + *,
@@ -56,35 +56,41 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
               }
               
               .reveal .slides p {
-                margin-bottom: 0.25em !important;
-                margin-top: 0.05em !important;
-                line-height: 1.25 !important;
-                font-size: 0.95em !important;
+                margin-bottom: 0.4em !important;
+                margin-top: 0.1em !important;
+                line-height: 1.3 !important;
+                font-size: 1em !important;
+                opacity: 1 !important;
+                visibility: visible !important;
               }
               
               .reveal .slides ul, 
               .reveal .slides ol {
                 display: block !important;
-                margin-bottom: 0.25em !important;
-                margin-top: 0.05em !important;
-                padding-left: 1.2em !important;
+                margin-bottom: 0.4em !important;
+                margin-top: 0.2em !important;
+                padding-left: 1.3em !important;
               }
               
               .reveal .slides li {
-                margin-bottom: 0.05em !important;
-                line-height: 1.2 !important;
-                font-size: 0.95em !important;
+                margin-bottom: 0.1em !important;
+                line-height: 1.3 !important;
+                font-size: 0.98em !important;
+                opacity: 1 !important;
+                visibility: visible !important;
               }
               
               .reveal .slides section > * {
                 margin-left: 0 !important;
                 margin-right: 0 !important;
                 width: 100% !important;
+                opacity: 1 !important;
+                visibility: visible !important;
               }
               
               .reveal .slides blockquote {
-                margin: 0.2em 0 !important;
-                padding: 0.4em !important;
+                margin: 0.3em 0 !important;
+                padding: 0.5em !important;
               }
               
               /* Force content to remain in the same slide */
@@ -123,14 +129,16 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
               
               .reveal p, .reveal li {
                 page-break-inside: avoid !important;
-                font-size: 0.92em !important;
+                font-size: 0.95em !important;
                 max-height: none !important;
                 overflow: visible !important;
+                opacity: 1 !important;
+                visibility: visible !important;
               }
               
               /* Optimisation pour plus de texte */
               .reveal .slides {
-                font-size: 18px !important;
+                font-size: 20px !important;
               }
               
               /* Ensure slide contents don't overflow */
@@ -144,9 +152,24 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
                 visibility: visible !important;
               }
               
-              /* Fix for slide content overflow */
-              .reveal .slide-background {
+              /* Force render all elements */
+              .reveal * {
+                opacity: 1 !important;
+                visibility: visible !important;
+              }
+              
+              /* Critical: Ensure text is visible */
+              .reveal .slides p, .reveal .slides li, .reveal .slides h1, 
+              .reveal .slides h2, .reveal .slides h3, .reveal .slides blockquote {
+                color: inherit !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+              }
+              
+              /* Ensure content is not truncated */
+              .reveal .slides section {
                 overflow: visible !important;
+                max-height: none !important;
               }
             `;
             container.current.appendChild(style);
