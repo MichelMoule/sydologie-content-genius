@@ -4,12 +4,10 @@ import { generateHtmlTemplate } from "./html/template";
 import { downloadHtmlFile } from "./html/htmlDownloader";
 import { useToast } from "@/hooks/use-toast";
 
-interface HtmlExporterProps {
-  slidesHtml: string;
-  colors: ThemeColors;
-}
-
-export const HtmlExporter = ({ slidesHtml, colors }: HtmlExporterProps) => {
+/**
+ * Custom hook for HTML export functionality
+ */
+export const useHtmlExporter = (slidesHtml: string | null, colors: ThemeColors) => {
   const { toast } = useToast();
 
   const downloadHtml = () => {

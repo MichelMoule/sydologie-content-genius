@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { processSvgDiagrams } from "@/components/diapoai/utils/SvgProcessor";
 import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { DiapoAIPreview } from "@/components/diapoai/DiapoAIPreview";
-import { HtmlExporter } from "@/components/diapoai/exporters/HtmlExporter";
+import { useHtmlExporter } from "@/components/diapoai/exporters/HtmlExporter";
 import { ThemeColors } from "@/components/diapoai/types/ThemeColors";
 
 const DiapoAI = () => {
@@ -21,7 +21,7 @@ const DiapoAI = () => {
     text: "#333333"        // Dark gray for text
   });
   const { toast } = useToast();
-  const htmlExporter = slidesHtml ? HtmlExporter({ slidesHtml, colors }) : null;
+  const { downloadHtml } = useHtmlExporter(slidesHtml, colors);
 
   const handleOutlineGenerated = (generatedOutline: OutlineSection[]) => {
     setOutline(generatedOutline);
@@ -62,7 +62,7 @@ const DiapoAI = () => {
             {slidesHtml && (
               <DiapoAIPreview
                 slidesHtml={slidesHtml}
-                downloadHtml={htmlExporter?.downloadHtml || (() => {})}
+                downloadHtml={downloadHtml}
                 onColorChange={handleColorChange}
                 colors={colors}
               />
