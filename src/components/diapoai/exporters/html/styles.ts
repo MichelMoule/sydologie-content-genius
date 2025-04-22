@@ -1,5 +1,4 @@
-
-import { ThemeColors } from "../../pptx/types";
+import { ThemeColors } from "../../types/ThemeColors";
 import { hexToRgb, lightenColor } from "../../utils/ColorUtils";
 
 /**

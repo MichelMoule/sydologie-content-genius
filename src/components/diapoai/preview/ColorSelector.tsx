@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ThemeColors } from "../pptx/types";
+import { ThemeColors } from "../types/ThemeColors";
 
 interface ColorSelectorProps {
   colors: ThemeColors;

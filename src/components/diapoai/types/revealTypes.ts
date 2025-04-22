@@ -1,9 +1,8 @@
 
-import { ThemeColors } from "../pptx/types";
+import { ThemeColors } from "./ThemeColors";
 
 export interface RevealPreviewProps {
   slidesHtml: string;
-  onExportPpt?: () => void;
   onColorChange?: (colors: ThemeColors) => void;
 }
 

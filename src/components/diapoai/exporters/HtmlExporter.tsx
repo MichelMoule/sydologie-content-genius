@@ -1,5 +1,5 @@
 
-import { ThemeColors } from "../pptx/types";
+import { ThemeColors } from "../types/ThemeColors";
 import { generateHtmlTemplate } from "./html/template";
 import { downloadHtmlFile } from "./html/htmlDownloader";
 

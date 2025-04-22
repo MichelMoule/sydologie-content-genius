@@ -5,13 +5,11 @@ import Footer from "@/components/Footer";
 import { DiapoAIForm } from "@/components/diapoai/DiapoAIForm";
 import { OutlineSection } from "@/components/diapoai/types";
 import { useToast } from "@/hooks/use-toast";
-import { convertHtmlToPptx } from "@/components/diapoai/pptxExport";
-import { ThemeColors } from "@/components/diapoai/pptx/types";
 import { processSvgDiagrams } from "@/components/diapoai/utils/SvgProcessor";
 import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { DiapoAIPreview } from "@/components/diapoai/DiapoAIPreview";
 import { HtmlExporter } from "@/components/diapoai/exporters/HtmlExporter";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ThemeColors } from "@/components/diapoai/types/ThemeColors";
 
 const DiapoAI = () => {
   const [outline, setOutline] = useState<OutlineSection[] | null>(null);
@@ -46,44 +44,6 @@ const DiapoAI = () => {
     setColors(newColors);
   };
 
-  const exportToPpt = async () => {
-    if (!slidesHtml) return;
-    
-    try {
-      toast({
-        title: "Conversion en cours",
-        description: "Création du fichier PowerPoint...",
-      });
-      
-      const processedHtml = processSvgDiagrams(slidesHtml);
-      console.log('Processed HTML for PPT export (first 100 chars):', processedHtml.substring(0, 100));
-      
-      const pptxBlob = await convertHtmlToPptx(processedHtml, colors);
-      
-      const url = window.URL.createObjectURL(pptxBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'diapoai-presentation.pptx';
-      document.body.appendChild(a);
-      a.click();
-      
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast({
-        title: "Export terminé",
-        description: "Votre présentation PowerPoint a été téléchargée.",
-      });
-    } catch (error) {
-      console.error("Error exporting to PPT:", error);
-      toast({
-        title: "Erreur lors de l'export",
-        description: "Impossible de créer le fichier PowerPoint. Essayez le format HTML à la place.",
-        variant: "destructive"
-      });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
@@ -103,7 +63,6 @@ const DiapoAI = () => {
               <DiapoAIPreview
                 slidesHtml={slidesHtml}
                 downloadHtml={htmlExporter?.downloadHtml || (() => {})}
-                exportToPpt={exportToPpt}
                 onColorChange={handleColorChange}
                 colors={colors}
               />

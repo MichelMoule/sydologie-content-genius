@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OutlineEditor from "./OutlineEditor";
 import { useToast } from "@/hooks/use-toast";
-import { ThemeColors } from "./pptx/types";
+import { ThemeColors } from "./types/ThemeColors";
 
 export const formSchema = z.object({
   content: z.string().min(10, { message: "Le contenu est requis (minimum 10 caractères)" }),

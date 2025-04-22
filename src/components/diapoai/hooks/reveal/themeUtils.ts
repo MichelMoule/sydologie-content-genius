@@ -1,5 +1,5 @@
-
-import { ThemeColors } from "../../pptx/types";
+import { themes } from "reveal.js/dist/reveal.esm.js";
+import { ThemeColors } from "../../types/ThemeColors";
 
 /**
  * Applies theme colors to the slides

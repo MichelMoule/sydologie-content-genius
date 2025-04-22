@@ -1,116 +1,64 @@
+import { themes } from "reveal.js/dist/reveal.esm.js";
+import { ThemeColors } from "../../types/ThemeColors";
+import { applyCustomColors } from "./themeUtils";
 
-import { ThemeColors } from "../../pptx/types";
-import { applyThemeColors } from "./themeUtils";
-import { createRevealConfig } from "./config";
-import { normalizeSlideStructure } from "./slideStructureManager";
-
-/**
- * Handles safe destruction of an existing Reveal.js instance
- */
-export const safeDestroyReveal = (deck: any) => {
-  if (deck) {
-    try {
-      console.log('Safely destroying Reveal.js deck');
-      deck.destroy();
-    } catch (e) {
-      console.warn('Error while destroying Reveal.js deck:', e);
-      // Continue despite the error
-    }
-  }
-};
-
-// Cache for avoiding redundant reinitializations
-const initCache = {
-  lastConfig: null as any,
-  lastColors: null as ThemeColors | null,
-  lastInit: 0,
-  contentHash: null as string | null,
-};
+interface RevealInitConfig {
+  container: HTMLElement | null;
+  slidesHtml: string;
+  themeColors: ThemeColors;
+  transition: string;
+}
 
 /**
- * Initializes Reveal.js with the given configuration
+ * Initializes Reveal.js with the given configuration.
+ *
+ * @param {RevealInitConfig} config - The configuration object for Reveal.js.
  */
-export const initializeReveal = async (
-  container: HTMLDivElement, 
-  colors: ThemeColors,
-  transition: string
-): Promise<any> => {
-  try {
-    // Anti-bounce: skip if initialization occurred less than 2 seconds ago
-    const now = Date.now();
-    if (now - initCache.lastInit < 2000) {
-      console.log('Limiting re-initialization frequency');
-      return document.querySelector('.reveal')['Reveal']; // Return existing instance
-    }
-    
-    // Update last initialization timestamp
-    initCache.lastInit = now;
-    
-    // Get the Reveal constructor
-    const Reveal = (window as any).Reveal;
-    
-    if (!Reveal) {
-      console.error('Reveal.js not found in window object');
-      return null;
-    }
-    
-    // Apply theme colors
-    applyThemeColors(container, colors);
-    
-    // Create configuration
-    const config = createRevealConfig(transition);
-    
-    // Ensure slides structure exists
-    const slidesContainer = container.querySelector('.slides');
-    if (!slidesContainer) {
-      console.error('No slides container found');
-      return null;
-    }
-    
-    // Normalize slide structure before initialization
-    normalizeSlideStructure(slidesContainer);
-    
-    // Initialize Reveal
-    const deck = new Reveal(container, config);
-    
-    // Handle initialization with Promise
-    await new Promise<void>((resolve) => {
-      deck.initialize().then(() => {
-        console.log('Reveal.js initialized successfully');
-        
-        // Force visibility of all slides after initialization
-        setTimeout(() => {
-          try {
-            const sections = container.querySelectorAll('.slides section');
-            sections.forEach((section) => {
-              (section as HTMLElement).style.visibility = 'visible';
-              (section as HTMLElement).style.opacity = '1';
-              (section as HTMLElement).style.display = 'flex';
-              (section as HTMLElement).style.overflow = 'visible';
-            });
-            
-            // Force sync and go to first slide
-            deck.sync();
-            deck.slide(0);
-          } catch (e) {
-            console.warn('Error during post-init adjustments:', e);
-          }
-        }, 200);
-        
-        resolve();
-      }).catch((error: any) => {
-        console.error('Error in Reveal.js initialization promise:', error);
-        resolve(); // Continue despite error
-      });
-    });
-    
-    // Mark as initialized
-    container['_revealInitialized'] = true;
-    
-    return deck;
-  } catch (error) {
-    console.error('Error initializing Reveal.js:', error);
+export const initializeReveal = (config: RevealInitConfig) => {
+  if (!config.container) {
+    console.warn('Reveal.js container not found.');
     return null;
   }
+
+  const deck = new Reveal({
+    embedded: true,
+    width: "100%",
+    height: "100%",
+    margin: 0.1,
+    autoAnimateDuration: 0.8,
+    autoAnimateEasing: 'ease-in-out',
+    transition: config.transition,
+    backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes, RevealMarkdown, RevealZoom, RevealMath, RevealAnimate, RevealChart ],
+    chart: {
+      defaults: {
+        color: config.themeColors.text,
+        scale: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 },
+          grid: { color: `${config.themeColors.primary}33` }
+        },
+      },
+      line: { borderColor: [config.themeColors.primary, config.themeColors.secondary, `${config.themeColors.primary}88`] },
+      bar: { backgroundColor: [config.themeColors.primary, config.themeColors.secondary, `${config.themeColors.primary}88`] },
+      pie: { backgroundColor: [[config.themeColors.primary, config.themeColors.secondary, `${config.themeColors.primary}88`, `${config.themeColors.secondary}88`]] },
+    },
+  });
+
+  // Initialize Reveal
+  deck.initialize().then(() => {
+    // Apply custom theme colors
+    applyCustomColors(deck, config.themeColors);
+
+    // Set content AFTER Reveal is initialized
+    if (config.slidesHtml) {
+      deck.getSlidesElement().innerHTML = config.slidesHtml;
+    }
+
+    deck.layout();
+    deck.sync();
+  });
+
+  return deck;
 };
 
