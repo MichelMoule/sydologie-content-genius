@@ -1,11 +1,13 @@
+
 import { forwardRef, useEffect, useRef } from "react";
+import { normalizeSlideStructure } from "../hooks/reveal/slideStructureManager";
 
 export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string }>(
   ({ slidesHtml }, ref) => {
     const lastHtmlRef = useRef<string | null>(null);
     const stylesAddedRef = useRef(false);
     
-    // Injecter le HTML des slides seulement quand il change
+    // Inject the HTML of slides only when it changes
     useEffect(() => {
       const container = ref as React.RefObject<HTMLDivElement>;
       if (container.current && slidesHtml && slidesHtml !== lastHtmlRef.current) {
@@ -14,16 +16,12 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
         
         const slidesContainer = container.current.querySelector('.slides');
         if (slidesContainer) {
-          // Process the HTML to ensure it has proper slide structure
-          let processedHtml = slidesHtml;
+          // Update the slides container with HTML
+          slidesContainer.innerHTML = slidesHtml;
           
-          // If no section tags exist, wrap content in sections
-          if (!processedHtml.includes('<section')) {
-            processedHtml = `<section>${processedHtml}</section>`;
-          }
+          // Ensure slides have proper structure
+          normalizeSlideStructure(slidesContainer);
           
-          // Update the slides container with processed HTML
-          slidesContainer.innerHTML = processedHtml;
           console.log("Slides HTML updated");
           
           // Add custom styles to ensure content stays together on slides
