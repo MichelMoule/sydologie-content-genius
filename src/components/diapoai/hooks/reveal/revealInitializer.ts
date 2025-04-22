@@ -28,14 +28,28 @@ export const initializeReveal = (config: RevealInitConfig) => {
     return null;
   }
 
+  // Set content BEFORE Reveal is initialized
+  if (config.slidesHtml) {
+    const slidesContainer = config.container.querySelector('.slides');
+    if (slidesContainer) {
+      slidesContainer.innerHTML = config.slidesHtml;
+      console.log("Slides content set before initialization");
+    }
+  }
+
+  // Apply custom theme colors to container before init
+  applyCustomColors(null, config.colors, config.container);
+
   const deck = new Reveal({
     embedded: true,
     width: "100%",
     height: "100%",
     margin: 0.1,
+    minScale: 0.2,
+    maxScale: 2.0,
     autoAnimateDuration: 0.8,
     autoAnimateEasing: 'ease-in-out',
-    transition: config.transition,
+    transition: config.transition || 'slide',
     backgroundTransition: 'fade',
     plugins: [RevealHighlight, RevealNotes, RevealMarkdown, RevealZoom, RevealMath],
     chart: {
@@ -55,16 +69,16 @@ export const initializeReveal = (config: RevealInitConfig) => {
 
   // Initialize Reveal
   deck.initialize().then(() => {
-    // Apply custom theme colors
+    // Apply custom theme colors again after init
     applyCustomColors(deck, config.colors);
-
-    // Set content AFTER Reveal is initialized
-    if (config.slidesHtml) {
-      deck.getSlidesElement().innerHTML = config.slidesHtml;
-    }
-
+    
+    console.log("Reveal.js initialized successfully");
+    
+    // Additional layout updates
     deck.layout();
     deck.sync();
+  }).catch(error => {
+    console.error("Error initializing Reveal.js:", error);
   });
 
   return deck;

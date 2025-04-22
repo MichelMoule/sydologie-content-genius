@@ -1,7 +1,8 @@
 
-import { Presentation } from "lucide-react";
+import { Download, Presentation } from "lucide-react";
 import RevealPreview from "./RevealPreview";
 import { ThemeColors } from "./types/ThemeColors";
+import { Button } from "@/components/ui/button";
 
 interface DiapoAIPreviewProps {
   slidesHtml: string | null;
@@ -25,6 +26,14 @@ export const DiapoAIPreview = ({
           <Presentation className="h-5 w-5" />
           Votre diaporama
         </h3>
+        <Button 
+          onClick={downloadHtml} 
+          className="flex items-center gap-2" 
+          variant="outline"
+        >
+          <Download className="h-4 w-4" />
+          Télécharger HTML
+        </Button>
       </div>
       <RevealPreview 
         slidesHtml={slidesHtml} 

@@ -1,6 +1,4 @@
-
 import { forwardRef, useEffect, useRef } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string }>(
   ({ slidesHtml }, ref) => {
@@ -12,6 +10,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
       const container = ref as React.RefObject<HTMLDivElement>;
       if (container.current && slidesHtml && slidesHtml !== lastHtmlRef.current) {
         lastHtmlRef.current = slidesHtml;
+        console.log("Setting slides HTML content");
         
         const slidesContainer = container.current.querySelector('.slides');
         if (slidesContainer) {
@@ -25,6 +24,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
           
           // Update the slides container with processed HTML
           slidesContainer.innerHTML = processedHtml;
+          console.log("Slides HTML updated");
           
           // Add custom styles to ensure content stays together on slides
           if (!stylesAddedRef.current) {

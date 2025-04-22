@@ -1,4 +1,3 @@
-
 import { themes } from "reveal.js/dist/reveal.esm.js";
 import { ThemeColors } from "../../types/ThemeColors";
 
@@ -6,10 +5,13 @@ import { ThemeColors } from "../../types/ThemeColors";
  * Applies theme colors to the slides
  */
 export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors) => {
+  if (!container) return;
+  
   const slides = container.querySelectorAll('.slides section');
   slides.forEach(slide => {
     // Set background for slide
-    (slide as HTMLElement).style.background = colors.background;
+    (slide as HTMLElement).style.background = colors.background || '#FFFFFF';
+    (slide as HTMLElement).style.color = colors.text || '#333333';
     
     // Make sure the slide content is structured properly
     if (slide.children.length > 0) {
@@ -42,6 +44,7 @@ export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors)
     // Ensure paragraphs stay VERY close to headings
     const paragraphs = slide.querySelectorAll('p');
     paragraphs.forEach(p => {
+      (p as HTMLElement).style.color = colors.text;
       (p as HTMLElement).style.marginTop = '0.1em'; // Minimized spacing
       (p as HTMLElement).style.marginBottom = '0.2em'; // Minimized spacing
       (p as HTMLElement).style.fontSize = '1.3em'; // Slightly smaller for more content per slide
@@ -59,6 +62,7 @@ export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors)
     // Make list items more compact
     const listItems = slide.querySelectorAll('li');
     listItems.forEach(item => {
+      (item as HTMLElement).style.color = colors.text;
       (item as HTMLElement).style.fontSize = '1.3em'; // Slightly smaller
       (item as HTMLElement).style.marginBottom = '0.1em'; // Minimized spacing
       (item as HTMLElement).style.lineHeight = '1.3'; // Tighter line height
@@ -76,14 +80,23 @@ export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors)
 /**
  * Apply custom colors to the Reveal.js deck
  */
-export const applyCustomColors = (deck: any, colors: ThemeColors) => {
+export const applyCustomColors = (deck: any, colors: ThemeColors, container?: HTMLElement | null) => {
+  // If container is directly provided, use it
+  if (container) {
+    applyThemeColors(container as HTMLDivElement, colors);
+    return;
+  }
+  
+  // Otherwise, try to get slides element from deck
   if (!deck || !deck.getSlidesElement) return;
   
   const slidesContainer = deck.getSlidesElement();
   if (slidesContainer) {
     applyThemeColors(slidesContainer, colors);
     
-    // Force a layout update
-    deck.layout();
+    // Force a layout update if deck is available
+    if (deck && deck.layout) {
+      deck.layout();
+    }
   }
 };
