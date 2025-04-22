@@ -13,63 +13,83 @@ export const useRevealInit = (
   const isScriptLoaded = useRef(false);
   const isInitializing = useRef(false);
   const slidesRef = useRef(slidesHtml);
+  const colorsRef = useRef(themeColors);
+  const transitionRef = useRef(transition);
   const initAttempts = useRef(0);
-  const maxAttempts = 5; // Increase max attempts for better reliability
+  const maxAttempts = 3;
+  const lastInitTime = useRef(0);
 
-  // Keep track of the latest slidesHtml without triggering re-renders
+  // Keep track of the latest props without triggering re-renders
   useEffect(() => {
     slidesRef.current = slidesHtml;
-  }, [slidesHtml]);
+    colorsRef.current = themeColors;
+    transitionRef.current = transition;
+  }, [slidesHtml, themeColors, transition]);
 
   // Load the necessary Reveal.js resources only once
   useEffect(() => {
-    loadRevealCss();
-    
-    if (!isScriptLoaded.current) {
-      loadRevealScript()
-        .then(() => {
+    const loadScripts = async () => {
+      try {
+        await loadRevealCss();
+        if (!isScriptLoaded.current) {
+          await loadRevealScript();
           isScriptLoaded.current = true;
           console.log('Script Reveal.js loaded successfully');
-        })
-        .catch(error => {
-          console.error('Failed to load Reveal.js:', error);
-        });
-    }
+        }
+      } catch (error) {
+        console.error('Failed to load Reveal.js resources:', error);
+      }
+    };
+    
+    loadScripts();
   }, []);
 
-  // Initialize Reveal.js only when content or config changes
+  // Initialize Reveal.js only when necessary
   useEffect(() => {
+    // Avoid multiple initializations in short succession
+    if (isInitializing.current) return;
+    
+    // Debounce initialization (only initialize after time gap)
+    const now = Date.now();
+    if (now - lastInitTime.current < 2000) return;
+    
     const initializeRevealInstance = async () => {
-      if (!containerRef.current || !slidesHtml || !isScriptLoaded.current || isInitializing.current) return;
+      if (!containerRef.current || !isScriptLoaded.current) return;
       
       isInitializing.current = true;
+      lastInitTime.current = Date.now();
       
       try {
-        // If an existing deck is present, destroy it safely
+        // Safely destroy existing deck if present
         if (deck) {
+          console.log('Cleaning up previous deck before initialization');
           safeDestroyReveal(deck);
         }
         
         // Initialize new deck
         const newDeck = await initializeReveal(
           containerRef.current,
-          themeColors,
-          transition
+          colorsRef.current,
+          transitionRef.current
         );
         
         if (newDeck) {
           setDeck(newDeck);
-          initAttempts.current = 0; // Reset attempt counter on success
+          initAttempts.current = 0;
           console.log('Reveal.js initialized successfully');
-        } else if (initAttempts.current < maxAttempts) {
-          // If initialization failed, retry with increasing delay
-          initAttempts.current++;
-          const delay = 300 * Math.pow(1.5, initAttempts.current); // Exponential backoff
-          console.warn(`Initialization attempt ${initAttempts.current} failed, retrying in ${delay}ms`);
-          setTimeout(initializeRevealInstance, delay);
-        } else {
-          console.error(`Failed to initialize Reveal.js after ${maxAttempts} attempts`);
+          
+          // Single sync attempt with delay
+          setTimeout(() => {
+            try {
+              newDeck.sync();
+              newDeck.slide(0);
+            } catch (e) {
+              console.warn('Error during initial sync:', e);
+            }
+          }, 500);
         }
+      } catch (error) {
+        console.error('Error during Reveal initialization:', error);
       } finally {
         isInitializing.current = false;
       }
@@ -83,29 +103,10 @@ export const useRevealInit = (
     return () => {
       clearTimeout(timer);
     };
-  }, [containerRef, slidesHtml, themeColors, transition, deck]);
-
-  // Add a robust sync mechanism to handle navigation issues
-  useEffect(() => {
-    if (deck) {
-      // Multiple sync attempts with increasing delays for reliability
-      const syncTimers = [500, 1000, 2000].map((delay, index) => {
-        return setTimeout(() => {
-          try {
-            deck.sync();
-            if (index === 0) { // Only reset to first slide on first sync
-              deck.slide(0); // Ensure we start at the first slide
-            }
-            console.log(`Sync attempt ${index + 1} successful`);
-          } catch (e) {
-            console.warn(`Error syncing Reveal.js deck on attempt ${index + 1}:`, e);
-          }
-        }, delay);
-      });
-      
-      return () => syncTimers.forEach(timer => clearTimeout(timer));
-    }
-  }, [deck]);
+    
+  // Only depend on slidesHtml changes to trigger initialization
+  // themeColors and transition are accessed via refs to prevent loops
+  }, [containerRef, slidesHtml]);
 
   // Clean up on unmount
   useEffect(() => {

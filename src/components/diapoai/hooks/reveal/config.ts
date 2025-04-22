@@ -13,10 +13,13 @@ export const createRevealConfig = (transition: string) => {
     embedded: true, // Keep embedded mode to prevent fullscreen behavior
     width: '100%',
     height: '100%',
-    margin: 0.05, // Reduced margin to allow more content
-    viewDistance: 3, // Preload 3 slides in each direction
+    margin: 0.03, // Even more reduced margin to allow more content
+    viewDistance: 2, // Reduce preload for better performance
     display: 'block', // Ensure slides display as block
     fragments: false, // Disable fragments to prevent partial content showing
+    // Prevent unnecessary re-calculations that might trigger re-renders
+    autoPlayMedia: false,
+    autoAnimateUnmatched: false,
     // Improved keyboard config
     keyboard: {
       // Keep arrow navigation but disable space
@@ -25,21 +28,27 @@ export const createRevealConfig = (transition: string) => {
       37: 'prev', // Left arrow
       39: 'next', // Right arrow
     },
-    // Improved touch control
+    // Simplified touch control
     touch: {
       captureHorizontalSwipe: true,
       captureVerticalSwipe: false,
       swipeThreshold: 40
     },
-    // Force all content on a slide to be revealed
-    disableLayout: false,
+    // Prevent layout recalculations that may cause refreshes
+    disableLayout: true,
     // Add maxScale to prevent content from being too large
     maxScale: 1.5,
-    // Prevent auto-scaling that might cause content to be cut off
+    // Prevent auto-animation that might cause reflows
     autoSlide: 0,
     autoSlideStoppable: true,
-    // Ensure content is not spread across multiple slides
+    // Optimize for content display
+    minScale: 0.2,
+    // Prevent content from being cut off
     pdfMaxPagesPerSlide: 1,
-    pdfSeparateFragments: false
+    pdfSeparateFragments: false,
+    // Disable features that might cause reflows
+    overview: false,
+    // Set this to reduce unnecessary DOM updates
+    respondToHashChanges: false
   };
 };
