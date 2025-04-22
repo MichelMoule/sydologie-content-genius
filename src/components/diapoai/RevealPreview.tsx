@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
@@ -26,10 +27,15 @@ const RevealPreview = ({ slidesHtml, onColorChange }: RevealPreviewProps) => {
   const { toast } = useToast();
   const toastShownRef = useRef(false);
   
-  // Initialiser Reveal.js
-  const { deck } = useRevealInit(containerRef, slidesHtml, themeColors, transition);
+  // Initialize Reveal.js
+  const { deck } = useRevealInit({
+    containerRef, 
+    slidesHtml, 
+    colors: themeColors, 
+    transition
+  });
 
-  // Afficher un toast quand la prévisualisation est prête - but only once
+  // Show a toast when the preview is ready - but only once
   useEffect(() => {
     if (deck && !toastShownRef.current) {
       toastShownRef.current = true;
@@ -40,7 +46,7 @@ const RevealPreview = ({ slidesHtml, onColorChange }: RevealPreviewProps) => {
     }
   }, [deck, toast]);
 
-  // Gérer les changements de couleurs
+  // Handle color changes
   const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
     const newColors = { ...themeColors, [colorType]: color };
     setThemeColors(newColors);

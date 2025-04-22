@@ -1,3 +1,4 @@
+
 import { useEffect, useState, RefObject } from "react";
 import { ThemeColors } from "../types/ThemeColors";
 import { initReveal } from "./reveal/initManager";
@@ -9,12 +10,12 @@ interface UseRevealInitProps {
   transition: string;
 }
 
-export const useRevealInit = (
-  containerRef: RefObject<HTMLDivElement>,
-  slidesHtml: string,
-  colors: ThemeColors,
-  transition: string
-) => {
+export const useRevealInit = ({
+  containerRef,
+  slidesHtml,
+  colors,
+  transition
+}: UseRevealInitProps) => {
   const [deck, setDeck] = useState<any>(null);
 
   useEffect(() => {
@@ -29,7 +30,13 @@ export const useRevealInit = (
       setDeck(newDeck);
 
       return () => {
-        newDeck?.destroy();
+        if (newDeck && typeof newDeck.destroy === 'function') {
+          try {
+            newDeck.destroy();
+          } catch (error) {
+            console.error('Error destroying Reveal.js instance:', error);
+          }
+        }
       };
     }
   }, [containerRef, slidesHtml, colors, transition]);

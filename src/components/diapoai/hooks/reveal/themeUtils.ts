@@ -1,3 +1,4 @@
+
 import { themes } from "reveal.js/dist/reveal.esm.js";
 import { ThemeColors } from "../../types/ThemeColors";
 
@@ -70,4 +71,19 @@ export const applyThemeColors = (container: HTMLDivElement, colors: ThemeColors)
       (slide as HTMLElement).style.background = '#f8f8f8';
     }
   });
+};
+
+/**
+ * Apply custom colors to the Reveal.js deck
+ */
+export const applyCustomColors = (deck: any, colors: ThemeColors) => {
+  if (!deck || !deck.getSlidesElement) return;
+  
+  const slidesContainer = deck.getSlidesElement();
+  if (slidesContainer) {
+    applyThemeColors(slidesContainer, colors);
+    
+    // Force a layout update
+    deck.layout();
+  }
 };
