@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,12 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import OutlineEditor from "./OutlineEditor";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeColors } from "./types/ThemeColors";
@@ -39,6 +41,7 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
   const [outline, setOutline] = useState<any[] | null>(null);
   const [activeTab, setActiveTab] = useState("content");
   const [fileContent, setFileContent] = useState("");
+  const [apiError, setApiError] = useState<string | null>(null);
   const [colors, setColors] = useState<ThemeColors>({
     primary: "#1B4D3E",
     secondary: "#FF9B7A",
@@ -78,6 +81,7 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
   };
 
   const generateOutline = async (values: z.infer<typeof formSchema>) => {
+    setApiError(null);
     setIsGeneratingOutline(true);
     try {
       console.log("Generating outline with content:", values.content.substring(0, 100) + "...");
@@ -105,8 +109,9 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
         title: "Plan généré avec succès",
         description: "Vous pouvez maintenant modifier le plan avant de générer le diaporama",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating outline:", error);
+      setApiError(error.message || "Une erreur est survenue lors de la génération du plan.");
       toast({
         title: "Erreur de génération",
         description: "Une erreur est survenue lors de la génération du plan.",
@@ -127,6 +132,7 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
       return;
     }
 
+    setApiError(null);
     setIsGeneratingSlides(true);
     try {
       console.log("Generating slides with outline:", outline);
@@ -159,8 +165,9 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
         title: "Diaporama généré avec succès",
         description: "Vous pouvez maintenant visualiser votre diaporama",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating slides:", error);
+      setApiError(error.message || "Une erreur est survenue lors de la génération des diapositives.");
       toast({
         title: "Erreur de génération",
         description: "Une erreur est survenue lors de la génération des diapositives.",
@@ -182,8 +189,27 @@ export const DiapoAIForm = ({ onOutlineGenerated, onSlidesGenerated, onColorsCha
     }
   };
 
+  const clearApiError = () => {
+    setApiError(null);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md">
+      {apiError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Erreur</AlertTitle>
+          <AlertDescription>
+            {apiError}
+            <div className="mt-2">
+              <Button variant="outline" size="sm" onClick={clearApiError}>
+                Fermer
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="content">Contenu</TabsTrigger>

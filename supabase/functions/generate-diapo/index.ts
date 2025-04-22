@@ -6,6 +6,40 @@ import { corsHeaders } from "../_shared/cors.ts";
 const AZURE_ENDPOINT = "https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-02-15-preview";
 const AZURE_API_KEY = Deno.env.get('AZURE_OPENAI_API_KEY');
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 1000; // 1 second
+
+async function fetchWithRetry(url: string, options: RequestInit, retries = MAX_RETRIES, delay = INITIAL_RETRY_DELAY): Promise<Response> {
+  try {
+    const response = await fetch(url, options);
+    
+    // If we get a rate limit error (429), retry with exponential backoff
+    if (response.status === 429 && retries > 0) {
+      console.log(`Rate limit hit (429). Retrying in ${delay / 1000} seconds... Attempts remaining: ${retries}`);
+      
+      // Get retry-after header if available, otherwise use our exponential backoff
+      const retryAfter = response.headers.get('retry-after');
+      const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : delay;
+      
+      // Wait for the specified time
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      
+      // Retry with exponential backoff
+      return fetchWithRetry(url, options, retries - 1, delay * 2);
+    }
+    
+    return response;
+  } catch (error) {
+    if (retries > 0) {
+      console.log(`Fetch failed. Retrying in ${delay / 1000} seconds... Attempts remaining: ${retries}`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -135,27 +169,33 @@ serve(async (req) => {
     console.log(`System prompt: ${systemPrompt.substring(0, 100)}...`);
     console.log(`User prompt (truncated): ${userPrompt.substring(0, 100)}...`);
 
-    const response = await fetch(AZURE_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'api-key': AZURE_API_KEY!,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
-          {
-            role: "user",
-            content: userPrompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: step === 'slides' ? 4096 : 800,
-      }),
+    const body = JSON.stringify({
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: userPrompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: step === 'slides' ? 4096 : 800,
     });
+
+    // Use the fetchWithRetry function instead of regular fetch
+    const response = await fetchWithRetry(
+      AZURE_ENDPOINT, 
+      {
+        method: 'POST',
+        headers: {
+          'api-key': AZURE_API_KEY!,
+          'Content-Type': 'application/json',
+        },
+        body: body
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
