@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ThemeColors } from '../pptx/types';
 import { loadRevealCss, loadRevealScript } from './reveal/loaders';
-import { safeDestroyReveal, initializeReveal } from './reveal/initManager';
+import { safeDestroyReveal, initializeReveal } from './reveal/revealInitializer';
 
 export const useRevealInit = (
   containerRef: React.RefObject<HTMLDivElement>,
