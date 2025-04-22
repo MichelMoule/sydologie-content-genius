@@ -1,21 +1,19 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
 import { useToast } from '@/hooks/use-toast';
-import { ThemeColors } from './pptx/types';
 import { themes, transitions } from './types/revealTypes';
 import { useRevealInit } from './hooks/useRevealInit';
 import { PreviewControls } from './preview/PreviewControls';
 import { SlidesContainer } from './preview/SlidesContainer';
+import { ThemeColors } from './types/ThemeColors';
 
 interface RevealPreviewProps {
   slidesHtml: string;
-  onExportPpt?: () => void;
   onColorChange?: (colors: ThemeColors) => void;
 }
 
-const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreviewProps) => {
+const RevealPreview = ({ slidesHtml, onColorChange }: RevealPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState('white');
   const [transition, setTransition] = useState('slide');
@@ -68,14 +66,12 @@ const RevealPreview = ({ slidesHtml, onExportPpt, onColorChange }: RevealPreview
         onThemeChange={setTheme}
         onTransitionChange={setTransition}
         onColorChange={handleColorChange}
-        onExportPpt={onExportPpt}
       />
       
       <SlidesContainer ref={containerRef} slidesHtml={slidesHtml} />
       
       <div className="text-sm text-muted-foreground mt-2">
         <p>Utilisez les flèches du clavier ou cliquez sur les côtés pour naviguer entre les diapositives.</p>
-        <p>Les diapositives sont chargées mais peuvent apparaître vides jusqu'à ce que vous naviguiez.</p>
       </div>
     </div>
   );

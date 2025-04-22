@@ -2,9 +2,8 @@
 import { ThemeSelector } from "./ThemeSelector";
 import { TransitionSelector } from "./TransitionSelector";
 import { ColorSelector } from "./ColorSelector";
-import { ExportButton } from "./ExportButton";
 import { ThemeOption, TransitionOption } from "../types/revealTypes";
-import { ThemeColors } from "../pptx/types";
+import { ThemeColors } from "../types/ThemeColors";
 
 interface PreviewControlsProps {
   themes: ThemeOption[];
@@ -15,7 +14,6 @@ interface PreviewControlsProps {
   onThemeChange: (theme: string) => void;
   onTransitionChange: (transition: string) => void;
   onColorChange: (colorType: keyof ThemeColors, color: string) => void;
-  onExportPpt?: () => void;
 }
 
 export const PreviewControls = ({
@@ -27,7 +25,6 @@ export const PreviewControls = ({
   onThemeChange,
   onTransitionChange,
   onColorChange,
-  onExportPpt
 }: PreviewControlsProps) => {
   return (
     <div className="flex flex-wrap gap-2 justify-end">
@@ -47,8 +44,6 @@ export const PreviewControls = ({
         colors={colors} 
         onColorChange={onColorChange} 
       />
-
-      {onExportPpt && <ExportButton onExport={onExportPpt} />}
     </div>
   );
 };
