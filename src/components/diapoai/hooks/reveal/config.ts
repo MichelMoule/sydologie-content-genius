@@ -6,7 +6,6 @@ export const createRevealConfig = (transition: string) => {
   return {
     controls: true,
     progress: true,
-    center: false,
     hash: false,
     transition: transition,
     slideNumber: true,
@@ -66,7 +65,9 @@ export const createRevealConfig = (transition: string) => {
     pdfPageHeightOffset: -1,
     
     // Garantir que tout le contenu reste visible
-    center: false,
-    fit: true
+    fit: true,
+    
+    // Enable better content distribution
+    center: true // Removed the duplicate "center" property
   };
 };
