@@ -27,7 +27,6 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
           slidesContainer.innerHTML = processedHtml;
           
           // Add custom styles to ensure content stays together on slides
-          // Do this only once to avoid multiple style injections
           if (!stylesAddedRef.current) {
             stylesAddedRef.current = true;
             const style = document.createElement('style');
@@ -60,6 +59,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
                 margin-bottom: 0.25em !important;
                 margin-top: 0.05em !important;
                 line-height: 1.25 !important;
+                font-size: 0.95em !important;
               }
               
               .reveal .slides ul, 
@@ -73,6 +73,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
               .reveal .slides li {
                 margin-bottom: 0.05em !important;
                 line-height: 1.2 !important;
+                font-size: 0.95em !important;
               }
               
               .reveal .slides section > * {
@@ -94,6 +95,14 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
                 justify-content: flex-start !important;
                 text-align: left !important;
                 page-break-inside: avoid !important;
+                overflow: visible !important;
+              }
+              
+              /* Ensure all content is visible - critical fix */
+              .reveal .slides {
+                height: auto !important;
+                overflow: visible !important;
+                max-height: none !important;
               }
               
               /* Ensure content wrapping for better text density */
@@ -107,14 +116,37 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
                 page-break-after: avoid !important;
               }
               
+              /* Force les éléments à rester avec leur contenu */
+              .reveal h1 + *, .reveal h2 + *, .reveal h3 + * {
+                page-break-before: avoid !important;
+              }
+              
               .reveal p, .reveal li {
                 page-break-inside: avoid !important;
                 font-size: 0.92em !important;
+                max-height: none !important;
+                overflow: visible !important;
               }
               
               /* Optimisation pour plus de texte */
               .reveal .slides {
                 font-size: 18px !important;
+              }
+              
+              /* Ensure slide contents don't overflow */
+              .reveal .slides section > * {
+                overflow: visible !important;
+              }
+              
+              /* Disable any slide transitions that might cause content to be hidden */
+              .reveal .slides section {
+                opacity: 1 !important;
+                visibility: visible !important;
+              }
+              
+              /* Fix for slide content overflow */
+              .reveal .slide-background {
+                overflow: visible !important;
               }
             `;
             container.current.appendChild(style);
@@ -130,7 +162,7 @@ export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string 
           className="bg-white reveal border rounded-lg overflow-hidden shadow-lg"
           style={{ height: '600px', width: '100%', position: 'relative' }}
         >
-          <div className="slides">
+          <div className="slides" style={{ overflow: 'visible' }}>
             <section>
               <h2>Chargement du diaporama...</h2>
               <p>La prévisualisation apparaîtra dans quelques instants.</p>

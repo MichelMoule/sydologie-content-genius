@@ -13,24 +13,43 @@ export const processParagraphs = (
 ): number => {
   let currentY = startY;
   
-  for (let i = 0; i < paragraphs.length; i++) {
-    const paragraph = paragraphs[i];
-    const text = getTextContent(paragraph);
+  // Regrouper les paragraphes pour un meilleur agencement
+  const maxParasPerGroup = 3;
+  for (let i = 0; i < paragraphs.length; i += maxParasPerGroup) {
+    let combinedText = "";
     
-    if (text.trim()) {
-      // Optimisations pour plus de texte par diapo
-      slide.addText(text, {
+    // Combiner jusqu'à maxParasPerGroup paragraphes
+    for (let j = 0; j < maxParasPerGroup && i + j < paragraphs.length; j++) {
+      const paragraph = paragraphs[i + j];
+      const text = getTextContent(paragraph);
+      
+      if (text.trim()) {
+        combinedText += (combinedText ? '\n\n' : '') + text;
+      }
+    }
+    
+    if (combinedText.trim()) {
+      // Ajouter le groupe de paragraphes comme un seul bloc de texte
+      // avec une hauteur adaptative basée sur la longueur du texte
+      const textLength = combinedText.length;
+      const dynamicHeight = Math.max(0.35, Math.min(1.5, textLength / 300));
+      
+      slide.addText(combinedText, {
         x: 0.4, 
         y: currentY, 
-        w: '96%', // Augmenté pour utiliser plus d'espace horizontal
-        h: 0.45,  // Réduit davantage pour permettre plus de contenu
-        fontSize: 16, // Plus petit pour accommoder plus de texte
+        w: '96%',
+        h: dynamicHeight,
+        fontSize: 16,
         color: textColor,
         breakLine: true,
-        lineSpacing: 0.85, // Lignes plus rapprochées pour une meilleure densité
-        margin: [0, 0, 0, 0] // Réduire les marges au minimum
+        lineSpacing: 0.85,
+        margin: [0, 0, 0, 0],
+        valign: 'top',
+        wrap: true
       });
-      currentY += 0.5; // Avancer encore moins pour plus de contenu par diapo
+      
+      // Avancer la position Y de façon proportionnelle au texte ajouté
+      currentY += dynamicHeight + 0.1;
     }
   }
   

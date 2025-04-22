@@ -6,49 +6,63 @@ export const createRevealConfig = (transition: string) => {
   return {
     controls: true,
     progress: true,
-    center: false, // Keep content aligned for better text density
+    center: false,
     hash: false,
     transition: transition,
     slideNumber: true,
-    embedded: true, // Keep embedded mode to prevent fullscreen behavior
+    embedded: true,
     width: '100%',
     height: '100%',
-    margin: 0.03, // Even more reduced margin to allow more content
-    viewDistance: 2, // Reduce preload for better performance
-    display: 'block', // Ensure slides display as block
-    fragments: false, // Disable fragments to prevent partial content showing
-    // Prevent unnecessary re-calculations that might trigger re-renders
-    autoPlayMedia: false,
-    autoAnimateUnmatched: false,
-    // Improved keyboard config
-    keyboard: {
-      // Keep arrow navigation but disable space
-      32: null, // Space
-      // Explicitly enable arrow navigation
-      37: 'prev', // Left arrow
-      39: 'next', // Right arrow
-    },
-    // Simplified touch control
-    touch: {
-      captureHorizontalSwipe: true,
-      captureVerticalSwipe: false,
-      swipeThreshold: 40
-    },
-    // Prevent layout recalculations that may cause refreshes
-    disableLayout: true,
-    // Add maxScale to prevent content from being too large
-    maxScale: 1.5,
-    // Prevent auto-animation that might cause reflows
+    margin: 0.01,
+    viewDistance: 3,
+    display: 'block',
+    fragments: false,
+    
+    // Paramètres critiques pour éviter les problèmes d'affichage
     autoSlide: 0,
-    autoSlideStoppable: true,
-    // Optimize for content display
+    autoPlayMedia: false,
+    parallaxBackgroundImage: '',
+    parallaxBackgroundSize: '',
+    
+    // Désactiver les transitions complexes pour éviter les problèmes d'affichage
+    backgroundTransition: 'none',
+    
+    // Empêcher le contenu d'être coupé
     minScale: 0.2,
-    // Prevent content from being cut off
-    pdfMaxPagesPerSlide: 1,
+    maxScale: 2.0,
+    
+    // Configuration du clavier
+    keyboard: {
+      37: 'prev',
+      39: 'next',
+    },
+    
+    // Optimisations tactiles
+    touch: true,
+    
+    // Paramètres critiques pour garantir un affichage complet du contenu
     pdfSeparateFragments: false,
-    // Disable features that might cause reflows
+    pdfMaxPagesPerSlide: 1,
+    
+    // Force l'affichage du contenu
+    showNotes: false,
+    disableLayout: false,
+    
+    // Paramètres pour éviter les problèmes de flux de rendu
+    history: false,
     overview: false,
-    // Set this to reduce unnecessary DOM updates
-    respondToHashChanges: false
+    pause: false,
+    respondToHashChanges: false,
+    
+    // Important: désactive les fonctionnalités qui pourraient masquer du contenu
+    hideInactiveCursor: false,
+    hideCursorTime: 0,
+    
+    // Paramètres pour une meilleure compatibilité d'affichage
+    mouseWheel: false,
+    preloadIframes: true,
+    
+    // PDF specific settings
+    pdfPageHeightOffset: -1
   };
 };
