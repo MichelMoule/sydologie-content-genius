@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TransitionOption, transitions } from "../types/revealTypes";
+import { transitions } from "../types/revealTypes";
 
 interface TransitionSelectorProps {
   currentTransition: string;
@@ -18,6 +18,9 @@ export const TransitionSelector = ({
   currentTransition, 
   onTransitionChange 
 }: TransitionSelectorProps) => {
+  // Make sure transitions is defined and has a default if it's not
+  const safeTransitions = transitions || [];
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,8 +29,8 @@ export const TransitionSelector = ({
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {transitions.map((t) => (
+      <DropdownMenuContent align="end" className="bg-white">
+        {safeTransitions.map((t) => (
           <DropdownMenuItem 
             key={t.value}
             onClick={() => onTransitionChange(t.value)}
