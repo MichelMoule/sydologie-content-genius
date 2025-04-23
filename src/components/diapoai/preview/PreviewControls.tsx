@@ -6,44 +6,53 @@ import { ThemeOption, TransitionOption } from "../types/revealTypes";
 import { ThemeColors } from "../types/ThemeColors";
 
 interface PreviewControlsProps {
-  themes: ThemeOption[];
-  transitions: TransitionOption[];
-  currentTheme: string;
-  currentTransition: string;
+  onDownload?: () => void;
+  onTransitionChange?: (transition: string) => void;
   colors: ThemeColors;
-  onThemeChange: (theme: string) => void;
-  onTransitionChange: (transition: string) => void;
-  onColorChange: (colorType: keyof ThemeColors, color: string) => void;
+  onColorChange?: (colors: ThemeColors) => void;
 }
 
 export const PreviewControls = ({
-  themes,
-  transitions,
-  currentTheme,
-  currentTransition,
-  colors,
-  onThemeChange,
+  onDownload,
   onTransitionChange,
+  colors,
   onColorChange,
 }: PreviewControlsProps) => {
+  // Handler to adapt the ColorSelector's per-property updates to the full object updates
+  const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
+    if (onColorChange) {
+      const updatedColors = {
+        ...colors,
+        [colorType]: color
+      };
+      onColorChange(updatedColors);
+    }
+  };
+
   return (
     <div className="flex flex-wrap gap-2 justify-end">
-      <ThemeSelector 
-        themes={themes} 
-        currentTheme={currentTheme} 
-        onThemeChange={onThemeChange} 
-      />
-      
-      <TransitionSelector 
-        transitions={transitions} 
-        currentTransition={currentTransition} 
-        onTransitionChange={onTransitionChange} 
-      />
+      {onTransitionChange && (
+        <TransitionSelector
+          currentTransition="slide"
+          onTransitionChange={onTransitionChange}
+        />
+      )}
 
-      <ColorSelector 
-        colors={colors} 
-        onColorChange={onColorChange} 
-      />
+      {onColorChange && (
+        <ColorSelector 
+          colors={colors} 
+          onColorChange={handleColorChange}
+        />
+      )}
+      
+      {onDownload && (
+        <button 
+          onClick={onDownload}
+          className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80"
+        >
+          Télécharger
+        </button>
+      )}
     </div>
   );
 };

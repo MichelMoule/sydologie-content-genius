@@ -20,8 +20,13 @@ export const RevealPreview = ({
 }: RevealPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Initialize Reveal.js
-  useRevealInit(containerRef, slidesHtml, colors, transition);
+  // Initialize Reveal.js with the correct parameter structure
+  useRevealInit({
+    containerRef,
+    slidesHtml,
+    colors,
+    transition
+  });
   
   return (
     <div className="reveal-preview">
