@@ -3,10 +3,20 @@ import { forwardRef } from "react";
 import { useSlideStructure } from "../hooks/useSlideStructure";
 import { SlideStyles } from "./SlideStyles";
 import { LoadingSlide } from "./LoadingSlide";
+import { OutlineSection } from "../types";
 
-export const SlidesContainer = forwardRef<HTMLDivElement, { slidesHtml?: string }>(
-  ({ slidesHtml }, ref) => {
-    const { stylesAddedRef } = useSlideStructure(ref as React.RefObject<HTMLDivElement>, slidesHtml);
+export interface SlidesContainerProps {
+  slidesHtml?: string;
+  outline?: OutlineSection[] | null;
+}
+
+export const SlidesContainer = forwardRef<HTMLDivElement, SlidesContainerProps>(
+  ({ slidesHtml, outline }, ref) => {
+    const { stylesAddedRef, contentProcessedRef } = useSlideStructure(
+      ref as React.RefObject<HTMLDivElement>, 
+      slidesHtml,
+      outline
+    );
     
     return (
       <div className="relative w-full overflow-hidden">

@@ -1,44 +1,63 @@
 
-import { Download, Presentation } from "lucide-react";
-import RevealPreview from "./RevealPreview";
+import { useState, useRef, useEffect } from "react";
+import { RevealPreview } from "./RevealPreview";
+import { PreviewControls } from "./preview/PreviewControls";
 import { ThemeColors } from "./types/ThemeColors";
-import { Button } from "@/components/ui/button";
+import { OutlineSection } from "./types";
+import { useToast } from "@/hooks/use-toast";
 
 interface DiapoAIPreviewProps {
-  slidesHtml: string | null;
+  slidesHtml: string;
+  outline?: OutlineSection[] | null;
   downloadHtml: () => void;
+  onColorChange?: (colors: ThemeColors) => void;
   colors: ThemeColors;
-  onColorChange: (colors: ThemeColors) => void;
 }
 
 export const DiapoAIPreview = ({
   slidesHtml,
+  outline,
   downloadHtml,
   onColorChange,
-  colors
+  colors,
 }: DiapoAIPreviewProps) => {
-  if (!slidesHtml) return null;
+  const [transition, setTransition] = useState<string>("slide");
+  const { toast } = useToast();
+  
+  const handleDownload = () => {
+    try {
+      downloadHtml();
+    } catch (error) {
+      console.error("Error downloading HTML:", error);
+      toast({
+        title: "Erreur lors du téléchargement",
+        description: "Une erreur est survenue lors de la préparation du fichier HTML.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold text-sydologie-green flex items-center gap-2 font-dmsans">
-          <Presentation className="h-5 w-5" />
-          Votre diaporama
-        </h3>
-        <Button 
-          onClick={downloadHtml} 
-          className="flex items-center gap-2" 
-          variant="outline"
-        >
-          <Download className="h-4 w-4" />
-          Télécharger HTML
-        </Button>
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-4">
+        <h2 className="text-2xl font-bold">Prévisualisation du diaporama</h2>
+        
+        <PreviewControls
+          onDownload={handleDownload}
+          onTransitionChange={setTransition}
+          colors={colors}
+          onColorChange={onColorChange}
+        />
+        
+        <div className="border rounded-lg overflow-hidden bg-white shadow-md">
+          <RevealPreview 
+            slidesHtml={slidesHtml} 
+            transition={transition}
+            colors={colors}
+            outline={outline}
+          />
+        </div>
       </div>
-      <RevealPreview 
-        slidesHtml={slidesHtml} 
-        onColorChange={onColorChange}
-      />
     </div>
   );
 };

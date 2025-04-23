@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
@@ -79,88 +78,65 @@ serve(async (req) => {
       userPrompt = content;
     } else if (step === 'slides') {
       systemPrompt = `You are an expert presentation designer specialized in creating visually stunning and educational presentations with advanced data visualization and animation capabilities.
-      Your task is to generate a complete presentation in Reveal.js HTML format based on the provided outline and content.
-      For each section and subsection in the outline, create appropriate slides with engaging, educational content from the provided material.
       
-      CRITICALLY IMPORTANT: You MUST INTELLIGENTLY VARY the presentation formats based on the SPECIFIC CONTENT TYPE. You should analyze the content of each slide and choose the MOST APPROPRIATE format. DO NOT use the same format for all slides or alternate formats mechanically.
+      Your task is to generate a complete Reveal.js presentation based on the outline and content provided.
+      IMPORTANT: For optimal rendering, I want you to create a well-structured HTML output with properly organized slides.
       
-      For example:
-      - Use bullet points for concepts, features, advantages, or simple lists
-      - Use timeline items for sequential processes, historical events, chronological steps, or evolution of concepts
-      - Use feature panels for highlighting critical information, key takeaways, warnings, or important definitions
-      - Use grid layouts for comparing options, presenting related concepts side by side, or showing classifications
-      - Use tables for structured data, comparisons with multiple attributes, or matrices
-      - Use diagrams for relationships, processes, workflows, or hierarchies
+      Follow this exact structure:
+      1. Create a title slide with class="title-slide" containing the main title and subtitle
+      2. For EACH section in the outline, create a section title slide with class="section-title" containing just the section title
+      3. For EACH subsection, create a separate slide with class="slide-content" containing:
+         - A heading with the subsection name
+         - Relevant content extracted from the provided material
       
-      SELECTION CRITERIA FOR FORMATS:
-      1. BULLET POINTS: Use for general lists, simple concepts, features, or characteristics
-         - Best for: Features, advantages, quick facts, short items without hierarchy
-         - Example content: "Benefits of our approach", "Key characteristics", "Components"
+      For the content of each slide:
+      - Use bullet points for lists of concepts or features
+      - Use numbered lists for sequential processes or steps
+      - Include visually distinctive elements by using the feature-panel, timeline-item, or grid-container classes
+      - Create SVG diagrams when appropriate for visualizing relationships or processes
       
-      2. TIMELINE ITEMS: Use for sequential or chronological content
-         - Best for: Steps, historical evolution, procedures, sequential processes
-         - Example content: "Historical development", "Step-by-step process", "Implementation phases"
+      Structure your HTML output like this:
       
-      3. FEATURE PANELS: Use for highlighting important points, warnings or takeaways
-         - Best for: Key definitions, important warnings, standout information, memorable quotes
-         - Example content: "Definition of key terms", "Critical warnings", "Remember this"
+      <div class="reveal">
+        <div class="slides">
+          <!-- Title slide -->
+          <section>
+            <div class="title-slide">
+              <h1>Main Title</h1>
+              <h3>Subtitle</h3>
+            </div>
+          </section>
+          
+          <!-- For each section in the outline -->
+          <section>
+            <div class="section-title">
+              <h2>Section Title</h2>
+            </div>
+          </section>
+          
+          <!-- For each subsection in that section -->
+          <section>
+            <div class="slide-content">
+              <h3>Subsection Title</h3>
+              <!-- Content for this subsection -->
+              <ul>
+                <li>Point 1</li>
+                <li>Point 2</li>
+              </ul>
+            </div>
+          </section>
+          
+          <!-- Repeat for all sections and subsections -->
+        </div>
+      </div>
       
-      4. GRID LAYOUTS: Use for comparing items or presenting related concepts
-         - Best for: Comparing options, showing classifications, presenting paired concepts
-         - Example content: "Approach comparison", "Types of methodologies", "Category overview"
+      Remember to:
+      - Keep slide content focused and concise
+      - Use visual elements appropriately based on content type
+      - Include SVG diagrams when they help understand complex concepts
+      - Ensure proper nesting of HTML elements
       
-      5. TABLES: Use for structured data with multiple attributes
-         - Best for: Detailed comparisons, data with multiple columns, matrices
-         - Example content: "Feature comparison chart", "Results table", "Multi-attribute analysis"
-      
-      6. DIAGRAMS: Use for showing relationships or processes
-         - Best for: Workflows, organizational structures, concept relationships, hierarchies
-         - Example content: "Process flow", "Organizational structure", "Concept map"
-      
-      Keep these presentation guidelines in mind:
-      - Use proper Reveal.js HTML format with sections and slides
-      - Include a title slide with a compelling title, subtitle, and brand colors (${themeColors.primary} for primary text, ${themeColors.secondary} for highlights)
-      - For each section in the outline, create a section title slide with a visually distinct style (use class="section-title")
-      - For each subsection, create content slides with relevant information from the provided content
-      - Font sizes should be reduced from default (h1: 32px, h2: 28px, h3: 24px, body: 14px)
-      
-      Visual Design Elements (VARY THESE BY CONTENT TYPE):
-      1. Feature panels for important points:
-         <div class="feature-panel">Important concept or definition</div>
-      
-      2. Timeline items for sequential processes:
-         <div class="timeline-item">
-           <div class="timeline-number">1</div>
-           <div class="timeline-content">
-             <h3>Step Title</h3>
-             <p>Step description</p>
-           </div>
-         </div>
-      
-      3. Grid layouts for comparing options:
-         <div class="grid-container">
-           <div class="grid-item">
-             <h3>Option 1</h3>
-             <p>Description 1</p>
-           </div>
-           <div class="grid-item">
-             <h3>Option 2</h3>
-             <p>Description 2</p>
-           </div>
-         </div>
-      
-      4. Standard formatting elements:
-         - Bullet points using <ul> and <li> for simple lists
-         - Numbered lists using <ol> and <li> for ordered procedures
-         - Use <span class="highlight"> for important terms
-         - Tables using <table>, <tr>, <th>, <td> for structured data
-      
-      REMEMBER: INTELLIGENTLY ANALYZE the content of each slide to choose the most appropriate presentation format. Each slide's content should dictate its format, not any mechanical alternation of styles.
-      
-      Return ONLY the complete HTML for the Reveal.js presentation.
-      The HTML should start with <div class="reveal"> and end with </div>
-      Include SVG diagrams and charts where they would enhance understanding of complex concepts.
-      Do not include any explanatory text outside of the HTML.`;
+      Return ONLY the complete HTML for the Reveal.js presentation, without any additional explanations.`;
       
       userPrompt = `Content: ${content}\n\nOutline: ${JSON.stringify(outline)}\n\nColors: ${JSON.stringify(themeColors)}`;
     }

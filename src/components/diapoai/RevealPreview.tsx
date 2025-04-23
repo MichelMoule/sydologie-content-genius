@@ -1,86 +1,31 @@
 
-import React, { useRef, useState, useEffect } from 'react';
-import 'reveal.js/dist/reveal.css';
-import 'reveal.js/dist/theme/white.css';
-import { useToast } from '@/hooks/use-toast';
-import { themes, transitions } from './types/revealTypes';
-import { useRevealInit } from './hooks/useRevealInit';
-import { PreviewControls } from './preview/PreviewControls';
-import { SlidesContainer } from './preview/SlidesContainer';
-import { ThemeColors } from './types/ThemeColors';
+import { useEffect, useRef } from "react";
+import { SlidesContainer } from "./preview/SlidesContainer";
+import { ThemeColors } from "./types/ThemeColors";
+import { useRevealInit } from "./hooks/useRevealInit";
+import { OutlineSection } from "./types";
 
 interface RevealPreviewProps {
   slidesHtml: string;
-  onColorChange?: (colors: ThemeColors) => void;
+  outline?: OutlineSection[] | null;
+  transition?: string;
+  colors: ThemeColors;
 }
 
-const RevealPreview = ({ slidesHtml, onColorChange }: RevealPreviewProps) => {
+export const RevealPreview = ({
+  slidesHtml,
+  outline,
+  transition = "slide",
+  colors
+}: RevealPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState('white');
-  const [transition, setTransition] = useState('slide');
-  const [themeColors, setThemeColors] = useState<ThemeColors>({
-    primary: "#1B4D3E",
-    secondary: "#FF9B7A",
-    background: "#FFFFFF",
-    text: "#333333"
-  });
-  const { toast } = useToast();
-  const toastShownRef = useRef(false);
   
   // Initialize Reveal.js
-  const { deck } = useRevealInit({
-    containerRef, 
-    slidesHtml, 
-    colors: themeColors, 
-    transition
-  });
-
-  // Show a toast when the preview is ready - but only once
-  useEffect(() => {
-    if (deck && !toastShownRef.current) {
-      toastShownRef.current = true;
-      toast({
-        title: "Prévisualisation prête",
-        description: "Utilisez les flèches ou cliquez pour naviguer entre les diapositives."
-      });
-    }
-  }, [deck, toast]);
-
-  // Handle color changes
-  const handleColorChange = (colorType: keyof ThemeColors, color: string) => {
-    const newColors = { ...themeColors, [colorType]: color };
-    setThemeColors(newColors);
-    
-    if (onColorChange) {
-      onColorChange(newColors);
-    }
-    
-    toast({
-      title: "Couleurs mises à jour",
-      description: "Les couleurs du diaporama ont été changées."
-    });
-  };
-
+  useRevealInit(containerRef, slidesHtml, colors, transition);
+  
   return (
-    <div className="space-y-4">
-      <PreviewControls 
-        themes={themes}
-        transitions={transitions}
-        currentTheme={theme}
-        currentTransition={transition}
-        colors={themeColors}
-        onThemeChange={setTheme}
-        onTransitionChange={setTransition}
-        onColorChange={handleColorChange}
-      />
-      
-      <SlidesContainer ref={containerRef} slidesHtml={slidesHtml} />
-      
-      <div className="text-sm text-muted-foreground mt-2">
-        <p>Utilisez les flèches du clavier ou cliquez sur les côtés pour naviguer entre les diapositives.</p>
-      </div>
+    <div className="reveal-preview">
+      <SlidesContainer ref={containerRef} slidesHtml={slidesHtml} outline={outline} />
     </div>
   );
 };
-
-export default RevealPreview;

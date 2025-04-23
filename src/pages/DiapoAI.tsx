@@ -62,6 +62,7 @@ const DiapoAI = () => {
             {slidesHtml && (
               <DiapoAIPreview
                 slidesHtml={slidesHtml}
+                outline={outline}
                 downloadHtml={downloadHtml}
                 onColorChange={handleColorChange}
                 colors={colors}
