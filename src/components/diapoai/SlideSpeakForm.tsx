@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,9 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, AlertCircle, Download } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -29,15 +27,17 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { 
-  SlideSpeakTaskResult, 
-  SlideSpeakGenerateParams, 
-  SlideSpeakTemplate, 
-  slideSpeakService 
+import {
+  SlideSpeakTaskResult,
+  SlideSpeakGenerateParams,
+  SlideSpeakTemplate,
+  slideSpeakService,
 } from "@/services/slidespeak";
 
 export const formSchema = z.object({
-  content: z.string().min(10, { message: "Le contenu est requis (minimum 10 caractères)" }),
+  content: z.string().min(10, {
+    message: "Le contenu est requis (minimum 10 caractères)",
+  }),
   tone: z.string().optional(),
   verbosity: z.string().optional(),
   length: z.number().int().min(1).max(50).optional(),
@@ -58,8 +58,8 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
   const [apiError, setApiError] = useState<string | null>(null);
   const [templates, setTemplates] = useState<SlideSpeakTemplate[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
-  const [pollingInterval, setPollingInterval] = useState<number | null>(null);
-  
+  const [pollingIntervalId, setPollingIntervalId] = useState<number | null>(null);
+
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,18 +75,18 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
   });
 
   useEffect(() => {
-    // Charger les templates disponibles
+    // Load available templates on component mount
     const loadTemplates = async () => {
       setIsLoadingTemplates(true);
       try {
-        const templates = await slideSpeakService.getTemplates();
-        setTemplates(templates);
+        const fetchedTemplates = await slideSpeakService.getTemplates();
+        setTemplates(fetchedTemplates);
       } catch (error) {
         console.error("Erreur lors du chargement des templates:", error);
         toast({
           title: "Erreur de chargement",
           description: "Impossible de charger les templates de présentation.",
-          variant: "destructive"
+          variant: "destructive",
         });
       } finally {
         setIsLoadingTemplates(false);
@@ -96,7 +96,6 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
     loadTemplates();
   }, [toast]);
 
-  // Polling de l'état de la tâche
   useEffect(() => {
     if (!taskId) return;
 
@@ -106,10 +105,10 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
         setTaskStatus(status);
 
         if (status.task_status === "SUCCESS" && status.task_result?.url) {
-          // Présentation générée avec succès
-          if (pollingInterval) {
-            clearInterval(pollingInterval);
-            setPollingInterval(null);
+          // Success - clear polling and update UI
+          if (pollingIntervalId !== null) {
+            clearInterval(pollingIntervalId);
+            setPollingIntervalId(null);
           }
           setIsGenerating(false);
           onPresentationGenerated(status.task_result.url);
@@ -117,32 +116,39 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
             title: "Présentation générée avec succès",
             description: "Votre présentation PowerPoint est prête au téléchargement",
           });
+          setActiveTab("content");
         } else if (status.task_status === "FAILURE") {
-          // Échec de la génération
-          if (pollingInterval) {
-            clearInterval(pollingInterval);
-            setPollingInterval(null);
+          // Failure - clear polling and show error
+          if (pollingIntervalId !== null) {
+            clearInterval(pollingIntervalId);
+            setPollingIntervalId(null);
           }
           setIsGenerating(false);
-          setApiError(status.error || "Une erreur est survenue lors de la génération de la présentation");
+          setApiError(
+            status.error || "Une erreur est survenue lors de la génération de la présentation"
+          );
           toast({
             title: "Échec de la génération",
-            description: status.error || "Une erreur est survenue lors de la génération de la présentation",
-            variant: "destructive"
+            description:
+              status.error || "Une erreur est survenue lors de la génération de la présentation",
+            variant: "destructive",
           });
         }
+        // else keep waiting (PENDING or PROCESSING)
       } catch (error) {
         console.error("Erreur lors de la vérification du statut:", error);
       }
     };
 
-    // Vérifier immédiatement, puis toutes les 2 secondes
+    // Immediately check once, then every 2 seconds
     checkTaskStatus();
-    const interval = setInterval(checkTaskStatus, 2000);
-    setPollingInterval(interval);
+    const intervalId = window.setInterval(checkTaskStatus, 2000);
+    setPollingIntervalId(intervalId);
 
+    // Cleanup on unmount or taskId change
     return () => {
-      if (interval) clearInterval(interval);
+      if (intervalId) clearInterval(intervalId);
+      setPollingIntervalId(null);
     };
   }, [taskId, onPresentationGenerated, toast]);
 
@@ -154,7 +160,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
       toast({
         title: "Format non supporté",
         description: "Veuillez télécharger un fichier .docx",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -171,6 +177,8 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
   const generatePresentation = async (values: z.infer<typeof formSchema>) => {
     setApiError(null);
     setIsGenerating(true);
+    setTaskStatus(null);
+    setTaskId(null);
     try {
       const params: SlideSpeakGenerateParams = {
         plain_text: values.content,
@@ -186,13 +194,12 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
 
       const response = await slideSpeakService.generatePresentation(params);
       setTaskId(response.task_id);
-      
+
       toast({
         title: "Génération en cours",
         description: "Votre présentation est en cours de génération, veuillez patienter...",
       });
-      
-      // Le polling est géré par l'effet ci-dessus
+      setActiveTab("content");
     } catch (error: any) {
       console.error("Erreur lors de la génération de la présentation:", error);
       setApiError(error.message || "Une erreur est survenue lors de la génération de la présentation");
@@ -200,7 +207,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
       toast({
         title: "Erreur de génération",
         description: "Une erreur est survenue lors de la génération de la présentation",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -212,11 +219,16 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
   const getProgressValue = () => {
     if (!taskStatus) return 10;
     switch (taskStatus.task_status) {
-      case "PENDING": return 25;
-      case "PROCESSING": return 75;
-      case "SUCCESS": return 100;
-      case "FAILURE": return 100;
-      default: return 10;
+      case "PENDING":
+        return 25;
+      case "PROCESSING":
+        return 75;
+      case "SUCCESS":
+        return 100;
+      case "FAILURE":
+        return 100;
+      default:
+        return 10;
     }
   };
 
@@ -236,7 +248,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
           </AlertDescription>
         </Alert>
       )}
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="content">Contenu</TabsTrigger>
@@ -245,15 +257,15 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
 
         <TabsContent value="content" className="p-6">
           <h3 className="text-xl font-semibold mb-4">Contenu de la présentation</h3>
-          
+
           <div className="mb-6">
             <div className="flex flex-col space-y-2 mb-4">
               <Label htmlFor="docxFile">Importer un fichier DOCX (optionnel)</Label>
-              <Input 
-                id="docxFile" 
-                type="file" 
-                accept=".docx" 
-                onChange={handleFileUpload} 
+              <Input
+                id="docxFile"
+                type="file"
+                accept=".docx"
+                onChange={handleFileUpload}
                 className="max-w-md"
               />
               <p className="text-sm text-muted-foreground">
@@ -271,45 +283,40 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                   <FormItem>
                     <FormLabel>Contenu*</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Saisissez ou collez votre contenu ici..." 
+                      <Textarea
+                        placeholder="Saisissez ou collez votre contenu ici..."
                         className="min-h-[300px]"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Le contenu qui servira de base pour votre diaporama
-                    </FormDescription>
+                    <FormDescription>Le contenu qui servira de base pour votre diaporama</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
               <div className="flex justify-end">
-                <Button 
+                <Button
                   type="button"
-                  variant="outline" 
-                  className="mr-2" 
+                  variant="outline"
+                  className="mr-2"
                   onClick={() => setActiveTab("settings")}
+                  disabled={isGenerating}
                 >
                   Paramètres avancés
                 </Button>
-                
-                <Button 
-                  type="submit" 
-                  disabled={isGenerating}
-                >
+
+                <Button type="submit" disabled={isGenerating}>
                   {isGenerating ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                      Génération en cours...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Génération en cours...
                     </>
                   ) : (
                     "Générer la présentation"
                   )}
                 </Button>
               </div>
-              
+
               {isGenerating && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
@@ -330,7 +337,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
 
         <TabsContent value="settings" className="p-6">
           <h3 className="text-xl font-semibold mb-4">Paramètres de la présentation</h3>
-          
+
           <Form {...form}>
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -341,9 +348,9 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                     <FormItem>
                       <FormLabel>Template</FormLabel>
                       <FormControl>
-                        <Select 
-                          disabled={isLoadingTemplates} 
-                          onValueChange={field.onChange} 
+                        <Select
+                          disabled={isLoadingTemplates}
+                          onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <SelectTrigger className="w-full">
@@ -362,9 +369,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>
-                        Le style visuel de votre présentation
-                      </FormDescription>
+                      <FormDescription>Le style visuel de votre présentation</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -376,17 +381,15 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                     <FormItem>
                       <FormLabel>Nombre de diapositives</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          min={1} 
-                          max={50} 
-                          {...field} 
-                          onChange={e => field.onChange(parseInt(e.target.value) || 10)}
+                        <Input
+                          type="number"
+                          min={1}
+                          max={50}
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 10)}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Nombre approximatif de diapositives (1-50)
-                      </FormDescription>
+                      <FormDescription>Nombre approximatif de diapositives (1-50)</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -412,9 +415,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>
-                        Le ton utilisé pour le texte de la présentation
-                      </FormDescription>
+                      <FormDescription>Le ton utilisé pour le texte de la présentation</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -437,9 +438,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>
-                        La quantité de texte par diapositive
-                      </FormDescription>
+                      <FormDescription>La quantité de texte par diapositive</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -452,10 +451,10 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
                   <FormItem>
                     <FormLabel>Instructions personnalisées</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Instructions spécifiques pour la présentation..." 
+                      <Textarea
+                        placeholder="Instructions spécifiques pour la présentation..."
                         className="min-h-[100px]"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormDescription>
@@ -466,10 +465,7 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
               />
 
               <div className="flex justify-end">
-                <Button 
-                  type="button"
-                  onClick={() => setActiveTab("content")}
-                >
+                <Button type="button" onClick={() => setActiveTab("content")}>
                   Retour au contenu
                 </Button>
               </div>
