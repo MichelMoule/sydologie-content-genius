@@ -2,7 +2,7 @@
 import { ThemeSelector } from "./ThemeSelector";
 import { TransitionSelector } from "./TransitionSelector";
 import { ColorSelector } from "./ColorSelector";
-import { ThemeOption, TransitionOption } from "../types/revealTypes";
+import { ThemeOption, TransitionOption, transitions } from "../types/revealTypes";
 import { ThemeColors } from "../types/ThemeColors";
 
 interface PreviewControlsProps {
@@ -35,6 +35,7 @@ export const PreviewControls = ({
         <TransitionSelector
           currentTransition="slide"
           onTransitionChange={onTransitionChange}
+          transitions={transitions}
         />
       )}
 

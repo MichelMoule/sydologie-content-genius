@@ -7,16 +7,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { transitions } from "../types/revealTypes";
+import { TransitionOption } from "../types/revealTypes";
 
 interface TransitionSelectorProps {
   currentTransition: string;
   onTransitionChange: (transition: string) => void;
+  transitions: TransitionOption[];
 }
 
 export const TransitionSelector = ({ 
   currentTransition, 
-  onTransitionChange 
+  onTransitionChange,
+  transitions
 }: TransitionSelectorProps) => {
   // Make sure transitions is defined and has a default if it's not
   const safeTransitions = transitions || [];
