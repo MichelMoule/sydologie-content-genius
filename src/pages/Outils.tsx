@@ -13,10 +13,10 @@ const Outils = () => {
   // Map the tools to the format expected by ToolSection
   const mapToolsToToolSection = (toolsList) => {
     return toolsList.map(tool => ({
-      id: Number(tool.id),
+      id: tool.id,
       name: tool.name,
       description: tool.description,
-      image: tool.icon, // Map icon to image
+      image: tool.icon, // Use icon property as image
       path: tool.link
     }));
   };
