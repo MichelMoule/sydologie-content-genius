@@ -1,56 +1,226 @@
+import {
+  BrainCircuit,
+  BookText,
+  CaseIcon,
+  FileCode2,
+  FileSearch,
+  Flame,
+  FolderKanban,
+  GraduationCap,
+  ImageIcon,
+  LayoutDashboard,
+  ListChecks,
+  LucideIcon,
+  MessageSquare,
+  Pilcrow,
+  Presentation,
+  Search,
+  Settings,
+  Text,
+  VideoIcon,
+} from "lucide-react";
 
-export const tools = {
-  conception: [
-    {
-      id: 1,
-      name: "ProgrAImme",
-      description: "Créez des programmes de formation personnalisés",
-      image: "/lovable-uploads/11f4232d-1b7a-4f8d-b618-46ab72d881b5.png",
-      path: "/outils/program"
-    },
-    {
-      id: 2,
-      name: "Quiiiiiz?",
-      description: "Créez des quiz personnalisés pour vos apprenants",
-      image: "/lovable-uploads/dca74049-15ef-475b-8004-d0e8846712c3.png",
-      path: "/outils/quiz"
-    },
-    {
-      id: 3,
-      name: "Scrypto-vidéo",
-      description: "Créez des scripts pour vos vidéos de formation",
-      image: "/lovable-uploads/b7521456-bfcc-47d0-837b-5652b28664aa.png",
-      path: "/outils/videoscript"
-    },
-    {
-      id: 4,
-      name: "Flashcards",
-      description: "Créez des cartes pour mémoriser vos contenus",
-      image: "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
-      path: "/outils/flashcards"
-    },
-    {
-      id: 7,
-      name: "Glossaire",
-      description: "Créez des glossaires pour définir les termes clés",
-      image: "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
-      path: "/outils/glossaire"
-    },
-    {
-      id: 8,
-      name: "DiapoAI",
-      description: "Créez des présentations percutantes pour vos formations",
-      image: "/lovable-uploads/7dbee4f3-0134-4112-ab28-8b8b867c9b7a.png",
-      path: "/outils/diapoai"
-    }
-  ],
-  analyse: [
-    {
-      id: 9,
-      name: "FeedbaIck",
-      description: "Analysez les retours récoltés après vos formations",
-      image: "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
-      path: "/outils/feedbaick"
-    }
-  ]
+type Tool = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+  link: string;
+  bgColor: string;
+  color: string;
+  labelColor: string;
+  featured: boolean;
+  order: number;
+  active: boolean;
+};
+
+export const categories = [
+  {
+    id: "all",
+    name: "Tous",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "text",
+    name: "Textes",
+    icon: BookText,
+  },
+  {
+    id: "image",
+    name: "Images",
+    icon: ImageIcon,
+  },
+  {
+    id: "video",
+    name: "Vidéos",
+    icon: VideoIcon,
+  },
+  {
+    id: "code",
+    name: "Code",
+    icon: FileCode2,
+  },
+  {
+    id: "ai",
+    name: "IA",
+    icon: BrainCircuit,
+  },
+  {
+    id: "other",
+    name: "Autres",
+    icon: CaseIcon,
+  },
+];
+
+export const tools = [
+  {
+    id: "formations",
+    name: "Formations",
+    description: "Accédez à des formations de qualité",
+    icon: "graduation-cap",
+    category: "other",
+    link: "/formations",
+    bgColor: "bg-orange-50",
+    color: "text-orange-600",
+    labelColor: "orange",
+    featured: true,
+    order: 10,
+    active: true,
+  },
+  {
+    id: "feedbaick",
+    name: "FeedbaIck",
+    description: "Recevez des feedbacks constructifs",
+    icon: "message-square",
+    category: "text",
+    link: "/outils/feedbaick",
+    bgColor: "bg-red-50",
+    color: "text-red-600",
+    labelColor: "red",
+    featured: true,
+    order: 20,
+    active: true,
+  },
+  {
+    id: "quiz",
+    name: "Quiz",
+    description: "Testez vos connaissances",
+    icon: "list-checks",
+    category: "other",
+    link: "/outils/quiz",
+    bgColor: "bg-blue-50",
+    color: "text-blue-600",
+    labelColor: "blue",
+    featured: true,
+    order: 30,
+    active: true,
+  },
+  {
+    id: "program",
+    name: "ProgrAImme",
+    description: "Générez un programme de formation",
+    icon: "pilcrow",
+    category: "text",
+    link: "/outils/program",
+    bgColor: "bg-green-50",
+    color: "text-green-600",
+    labelColor: "green",
+    featured: true,
+    order: 40,
+    active: true,
+  },
+  {
+    id: "flashcards",
+    name: "Flashcards",
+    description: "Créez des flashcards pour mémoriser",
+    icon: "file-search",
+    category: "text",
+    link: "/outils/flashcards",
+    bgColor: "bg-yellow-50",
+    color: "text-yellow-600",
+    labelColor: "yellow",
+    featured: true,
+    order: 50,
+    active: true,
+  },
+  {
+    id: "diapoai",
+    name: "DiapoAI",
+    description: "Générez un diaporama",
+    icon: "presentation",
+    category: "ai",
+    link: "/outils/diapoai",
+    bgColor: "bg-purple-50",
+    color: "text-purple-600",
+    labelColor: "purple",
+    featured: true,
+    order: 60,
+    active: true,
+  },
+  {
+    id: "prompt-engineer",
+    name: "PromptEngineer",
+    description: "Créer et améliorer vos prompts pour l'IA",
+    icon: "text",
+    category: "ai",
+    link: "/outils/prompt-engineer",
+    bgColor: "bg-blue-50",
+    color: "text-blue-600",
+    labelColor: "blue",
+    featured: true,
+    order: 70,
+    active: true,
+  },
+  {
+    id: "glossaire",
+    name: "Glossaire IA",
+    description: "Découvrez les termes clés de l'IA",
+    icon: "search",
+    category: "ai",
+    link: "/outils/glossaire",
+    bgColor: "bg-sky-50",
+    color: "text-sky-600",
+    labelColor: "sky",
+    featured: false,
+    order: 80,
+    active: true,
+  },
+  {
+    id: "videoscript",
+    name: "VideoScript",
+    description: "Générez un script de vidéo",
+    icon: "video",
+    category: "video",
+    link: "/outils/videoscript",
+    bgColor: "bg-teal-50",
+    color: "text-teal-600",
+    labelColor: "teal",
+    featured: false,
+    order: 90,
+    active: true,
+  },
+  {
+    id: "suggestions",
+    name: "Suggestions IA",
+    description: "Recevez des suggestions d'amélioration",
+    icon: "flame",
+    category: "ai",
+    link: "/outils/suggestions",
+    bgColor: "bg-pink-50",
+    color: "text-pink-600",
+    labelColor: "pink",
+    featured: false,
+    order: 100,
+    active: true,
+  },
+];
+
+export const getToolsByCategory = (category: string) => {
+  if (category === "all") {
+    return tools.sort((a, b) => a.order - b.order);
+  }
+  return tools
+    .filter((tool) => tool.category === category)
+    .sort((a, b) => a.order - b.order);
 };

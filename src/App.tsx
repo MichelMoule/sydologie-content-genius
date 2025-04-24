@@ -21,6 +21,7 @@ import Suggestions from "./pages/Suggestions";
 import Legal from "./pages/Legal";
 import Settings from "./pages/Settings";
 import ResetPassword from "./pages/ResetPassword";
+import PromptEngineer from "./pages/PromptEngineer";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/outils/videoscript" element={<VideoScript />} />
           <Route path="/outils/diapoai" element={<DiapoAI />} />
           <Route path="/outils/suggestions" element={<Suggestions />} />
+          <Route path="/outils/prompt-engineer" element={<PromptEngineer />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="*" element={<NotFound />} />
