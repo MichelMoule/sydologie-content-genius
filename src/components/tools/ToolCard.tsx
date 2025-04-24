@@ -16,11 +16,17 @@ const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
       to={path || "#"} 
       className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
     >
-      <img
-        src={image}
-        alt={name}
-        className="w-full h-48 object-cover rounded-lg mb-4"
-      />
+      <div className="w-full h-48 rounded-lg mb-4 overflow-hidden bg-gray-100">
+        <img
+          src={image}
+          alt={name}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "/placeholder.svg";
+          }}
+        />
+      </div>
       <h4 className="text-xl font-bold mb-2 font-dmsans">
         <span className="text-[#1F5E40]">_</span>
         {name}
