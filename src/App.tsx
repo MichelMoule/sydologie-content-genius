@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -46,7 +45,7 @@ const App = () => (
           <Route path="/outils/videoscript" element={<VideoScript />} />
           <Route path="/outils/diapoai" element={<DiapoAI />} />
           <Route path="/outils/suggestions" element={<Suggestions />} />
-          <Route path="/outils/prompt-engineer" element={<PromptEngineer />} />
+          <Route path="/outils/prompt-ai" element={<PromptEngineer />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="*" element={<NotFound />} />

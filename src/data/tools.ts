@@ -216,6 +216,17 @@ export const tools = [
   },
 ];
 
+export const tools = tools.map(tool => 
+  tool.id === 'prompt-engineer' 
+    ? {
+        ...tool,
+        name: 'PromptAI',
+        id: 'prompt-ai',
+        link: '/outils/prompt-ai'
+      }
+    : tool
+);
+
 export const getToolsByCategory = (category: string) => {
   if (category === "all") {
     return tools.sort((a, b) => a.order - b.order);
