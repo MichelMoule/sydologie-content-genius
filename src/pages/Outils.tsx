@@ -1,3 +1,4 @@
+
 import Navbar from "@/components/Navbar";
 import ToolsHero from "@/components/tools/ToolsHero";
 import ToolSection from "@/components/tools/ToolSection";
@@ -12,13 +13,28 @@ const Outils = () => {
 
   // Map the tools to the format expected by ToolSection
   const mapToolsToToolSection = (toolsList) => {
-    return toolsList.map(tool => ({
-      id: tool.id,
-      name: tool.name,
-      description: tool.description,
-      image: tool.icon, // Use icon property as image
-      path: tool.link
-    }));
+    // Use specific image assets for tools that should have them
+    return toolsList.map(tool => {
+      // Map of tool IDs to their respective image paths
+      const toolImages = {
+        'program': "/lovable-uploads/11f4232d-1b7a-4f8d-b618-46ab72d881b5.png",
+        'glossaire': "/lovable-uploads/b293fc5f-d161-41c4-8889-8e2e574d9238.png",
+        'flashcards': "/lovable-uploads/323c4fdf-2153-4ef0-9c92-5ea24ab4bade.png",
+        'feedbaick': "/lovable-uploads/54f5902a-b223-49d6-99d1-66627d855a79.png",
+        'diapoai': "/lovable-uploads/716e18bb-8160-42f9-8fb7-ec0f88d754ae.png",
+        'prompt-engineer': "/lovable-uploads/6888803e-0376-421b-8d1f-8f62e0e2ed38.png"
+      };
+
+      const image = toolImages[tool.id] || `/placeholder.svg`;
+      
+      return {
+        id: tool.id,
+        name: tool.name,
+        description: tool.description,
+        image: image,
+        path: tool.link
+      };
+    });
   };
 
   return (
