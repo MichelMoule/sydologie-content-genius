@@ -68,7 +68,7 @@ serve(async (req) => {
       3. Tu dois ajouter des explications didactiques sur pourquoi chaque section est importante
       4. Le prompt final doit être clair, complet et parfaitement adapté au besoin de l'utilisateur
       
-      Répond uniquement au format JSON en respectant cette structure :
+      Réponds uniquement au format JSON en respectant cette structure :
       {
         "prompt": "Le prompt complet avec mise en forme HTML et couleurs",
         "explanation": "Explication générale sur la construction de ce prompt",
@@ -98,7 +98,7 @@ serve(async (req) => {
       3. Tu vas proposer une version améliorée du prompt avec des explications sur les changements
       4. Utilise des couleurs HTML pour mettre en évidence les différences et les améliorations
       
-      Répond uniquement au format JSON en respectant cette structure:
+      Réponds uniquement au format JSON en respectant cette structure:
       {
         "score": 85,
         "evaluation": {
@@ -128,6 +128,9 @@ serve(async (req) => {
         throw new Error('Action non reconnue');
     }
 
+    // Log the request for debugging
+    console.log(`Processing ${action} request with need: ${need?.substring(0, 50)}...`);
+
     // Call Azure OpenAI API
     const response = await fetch('https://sydo-chatgpt.openai.azure.com/openai/deployments/gpt-4o-mini-2/chat/completions?api-version=2024-08-01-preview', {
       method: 'POST',
@@ -145,19 +148,36 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`OpenAI API error: ${response.status} ${errorText}`);
+      throw new Error(`API error: ${response.status}`);
+    }
+
     const result = await response.json();
     
     if (!result.choices || result.choices.length === 0) {
+      console.error("Invalid response structure from OpenAI:", JSON.stringify(result));
       throw new Error('Invalid response from the AI service');
     }
 
     const aiContent = result.choices[0].message.content;
+    console.log("AI response content:", aiContent.substring(0, 200) + "...");
+    
     let responseData;
     
     try {
       responseData = JSON.parse(aiContent);
+      
+      // Validate the response structure based on action type
+      if (action === 'generate_questions' && (!responseData.questions || !Array.isArray(responseData.questions))) {
+        console.error("Invalid questions structure:", JSON.stringify(responseData));
+        throw new Error("Response missing questions array");
+      }
+      
     } catch (error) {
-      console.error("Failed to parse AI response:", aiContent);
+      console.error("Failed to parse AI response:", error);
+      console.error("Raw AI response:", aiContent);
       throw new Error("Format de réponse invalide de l'IA");
     }
 

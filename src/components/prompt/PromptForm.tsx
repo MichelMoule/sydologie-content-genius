@@ -80,15 +80,25 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
         body: { action: 'generate_questions', need },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw error;
+      }
 
-      if (data && Array.isArray(data.questions)) {
+      console.log('Response from edge function:', data);
+
+      if (data?.success === false) {
+        throw new Error(data.error || 'Une erreur est survenue');
+      }
+
+      if (data?.success && data?.data?.questions && Array.isArray(data.data.questions)) {
         setQuestionState({
           currentQuestionIndex: 0,
-          questions: data.questions,
+          questions: data.data.questions,
           answers: [],
         });
       } else {
+        console.error('Invalid response format:', data);
         throw new Error("Format de réponse invalide");
       }
     } catch (error) {
@@ -146,9 +156,16 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw error;
+      }
 
-      onPromptGenerated(responseData);
+      if (responseData?.success === false) {
+        throw new Error(responseData.error || 'Une erreur est survenue');
+      }
+
+      onPromptGenerated(responseData.data);
       toast({
         title: "Succès !",
         description: `Votre prompt a été ${data.mode === 'generate' ? 'généré' : 'analysé'} avec succès.`,
