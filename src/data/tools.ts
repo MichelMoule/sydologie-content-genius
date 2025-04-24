@@ -1,7 +1,7 @@
 import {
   BrainCircuit,
   BookText,
-  CaseIcon,
+  Briefcase,
   FileCode2,
   FileSearch,
   Flame,
@@ -69,7 +69,7 @@ export const categories = [
   {
     id: "other",
     name: "Autres",
-    icon: CaseIcon,
+    icon: Briefcase,
   },
 ];
 

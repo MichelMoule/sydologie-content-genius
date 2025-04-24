@@ -1,11 +1,15 @@
-
 import Navbar from "@/components/Navbar";
 import ToolsHero from "@/components/tools/ToolsHero";
 import ToolSection from "@/components/tools/ToolSection";
 import Footer from "@/components/Footer";
-import { tools } from "@/data/tools";
+import { tools, getToolsByCategory } from "@/data/tools";
 
 const Outils = () => {
+  // Get all tools and split them into featured and non-featured ones
+  const allTools = getToolsByCategory("all");
+  const featuredTools = allTools.filter(tool => tool.featured);
+  const otherTools = allTools.filter(tool => !tool.featured);
+
   return <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
       
@@ -14,11 +18,11 @@ const Outils = () => {
 
       {/* Tools Sections */}
       <div className="container mx-auto px-4 pb-16">
-        {/* Conception Tools */}
-        <ToolSection title="Nos outils de conception" tools={tools.conception} />
+        {/* Featured Tools */}
+        <ToolSection title="Nos outils de conception" tools={featuredTools} />
 
-        {/* Analysis Tools */}
-        <ToolSection title="Nos outils d'analyse" tools={tools.analyse} />
+        {/* Other Tools */}
+        <ToolSection title="Nos autres outils" tools={otherTools} />
       </div>
       
       <Footer />

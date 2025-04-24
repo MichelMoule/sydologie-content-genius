@@ -5,18 +5,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Copy, Check, Download } from "lucide-react";
-import { PromptResult, GeneratedPrompt, ImprovedPrompt } from "./types";
+import type { PromptResult as PromptResultType, GeneratedPrompt, ImprovedPrompt } from "./types";
 
-function isGeneratedPrompt(result: PromptResult): result is GeneratedPrompt {
+function isGeneratedPrompt(result: PromptResultType): result is GeneratedPrompt {
   return 'sections' in result;
 }
 
-function isImprovedPrompt(result: PromptResult): result is ImprovedPrompt {
+function isImprovedPrompt(result: PromptResultType): result is ImprovedPrompt {
   return 'score' in result;
 }
 
 interface PromptResultProps {
-  result: PromptResult;
+  result: PromptResultType;
 }
 
 export function PromptResult({ result }: PromptResultProps) {
