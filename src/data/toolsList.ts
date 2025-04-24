@@ -1,3 +1,4 @@
+
 import { Tool } from "@/types/tools";
 
 const initialTools: Tool[] = [
@@ -143,13 +144,20 @@ const initialTools: Tool[] = [
   },
 ];
 
+// Transform initialTools to rename PromptEngineer to PromptAI
 export const tools = initialTools.map(tool => 
   tool.id === 'prompt-engineer' 
     ? {
         ...tool,
         name: 'PromptAI',
+        description: 'Créer et améliorer vos prompts pour l'IA',
         id: 'prompt-ai',
-        link: '/outils/prompt-ai'
+        icon: '/lovable-uploads/6888803e-0376-421b-8d1f-8f62e0e2ed38.png',
+        link: '/outils/prompt-ai',
+        bgColor: 'bg-orange-50',
+        color: 'text-orange-600',
+        labelColor: 'orange',
+        featured: false
       }
     : tool
 );

@@ -1,5 +1,6 @@
 
 import { Tool } from "@/types/tools";
+import { tools } from "@/data/toolsList";
 
 export const getToolsByCategory = (category: string) => {
   if (category === "all") {
