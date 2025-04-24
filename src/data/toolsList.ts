@@ -150,7 +150,7 @@ export const tools = initialTools.map(tool =>
     ? {
         ...tool,
         name: 'PromptAI',
-        description: 'Créer et améliorer vos prompts pour l'IA',
+        description: 'Créer et améliorer vos prompts pour l\'IA',
         id: 'prompt-ai',
         icon: '/lovable-uploads/6888803e-0376-421b-8d1f-8f62e0e2ed38.png',
         link: '/outils/prompt-ai',
