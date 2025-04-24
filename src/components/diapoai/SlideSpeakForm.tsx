@@ -47,9 +47,13 @@ export const formSchema = z.object({
 
 interface SlideSpeakFormProps {
   onPresentationGenerated: (url: string) => void;
+  onPresentationGenerating?: (status: boolean) => void;
 }
 
-export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps) => {
+export const SlideSpeakForm = ({ 
+  onPresentationGenerated,
+  onPresentationGenerating
+}: SlideSpeakFormProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [taskStatus, setTaskStatus] = useState<SlideSpeakTaskResult | null>(null);
@@ -75,7 +79,6 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
   });
 
   useEffect(() => {
-    // Load available templates on component mount
     const loadTemplates = async () => {
       setIsLoadingTemplates(true);
       try {
@@ -105,12 +108,16 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
         setTaskStatus(status);
 
         if (status.task_status === "SUCCESS" && status.task_result?.url) {
-          // Success - clear polling and update UI
           if (pollingIntervalId !== null) {
             clearInterval(pollingIntervalId);
             setPollingIntervalId(null);
           }
           setIsGenerating(false);
+          
+          if (onPresentationGenerating) {
+            onPresentationGenerating(false);
+          }
+          
           onPresentationGenerated(status.task_result.url);
           toast({
             title: "Présentation générée avec succès",
@@ -118,12 +125,16 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
           });
           setActiveTab("content");
         } else if (status.task_status === "FAILURE") {
-          // Failure - clear polling and show error
           if (pollingIntervalId !== null) {
             clearInterval(pollingIntervalId);
             setPollingIntervalId(null);
           }
           setIsGenerating(false);
+          
+          if (onPresentationGenerating) {
+            onPresentationGenerating(false);
+          }
+          
           setApiError(
             status.error || "Une erreur est survenue lors de la génération de la présentation"
           );
@@ -134,23 +145,20 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
             variant: "destructive",
           });
         }
-        // else keep waiting (PENDING or PROCESSING)
       } catch (error) {
         console.error("Erreur lors de la vérification du statut:", error);
       }
     };
 
-    // Immediately check once, then every 2 seconds
     checkTaskStatus();
     const intervalId = window.setInterval(checkTaskStatus, 2000);
     setPollingIntervalId(intervalId);
 
-    // Cleanup on unmount or taskId change
     return () => {
       if (intervalId) clearInterval(intervalId);
       setPollingIntervalId(null);
     };
-  }, [taskId, onPresentationGenerated, toast]);
+  }, [taskId, onPresentationGenerated, onPresentationGenerating, toast]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -179,6 +187,11 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
     setIsGenerating(true);
     setTaskStatus(null);
     setTaskId(null);
+    
+    if (onPresentationGenerating) {
+      onPresentationGenerating(true);
+    }
+    
     try {
       const params: SlideSpeakGenerateParams = {
         plain_text: values.content,
@@ -204,6 +217,11 @@ export const SlideSpeakForm = ({ onPresentationGenerated }: SlideSpeakFormProps)
       console.error("Erreur lors de la génération de la présentation:", error);
       setApiError(error.message || "Une erreur est survenue lors de la génération de la présentation");
       setIsGenerating(false);
+      
+      if (onPresentationGenerating) {
+        onPresentationGenerating(false);
+      }
+      
       toast({
         title: "Erreur de génération",
         description: "Une erreur est survenue lors de la génération de la présentation",

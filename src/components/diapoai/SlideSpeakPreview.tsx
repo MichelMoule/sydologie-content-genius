@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink } from "lucide-react";
+import { Download, ExternalLink, FilePresentation } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -18,7 +18,6 @@ export const SlideSpeakPreview = ({ presentationUrl }: SlideSpeakPreviewProps) =
       // Téléchargement direct
       const link = document.createElement('a');
       link.href = presentationUrl;
-      link.target = '_blank';
       link.download = 'presentation.pptx';
       document.body.appendChild(link);
       link.click();
@@ -42,6 +41,12 @@ export const SlideSpeakPreview = ({ presentationUrl }: SlideSpeakPreviewProps) =
 
   const openInNewWindow = () => {
     window.open(presentationUrl, '_blank');
+  };
+
+  // Convertir l'URL du PPTX en URL d'aperçu Office Online si possible
+  const getOfficeOnlineViewerUrl = () => {
+    // Utiliser le service de visualisation Office Online
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(presentationUrl)}`;
   };
 
   return (
@@ -72,12 +77,16 @@ export const SlideSpeakPreview = ({ presentationUrl }: SlideSpeakPreviewProps) =
         <div className="border rounded-lg overflow-hidden bg-white shadow-md">
           <div className="aspect-video w-full flex items-center justify-center bg-gray-100">
             <iframe 
-              src={presentationUrl} 
+              src={getOfficeOnlineViewerUrl()} 
               className="w-full h-full"
               title="PowerPoint Presentation Preview"
-              sandbox="allow-same-origin allow-scripts"
+              allowFullScreen
             />
           </div>
+        </div>
+
+        <div className="text-sm text-muted-foreground">
+          <p>Si l'aperçu ne s'affiche pas, vous pouvez télécharger la présentation et l'ouvrir avec Microsoft PowerPoint ou un logiciel compatible.</p>
         </div>
       </div>
     </div>
