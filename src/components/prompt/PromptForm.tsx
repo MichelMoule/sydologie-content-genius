@@ -1,51 +1,27 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PromptFormData, PromptResult, GeneratedPrompt, ImprovedPrompt } from "./types";
-import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Text } from "lucide-react";
+import type { PromptFormData, PromptResult, Question, QuestionAnswer, QuestionsState } from "./types";
+import { PromptQuestionnaire } from "./PromptQuestionnaire";
 
-// Schéma de validation pour le formulaire de génération
+// Schéma simplifié pour le formulaire initial
 const generateSchema = z.object({
   mode: z.literal('generate'),
   need: z.string().min(10, "Le besoin doit contenir au moins 10 caractères"),
-  context: z.string().optional(),
-  audience: z.string().optional(),
-  tone: z.string().optional(),
-  complexity: z.string().optional(),
 });
 
-// Schéma de validation pour le formulaire d'amélioration
 const improveSchema = z.object({
   mode: z.literal('improve'),
   need: z.string().min(10, "Le besoin doit contenir au moins 10 caractères"),
   prompt: z.string().min(20, "Le prompt doit contenir au moins 20 caractères"),
 });
 
-// Schéma combiné
 const formSchema = z.discriminatedUnion("mode", [
   generateSchema,
   improveSchema,
@@ -60,53 +36,80 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'generate' | 'improve'>('generate');
   const [isLoading, setIsLoading] = useState(false);
+  const [questionState, setQuestionState] = useState<QuestionsState | null>(null);
 
-  // Formulaire avec validation - Fix the type error by using "as any" for defaultValues
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       mode: 'generate' as const,
       need: "",
-      context: "",
-      audience: "",
-      tone: "",
-      complexity: "Moyen",
-      // Using "as any" to bypass the type checking temporarily
-      // This works because we're actually switching between two valid schemas
     } as any,
   });
 
-  // Gestion du changement d'onglet
-  const handleTabChange = (value: string) => {
-    setActiveTab(value as 'generate' | 'improve');
-    form.setValue("mode", value as 'generate' | 'improve');
+  // Questions dynamiques basées sur le besoin initial
+  const generateQuestionsForNeed = async (need: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-prompt', {
+        body: { action: 'generate_questions', need },
+      });
+
+      if (error) throw error;
+
+      setQuestionState({
+        currentQuestionIndex: 0,
+        questions: data.questions,
+        answers: [],
+      });
+    } catch (error) {
+      console.error('Erreur lors de la génération des questions:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer les questions complémentaires",
+        variant: "destructive",
+      });
+    }
   };
 
-  // Soumission du formulaire
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const handleAnswer = async (answer: string) => {
+    if (!questionState) return;
+
+    const newAnswers = [
+      ...questionState.answers,
+      { 
+        questionId: questionState.questions[questionState.currentQuestionIndex].id, 
+        answer 
+      }
+    ];
+
+    if (questionState.currentQuestionIndex + 1 < questionState.questions.length) {
+      // Passer à la question suivante
+      setQuestionState({
+        ...questionState,
+        currentQuestionIndex: questionState.currentQuestionIndex + 1,
+        answers: newAnswers,
+      });
+    } else {
+      // Toutes les questions ont été répondues, générer le prompt final
+      await generateFinalPrompt({
+        mode: 'generate',
+        need: form.getValues('need'),
+        answers: newAnswers,
+      });
+    }
+  };
+
+  const generateFinalPrompt = async (data: PromptFormData & { answers: QuestionAnswer[] }) => {
     setIsLoading(true);
     onPromptGenerating(true);
 
     try {
       const { data: responseData, error } = await supabase.functions.invoke('generate-prompt', {
-        body: data as PromptFormData,
+        body: { ...data, action: 'generate_prompt' },
       });
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw error;
 
-      if (!responseData || !responseData.success) {
-        throw new Error(responseData?.error || "Une erreur est survenue");
-      }
-
-      // Traiter la réponse selon le mode
-      if (data.mode === 'generate') {
-        onPromptGenerated(responseData.data as GeneratedPrompt);
-      } else {
-        onPromptGenerated(responseData.data as ImprovedPrompt);
-      }
-
+      onPromptGenerated(responseData.data);
       toast({
         title: "Succès !",
         description: "Votre prompt a été généré avec succès.",
@@ -121,6 +124,39 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
     } finally {
       setIsLoading(false);
       onPromptGenerating(false);
+    }
+  };
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (data.mode === 'generate') {
+      await generateQuestionsForNeed(data.need);
+    } else {
+      setIsLoading(true);
+      onPromptGenerating(true);
+      
+      try {
+        const { data: responseData, error } = await supabase.functions.invoke('generate-prompt', {
+          body: { ...data, action: 'improve_prompt' },
+        });
+
+        if (error) throw error;
+
+        onPromptGenerated(responseData.data);
+        toast({
+          title: "Succès !",
+          description: "Votre prompt a été analysé avec succès.",
+        });
+      } catch (error) {
+        console.error("Erreur lors de l'amélioration du prompt:", error);
+        toast({
+          title: "Erreur",
+          description: error instanceof Error ? error.message : "Une erreur est survenue",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+        onPromptGenerating(false);
+      }
     }
   };
 

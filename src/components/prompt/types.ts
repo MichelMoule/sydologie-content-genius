@@ -1,4 +1,3 @@
-
 export interface PromptFormData {
   mode: 'generate' | 'improve';
   need: string;
@@ -38,3 +37,21 @@ export interface ImprovedPrompt {
 }
 
 export type PromptResult = GeneratedPrompt | ImprovedPrompt;
+
+export interface Question {
+  id: string;
+  text: string;
+  type: 'open' | 'choice';
+  choices?: string[];
+}
+
+export interface QuestionAnswer {
+  questionId: string;
+  answer: string;
+}
+
+export interface QuestionsState {
+  currentQuestionIndex: number;
+  questions: Question[];
+  answers: QuestionAnswer[];
+}

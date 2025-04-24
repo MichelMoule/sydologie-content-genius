@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -15,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { mode, need, context, audience, tone, complexity, prompt } = await req.json();
+    const { action, need, answers, prompt } = await req.json();
     
     const apiKey = Deno.env.get('AZURE_OPENAI_API_KEY');
     if (!apiKey) {
@@ -25,9 +24,42 @@ serve(async (req) => {
     let systemPrompt = '';
     let userPrompt = '';
 
-    // Différent prompts selon le mode (génération ou amélioration)
-    if (mode === 'generate') {
-      systemPrompt = `Tu es un expert en création de prompts pour l'IA. Tu vas créer un prompt structuré, détaillé et efficace à partir des informations fournies par l'utilisateur.
+    switch (action) {
+      case 'generate_questions':
+        systemPrompt = `Tu es un expert en création de prompts pour l'IA. En fonction du besoin de l'utilisateur, 
+        tu vas générer 3 à 5 questions pertinentes pour obtenir plus de contexte et mieux comprendre ses attentes.
+        
+        Format de ta réponse :
+        Un tableau de questions avec pour chaque question :
+        - Un ID unique
+        - Le texte de la question
+        - Le type de question (ouvert ou choix)
+        - Les choix possibles si c'est une question à choix
+
+        Réponds uniquement au format JSON avec cette structure :
+        {
+          "questions": [
+            {
+              "id": "q1",
+              "text": "Texte de la question",
+              "type": "open"
+            },
+            {
+              "id": "q2",
+              "text": "Question à choix",
+              "type": "choice",
+              "choices": ["Choix 1", "Choix 2", "Choix 3"]
+            }
+          ]
+        }`;
+
+        userPrompt = `Voici le besoin de l'utilisateur : "${need}"
+        
+        Génère-moi des questions pertinentes pour mieux comprendre son besoin et créer un prompt optimal.`;
+        break;
+
+      case 'generate_prompt':
+        systemPrompt = `Tu es un expert en création de prompts pour l'IA. Tu vas créer un prompt structuré, détaillé et efficace à partir des informations fournies par l'utilisateur.
       
       Format de ta réponse :
       1. Tu vas structurer le prompt généré avec des sections clairement identifiables
@@ -51,14 +83,13 @@ serve(async (req) => {
       userPrompt = `Je souhaite créer un prompt pour l'IA avec les critères suivants:
       
       Besoin: ${need}
-      Contexte: ${context || "Non spécifié"}
-      Public cible: ${audience || "Non spécifié"}
-      Ton souhaité: ${tone || "Non spécifié"}
-      Niveau de complexité: ${complexity || "Moyen"}
+      Réponses aux questions: ${JSON.stringify(answers)}
       
       Crée-moi un prompt optimal qui réponde parfaitement à ce besoin, avec des explications pédagogiques.`;
-    } else {
-      systemPrompt = `Tu es un expert en évaluation et amélioration de prompts pour l'IA. Tu vas analyser le prompt fourni par l'utilisateur et proposer des améliorations.
+        break;
+
+      case 'improve_prompt':
+        systemPrompt = `Tu es un expert en évaluation et amélioration de prompts pour l'IA. Tu vas analyser le prompt fourni par l'utilisateur et proposer des améliorations.
       
       Format de ta réponse :
       1. Tu vas noter le prompt sur 100 points selon plusieurs critères: clarté, précision, structure, et efficacité.
@@ -90,6 +121,10 @@ serve(async (req) => {
       Mon besoin est: ${need}
       
       Évalue ce prompt et propose-moi une version améliorée avec des explications détaillées.`;
+        break;
+
+      default:
+        throw new Error('Action non reconnue');
     }
 
     // Call Azure OpenAI API
@@ -110,25 +145,13 @@ serve(async (req) => {
     });
 
     const result = await response.json();
-    console.log('Received response from Azure OpenAI');
-
+    
     if (!result.choices || result.choices.length === 0) {
-      console.error('Invalid response from Azure OpenAI:', result);
       throw new Error('Invalid response from the AI service');
     }
 
     const aiContent = result.choices[0].message.content;
-    let responseData;
-
-    try {
-      // Parse the JSON response from the AI
-      responseData = JSON.parse(aiContent);
-      console.log('Successfully parsed prompt data');
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      console.log('Raw response:', aiContent);
-      throw new Error('Failed to parse data from AI response');
-    }
+    const responseData = JSON.parse(aiContent);
 
     return new Response(
       JSON.stringify({ 
