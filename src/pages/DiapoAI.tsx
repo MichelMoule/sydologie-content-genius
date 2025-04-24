@@ -6,7 +6,7 @@ import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { SlideSpeakForm } from "@/components/diapoai/SlideSpeakForm";
 import { SlideSpeakPreview } from "@/components/diapoai/SlideSpeakPreview";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FilePresentation } from "lucide-react";
+import { Presentation } from "lucide-react";
 
 const DiapoAI = () => {
   const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
@@ -37,7 +37,7 @@ const DiapoAI = () => {
             
             {!presentationUrl && !isGenerating && (
               <Alert className="bg-muted border border-muted-foreground/20">
-                <FilePresentation className="h-5 w-5" />
+                <Presentation className="h-5 w-5" />
                 <AlertDescription>
                   Générez votre première présentation PowerPoint en remplissant le formulaire ci-dessus.
                 </AlertDescription>

@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink, FilePresentation } from "lucide-react";
+import { Download, ExternalLink, Presentation } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 
