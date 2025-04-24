@@ -17,11 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Text } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Text } from "lucide-react";
 import type { PromptFormData, PromptResult, Question, QuestionAnswer, QuestionsState } from "./types";
 import { PromptQuestionnaire } from "./PromptQuestionnaire";
 
@@ -53,7 +50,6 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
   const [isLoading, setIsLoading] = useState(false);
   const [questionState, setQuestionState] = useState<QuestionsState | null>(null);
 
-  // Add the missing handleTabChange function
   const handleTabChange = (value: string) => {
     setActiveTab(value as 'generate' | 'improve');
     
@@ -86,11 +82,15 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
 
       if (error) throw error;
 
-      setQuestionState({
-        currentQuestionIndex: 0,
-        questions: data.questions,
-        answers: [],
-      });
+      if (data && Array.isArray(data.questions)) {
+        setQuestionState({
+          currentQuestionIndex: 0,
+          questions: data.questions,
+          answers: [],
+        });
+      } else {
+        throw new Error("Format de réponse invalide");
+      }
     } catch (error) {
       console.error('Erreur lors de la génération des questions:', error);
       toast({
@@ -104,12 +104,15 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
   };
 
   const handleAnswer = async (answer: string) => {
-    if (!questionState) return;
+    if (!questionState || !questionState.questions || questionState.questions.length === 0) return;
+
+    const currentQuestion = questionState.questions[questionState.currentQuestionIndex];
+    if (!currentQuestion) return;
 
     const newAnswers = [
       ...questionState.answers,
       { 
-        questionId: questionState.questions[questionState.currentQuestionIndex].id, 
+        questionId: currentQuestion.id, 
         answer 
       }
     ];
@@ -137,12 +140,15 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
 
     try {
       const { data: responseData, error } = await supabase.functions.invoke('generate-prompt', {
-        body: { ...data, action: data.mode === 'generate' ? 'generate_prompt' : 'improve_prompt' },
+        body: { 
+          ...data, 
+          action: data.mode === 'generate' ? 'generate_prompt' : 'improve_prompt' 
+        },
       });
 
       if (error) throw error;
 
-      onPromptGenerated(responseData.data);
+      onPromptGenerated(responseData);
       toast({
         title: "Succès !",
         description: `Votre prompt a été ${data.mode === 'generate' ? 'généré' : 'analysé'} avec succès.`,
@@ -164,23 +170,25 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
     if (data.mode === 'generate') {
       await generateQuestionsForNeed(data.need);
     } else {
-      await generateFinalPrompt(data);
+      await generateFinalPrompt(data as PromptFormData);
     }
   };
 
   // If we're showing questions, render the questionnaire
-  if (questionState) {
+  if (questionState && questionState.questions && questionState.questions.length > 0) {
     const currentQuestion = questionState.questions[questionState.currentQuestionIndex];
     const isLastQuestion = questionState.currentQuestionIndex === questionState.questions.length - 1;
     
     return (
       <div className="space-y-6">
         <h3 className="text-lg font-semibold">Quelques questions complémentaires</h3>
-        <PromptQuestionnaire
-          question={currentQuestion}
-          onAnswer={handleAnswer}
-          isLastQuestion={isLastQuestion}
-        />
+        {currentQuestion && (
+          <PromptQuestionnaire
+            question={currentQuestion}
+            onAnswer={handleAnswer}
+            isLastQuestion={isLastQuestion}
+          />
+        )}
       </div>
     );
   }

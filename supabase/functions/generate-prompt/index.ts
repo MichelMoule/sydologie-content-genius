@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -151,7 +152,14 @@ serve(async (req) => {
     }
 
     const aiContent = result.choices[0].message.content;
-    const responseData = JSON.parse(aiContent);
+    let responseData;
+    
+    try {
+      responseData = JSON.parse(aiContent);
+    } catch (error) {
+      console.error("Failed to parse AI response:", aiContent);
+      throw new Error("Format de réponse invalide de l'IA");
+    }
 
     return new Response(
       JSON.stringify({ 
