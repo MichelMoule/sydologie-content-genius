@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -5,6 +6,20 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Text } from "lucide-react";
 import type { PromptFormData, PromptResult, Question, QuestionAnswer, QuestionsState } from "./types";
@@ -38,17 +53,33 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
   const [isLoading, setIsLoading] = useState(false);
   const [questionState, setQuestionState] = useState<QuestionsState | null>(null);
 
+  // Add the missing handleTabChange function
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as 'generate' | 'improve');
+    
+    // Reset the form with the appropriate default values based on the tab
+    form.reset({
+      mode: value as 'generate' | 'improve',
+      need: "",
+      ...(value === 'improve' ? { prompt: "" } : {})
+    });
+    
+    // Reset question state when switching tabs
+    setQuestionState(null);
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       mode: 'generate' as const,
       need: "",
-    } as any,
+    },
   });
 
   // Questions dynamiques basées sur le besoin initial
   const generateQuestionsForNeed = async (need: string) => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase.functions.invoke('generate-prompt', {
         body: { action: 'generate_questions', need },
       });
@@ -67,6 +98,8 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
         description: "Impossible de générer les questions complémentaires",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,13 +131,13 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
     }
   };
 
-  const generateFinalPrompt = async (data: PromptFormData & { answers: QuestionAnswer[] }) => {
+  const generateFinalPrompt = async (data: PromptFormData & { answers?: QuestionAnswer[] }) => {
     setIsLoading(true);
     onPromptGenerating(true);
 
     try {
       const { data: responseData, error } = await supabase.functions.invoke('generate-prompt', {
-        body: { ...data, action: 'generate_prompt' },
+        body: { ...data, action: data.mode === 'generate' ? 'generate_prompt' : 'improve_prompt' },
       });
 
       if (error) throw error;
@@ -112,7 +145,7 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
       onPromptGenerated(responseData.data);
       toast({
         title: "Succès !",
-        description: "Votre prompt a été généré avec succès.",
+        description: `Votre prompt a été ${data.mode === 'generate' ? 'généré' : 'analysé'} avec succès.`,
       });
     } catch (error) {
       console.error("Erreur lors de la génération du prompt:", error);
@@ -131,34 +164,26 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
     if (data.mode === 'generate') {
       await generateQuestionsForNeed(data.need);
     } else {
-      setIsLoading(true);
-      onPromptGenerating(true);
-      
-      try {
-        const { data: responseData, error } = await supabase.functions.invoke('generate-prompt', {
-          body: { ...data, action: 'improve_prompt' },
-        });
-
-        if (error) throw error;
-
-        onPromptGenerated(responseData.data);
-        toast({
-          title: "Succès !",
-          description: "Votre prompt a été analysé avec succès.",
-        });
-      } catch (error) {
-        console.error("Erreur lors de l'amélioration du prompt:", error);
-        toast({
-          title: "Erreur",
-          description: error instanceof Error ? error.message : "Une erreur est survenue",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-        onPromptGenerating(false);
-      }
+      await generateFinalPrompt(data);
     }
   };
+
+  // If we're showing questions, render the questionnaire
+  if (questionState) {
+    const currentQuestion = questionState.questions[questionState.currentQuestionIndex];
+    const isLastQuestion = questionState.currentQuestionIndex === questionState.questions.length - 1;
+    
+    return (
+      <div className="space-y-6">
+        <h3 className="text-lg font-semibold">Quelques questions complémentaires</h3>
+        <PromptQuestionnaire
+          question={currentQuestion}
+          onAnswer={handleAnswer}
+          isLastQuestion={isLastQuestion}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -198,84 +223,6 @@ export function PromptForm({ onPromptGenerating, onPromptGenerated }: PromptForm
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="context"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contexte (optionnel)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Informations complémentaires sur le contexte d'utilisation"
-                            className="h-20"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Fournissez du contexte pour un prompt plus précis
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <FormField
-                      control={form.control}
-                      name="audience"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Public cible (optionnel)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ex: Professionnels, débutants..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="tone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Ton souhaité (optionnel)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ex: Formel, conversationnel..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="complexity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Niveau de complexité</FormLabel>
-                          <Select 
-                            onValueChange={field.onChange} 
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Sélectionnez un niveau" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Simple">Simple</SelectItem>
-                              <SelectItem value="Moyen">Moyen</SelectItem>
-                              <SelectItem value="Avancé">Avancé</SelectItem>
-                              <SelectItem value="Expert">Expert</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                 </div>
               </TabsContent>
 

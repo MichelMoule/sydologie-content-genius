@@ -10,7 +10,19 @@ const Outils = () => {
   const featuredTools = allTools.filter(tool => tool.featured);
   const otherTools = allTools.filter(tool => !tool.featured);
 
-  return <div className="min-h-screen bg-background text-foreground flex flex-col">
+  // Map the tools to the format expected by ToolSection
+  const mapToolsToToolSection = (toolsList) => {
+    return toolsList.map(tool => ({
+      id: Number(tool.id),
+      name: tool.name,
+      description: tool.description,
+      image: tool.icon, // Map icon to image
+      path: tool.link
+    }));
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
       
       {/* Hero Section */}
@@ -19,13 +31,15 @@ const Outils = () => {
       {/* Tools Sections */}
       <div className="container mx-auto px-4 pb-16">
         {/* Featured Tools */}
-        <ToolSection title="Nos outils de conception" tools={featuredTools} />
+        <ToolSection title="Nos outils de conception" tools={mapToolsToToolSection(featuredTools)} />
 
         {/* Other Tools */}
-        <ToolSection title="Nos autres outils" tools={otherTools} />
+        <ToolSection title="Nos autres outils" tools={mapToolsToToolSection(otherTools)} />
       </div>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Outils;
