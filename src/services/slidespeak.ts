@@ -1,4 +1,3 @@
-
 /**
  * Service d'intégration avec l'API SlideSpeak pour la génération de diaporamas
  */
@@ -61,8 +60,18 @@ export const slideSpeakService = {
    */
   async generatePresentation(params: SlideSpeakGenerateParams): Promise<SlideSpeakTaskResponse> {
     try {
+      // Force specific parameters
+      const enhancedParams = {
+        ...params,
+        length: 10, // Fixed to 10 slides
+        use_branding_logo: true,
+        fetch_images: true,
+        include_cover: true,
+        include_table_of_contents: true,
+      };
+
       const { data, error } = await supabase.functions.invoke('slidespeak-generate', {
-        body: params,
+        body: enhancedParams,
       });
 
       if (error) throw error;

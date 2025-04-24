@@ -40,7 +40,6 @@ export const formSchema = z.object({
   }),
   tone: z.string().optional(),
   verbosity: z.string().optional(),
-  length: z.number().int().min(1).max(50).optional(),
   template: z.string().optional(),
   custom_instructions: z.string().optional(),
 });
@@ -73,7 +72,6 @@ export const SlideSpeakForm = ({
       content: "",
       tone: "professional",
       verbosity: "standard",
-      length: 10,
       template: "default",
       custom_instructions: "",
     },
@@ -223,14 +221,10 @@ export const SlideSpeakForm = ({
     try {
       const params: SlideSpeakGenerateParams = {
         plain_text: values.content,
-        length: values.length,
         template: values.template,
         tone: values.tone as any,
         verbosity: values.verbosity as any,
         custom_user_instructions: values.custom_instructions,
-        fetch_images: true,
-        include_cover: true,
-        include_table_of_contents: true,
       };
 
       const response = await slideSpeakService.generatePresentation(params);
@@ -420,51 +414,31 @@ export const SlideSpeakForm = ({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="length"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nombre de diapositives</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={1}
-                          max={50}
-                          {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 10)}
-                        />
-                      </FormControl>
-                      <FormDescription>Nombre approximatif de diapositives (1-50)</FormDescription>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ton</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Choisir un ton" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="default">Par défaut</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
-                            <SelectItem value="professional">Professionnel</SelectItem>
-                            <SelectItem value="funny">Amusant</SelectItem>
-                            <SelectItem value="educational">Éducatif</SelectItem>
-                            <SelectItem value="sales_pitch">Argumentaire commercial</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>Le ton utilisé pour le texte de la présentation</FormDescription>
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="tone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ton</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choisir un ton" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="default">Par défaut</SelectItem>
+                          <SelectItem value="casual">Casual</SelectItem>
+                          <SelectItem value="professional">Professionnel</SelectItem>
+                          <SelectItem value="funny">Amusant</SelectItem>
+                          <SelectItem value="educational">Éducatif</SelectItem>
+                          <SelectItem value="sales_pitch">Argumentaire commercial</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>Le ton utilisé pour le texte de la présentation</FormDescription>
+                  </FormItem>
+                )}
+              />
 
                 <FormField
                   control={form.control}
