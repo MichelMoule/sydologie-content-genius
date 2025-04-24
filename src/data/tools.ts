@@ -73,7 +73,7 @@ export const categories = [
   },
 ];
 
-export const tools = [
+const initialTools: Tool[] = [
   {
     id: "formations",
     name: "Formations",
@@ -216,7 +216,7 @@ export const tools = [
   },
 ];
 
-export const tools = tools.map(tool => 
+export const tools = initialTools.map(tool => 
   tool.id === 'prompt-engineer' 
     ? {
         ...tool,
