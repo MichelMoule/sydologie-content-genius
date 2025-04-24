@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 
 interface ToolCardProps {
-  id: string | number;
+  id: number;
   name: string;
   description: string;
   image: string;
@@ -16,13 +16,11 @@ const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
       to={path || "#"} 
       className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
     >
-      <div className="relative aspect-video mb-4">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-48 object-cover rounded-lg mb-4"
-        />
-      </div>
+      <img
+        src={image}
+        alt={name}
+        className="w-full h-48 object-cover rounded-lg mb-4"
+      />
       <h4 className="text-xl font-bold mb-2 font-dmsans">
         <span className="text-[#1F5E40]">_</span>
         {name}

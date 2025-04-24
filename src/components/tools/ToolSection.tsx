@@ -4,7 +4,7 @@ import ToolCard from "./ToolCard";
 interface ToolSectionProps {
   title: string;
   tools: Array<{
-    id: string | number;
+    id: number;
     name: string;
     description: string;
     image: string;
