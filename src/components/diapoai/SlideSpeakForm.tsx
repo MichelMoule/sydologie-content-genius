@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -62,7 +62,8 @@ export const SlideSpeakForm = ({
   const [apiError, setApiError] = useState<string | null>(null);
   const [templates, setTemplates] = useState<SlideSpeakTemplate[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
-  const [pollingIntervalId, setPollingIntervalId] = useState<number | null>(null);
+  const pollingIntervalIdRef = useRef<number | null>(null);
+  const successNotifiedRef = useRef(false);
 
   const { toast } = useToast();
 
@@ -77,6 +78,14 @@ export const SlideSpeakForm = ({
       custom_instructions: "",
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalIdRef.current !== null) {
+        clearInterval(pollingIntervalIdRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -100,7 +109,16 @@ export const SlideSpeakForm = ({
   }, [toast]);
 
   useEffect(() => {
+    if (taskId) {
+      successNotifiedRef.current = false;
+    }
+    
     if (!taskId) return;
+
+    if (pollingIntervalIdRef.current !== null) {
+      clearInterval(pollingIntervalIdRef.current);
+      pollingIntervalIdRef.current = null;
+    }
 
     const checkTaskStatus = async () => {
       try {
@@ -108,9 +126,9 @@ export const SlideSpeakForm = ({
         setTaskStatus(status);
 
         if (status.task_status === "SUCCESS" && status.task_result?.url) {
-          if (pollingIntervalId !== null) {
-            clearInterval(pollingIntervalId);
-            setPollingIntervalId(null);
+          if (pollingIntervalIdRef.current !== null) {
+            clearInterval(pollingIntervalIdRef.current);
+            pollingIntervalIdRef.current = null;
           }
           setIsGenerating(false);
           
@@ -119,15 +137,20 @@ export const SlideSpeakForm = ({
           }
           
           onPresentationGenerated(status.task_result.url);
-          toast({
-            title: "Présentation générée avec succès",
-            description: "Votre présentation PowerPoint est prête au téléchargement",
-          });
+          
+          if (!successNotifiedRef.current) {
+            toast({
+              title: "Présentation générée avec succès",
+              description: "Votre présentation PowerPoint est prête au téléchargement",
+            });
+            successNotifiedRef.current = true;
+          }
+          
           setActiveTab("content");
         } else if (status.task_status === "FAILURE") {
-          if (pollingIntervalId !== null) {
-            clearInterval(pollingIntervalId);
-            setPollingIntervalId(null);
+          if (pollingIntervalIdRef.current !== null) {
+            clearInterval(pollingIntervalIdRef.current);
+            pollingIntervalIdRef.current = null;
           }
           setIsGenerating(false);
           
@@ -138,12 +161,16 @@ export const SlideSpeakForm = ({
           setApiError(
             status.error || "Une erreur est survenue lors de la génération de la présentation"
           );
-          toast({
-            title: "Échec de la génération",
-            description:
-              status.error || "Une erreur est survenue lors de la génération de la présentation",
-            variant: "destructive",
-          });
+          
+          if (!successNotifiedRef.current) {
+            toast({
+              title: "Échec de la génération",
+              description:
+                status.error || "Une erreur est survenue lors de la génération de la présentation",
+              variant: "destructive",
+            });
+            successNotifiedRef.current = true;
+          }
         }
       } catch (error) {
         console.error("Erreur lors de la vérification du statut:", error);
@@ -151,12 +178,12 @@ export const SlideSpeakForm = ({
     };
 
     checkTaskStatus();
+    
     const intervalId = window.setInterval(checkTaskStatus, 2000);
-    setPollingIntervalId(intervalId);
+    pollingIntervalIdRef.current = intervalId;
 
     return () => {
       if (intervalId) clearInterval(intervalId);
-      setPollingIntervalId(null);
     };
   }, [taskId, onPresentationGenerated, onPresentationGenerating, toast]);
 
@@ -187,6 +214,7 @@ export const SlideSpeakForm = ({
     setIsGenerating(true);
     setTaskStatus(null);
     setTaskId(null);
+    successNotifiedRef.current = false;
     
     if (onPresentationGenerating) {
       onPresentationGenerating(true);
