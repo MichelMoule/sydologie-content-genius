@@ -46,7 +46,13 @@ const DiapoAI = () => {
           <div className="grid gap-8">
             <SlideSpeakForm onPresentationGenerating={handlePresentationGenerating} onPresentationGenerated={handlePresentationGenerated} />
             
-            {!presentationUrl && !isGenerating}
+            {!presentationUrl && !isGenerating && (
+              <div className="bg-white p-8 rounded-lg shadow-md text-center">
+                <p className="text-muted-foreground">
+                  Entrez votre contenu et générz votre présentation pour la visualiser ici
+                </p>
+              </div>
+            )}
             
             {presentationUrl && <SlideSpeakPreview presentationUrl={presentationUrl} />}
           </div>

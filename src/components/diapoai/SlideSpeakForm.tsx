@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,6 +34,7 @@ import {
   SlideSpeakTemplate,
   slideSpeakService,
 } from "@/services/slidespeak";
+import * as mammoth from 'mammoth';
 
 export const formSchema = z.object({
   content: z.string().min(10, {
@@ -61,6 +63,7 @@ export const SlideSpeakForm = ({
   const [apiError, setApiError] = useState<string | null>(null);
   const [templates, setTemplates] = useState<SlideSpeakTemplate[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
   const pollingIntervalIdRef = useRef<number | null>(null);
   const successNotifiedRef = useRef(false);
 
@@ -185,7 +188,7 @@ export const SlideSpeakForm = ({
     };
   }, [taskId, onPresentationGenerated, onPresentationGenerating, toast]);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -198,13 +201,34 @@ export const SlideSpeakForm = ({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      setFileContent(content);
-      form.setValue("content", content);
-    };
-    reader.readAsText(file);
+    setIsProcessingFile(true);
+
+    try {
+      // Lire le fichier comme un ArrayBuffer
+      const arrayBuffer = await file.arrayBuffer();
+      
+      // Utiliser mammoth pour extraire le texte du fichier DOCX
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      const extractedText = result.value;
+      
+      // Mettre à jour le formulaire avec le texte extrait
+      setFileContent(extractedText);
+      form.setValue("content", extractedText);
+      
+      toast({
+        title: "Fichier importé avec succès",
+        description: "Le contenu du document a été chargé",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'extraction du texte:", error);
+      toast({
+        title: "Erreur d'importation",
+        description: "Impossible d'extraire le texte du document",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessingFile(false);
+    }
   };
 
   const generatePresentation = async (values: z.infer<typeof formSchema>) => {
@@ -307,7 +331,14 @@ export const SlideSpeakForm = ({
                 accept=".docx"
                 onChange={handleFileUpload}
                 className="max-w-md"
+                disabled={isProcessingFile}
               />
+              {isProcessingFile && (
+                <div className="flex items-center mt-1 text-sm text-blue-600">
+                  <Loader2 className="mr-2 h-3 w-3 animate-spin" /> 
+                  Extraction du texte en cours...
+                </div>
+              )}
               <p className="text-sm text-muted-foreground">
                 Ou saisissez directement votre contenu ci-dessous
               </p>
@@ -341,12 +372,12 @@ export const SlideSpeakForm = ({
                   variant="outline"
                   className="mr-2"
                   onClick={() => setActiveTab("settings")}
-                  disabled={isGenerating}
+                  disabled={isGenerating || isProcessingFile}
                 >
                   Paramètres avancés
                 </Button>
 
-                <Button type="submit" disabled={isGenerating}>
+                <Button type="submit" disabled={isGenerating || isProcessingFile}>
                   {isGenerating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Génération en cours...
