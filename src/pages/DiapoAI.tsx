@@ -38,7 +38,6 @@ const DiapoAI = () => {
                 <li>Les présentations sont limitées à 10 diapositives maximum</li>
                 <li>Le service n'est pas conforme RGPD car les données sont traitées hors UE</li>
                 <li>Nous formons aux outils d'IA génératifs</li>
-                <li>Pour une utilisation professionnelle</li>
               </ul>
             </AlertDescription>
           </Alert>
