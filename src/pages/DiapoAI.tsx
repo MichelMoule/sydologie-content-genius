@@ -6,20 +6,16 @@ import { SlideSpeakForm } from "@/components/diapoai/SlideSpeakForm";
 import { SlideSpeakPreview } from "@/components/diapoai/SlideSpeakPreview";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon, Link, Presentation } from "lucide-react";
-
 const DiapoAI = () => {
   const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-
   const handlePresentationGenerating = (status: boolean) => {
     setIsGenerating(status);
   };
-
   const handlePresentationGenerated = (url: string) => {
     setPresentationUrl(url);
     setIsGenerating(false);
   };
-
   return <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
       
@@ -37,7 +33,7 @@ const DiapoAI = () => {
               <ul className="list-disc ml-6 space-y-1">
                 <li>Les présentations sont limitées à 10 diapositives maximum</li>
                 <li>Le service n'est pas conforme RGPD car les données sont traitées hors UE</li>
-                <li>Nous formons aux outils d'IA génératifs</li>
+                
               </ul>
             </AlertDescription>
           </Alert>
@@ -55,5 +51,4 @@ const DiapoAI = () => {
       <Footer />
     </div>;
 };
-
 export default DiapoAI;
