@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { SlideSpeakForm } from "@/components/diapoai/SlideSpeakForm";
 import { SlideSpeakPreview } from "@/components/diapoai/SlideSpeakPreview";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Presentation } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon, Link, Presentation } from "lucide-react";
 
 const DiapoAI = () => {
   const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
@@ -26,8 +26,23 @@ const DiapoAI = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto space-y-6">
           <DiapoAIHeader />
+
+          <Alert className="bg-yellow-50 border-yellow-200">
+            <InfoIcon className="h-5 w-5 text-yellow-600" />
+            <AlertTitle>Informations importantes</AlertTitle>
+            <AlertDescription className="mt-2 space-y-2">
+              <p>
+                Cet outil utilise l'API de <a href="https://slidespeak.co/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">SlideSpeak</a>. Veuillez noter que :
+              </p>
+              <ul className="list-disc ml-6 space-y-1">
+                <li>Les présentations sont limitées à 10 diapositives maximum</li>
+                <li>Le service n'est pas conforme RGPD car les données sont traitées hors UE</li>
+                <li>Nous formons aux outils d'IA génératifs pour une utilisation professionnelle</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
 
           <div className="grid gap-8">
             <SlideSpeakForm 
