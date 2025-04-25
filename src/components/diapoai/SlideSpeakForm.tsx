@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
 import {
   SlideSpeakTaskResult,
   SlideSpeakGenerateParams,
@@ -204,14 +202,11 @@ export const SlideSpeakForm = ({
     setIsProcessingFile(true);
 
     try {
-      // Lire le fichier comme un ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
       
-      // Utiliser mammoth pour extraire le texte du fichier DOCX
       const result = await mammoth.extractRawText({ arrayBuffer });
       const extractedText = result.value;
       
-      // Mettre à jour le formulaire avec le texte extrait
       setFileContent(extractedText);
       form.setValue("content", extractedText);
       
@@ -278,22 +273,6 @@ export const SlideSpeakForm = ({
 
   const clearApiError = () => {
     setApiError(null);
-  };
-
-  const getProgressValue = () => {
-    if (!taskStatus) return 10;
-    switch (taskStatus.task_status) {
-      case "PENDING":
-        return 25;
-      case "PROCESSING":
-        return 75;
-      case "SUCCESS":
-        return 100;
-      case "FAILURE":
-        return 100;
-      default:
-        return 10;
-    }
   };
 
   return (
@@ -390,16 +369,13 @@ export const SlideSpeakForm = ({
 
               {isGenerating && (
                 <div className="mt-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">
-                      {taskStatus?.task_status === "PENDING" && "En attente..."}
-                      {taskStatus?.task_status === "PROCESSING" && "Génération en cours..."}
-                      {taskStatus?.task_status === "SUCCESS" && "Génération terminée!"}
-                      {taskStatus?.task_status === "FAILURE" && "Échec de la génération"}
-                    </span>
-                    <span className="text-sm text-muted-foreground">{getProgressValue()}%</span>
+                  <div className="text-sm font-medium text-center">
+                    {taskStatus?.task_status === "PENDING" && "En attente de traitement..."}
+                    {taskStatus?.task_status === "PROCESSING" && "Génération de votre présentation en cours..."}
+                    {taskStatus?.task_status === "SUCCESS" && "Génération terminée!"}
+                    {taskStatus?.task_status === "FAILURE" && "Échec de la génération"}
+                    {!taskStatus?.task_status && "Préparation de votre présentation..."}
                   </div>
-                  <Progress value={getProgressValue()} className="h-2" />
                 </div>
               )}
             </form>
