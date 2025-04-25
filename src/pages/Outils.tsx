@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/Navbar";
 import ToolsHero from "@/components/tools/ToolsHero";
 import ToolSection from "@/components/tools/ToolSection";
@@ -6,10 +5,14 @@ import Footer from "@/components/Footer";
 import { tools, getToolsByCategory } from "@/data/tools";
 
 const Outils = () => {
-  // Get all tools and split them into featured and non-featured ones
-  const allTools = getToolsByCategory("all");
-  const featuredTools = allTools.filter(tool => tool.featured);
-  const otherTools = allTools.filter(tool => !tool.featured);
+  // Filter out 'formations' and 'suggestions' from all tools
+  const filteredAllTools = tools.filter(tool => 
+    tool.id !== 'formations' && tool.id !== 'suggestions'
+  );
+
+  // Get filtered featured and non-featured tools
+  const featuredTools = filteredAllTools.filter(tool => tool.featured);
+  const otherTools = filteredAllTools.filter(tool => !tool.featured);
 
   // Define the tool image mapping
   const toolImages: Record<string, string> = {
@@ -48,7 +51,9 @@ const Outils = () => {
         <ToolSection title="Nos outils de conception" tools={mapToolsToToolSection(featuredTools)} />
 
         {/* Other Tools */}
-        <ToolSection title="Nos autres outils" tools={mapToolsToToolSection(otherTools)} />
+        {otherTools.length > 0 && (
+          <ToolSection title="Nos autres outils" tools={mapToolsToToolSection(otherTools)} />
+        )}
       </div>
       
       <Footer />
