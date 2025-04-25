@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -5,7 +6,7 @@ import { DiapoAIHeader } from "@/components/diapoai/DiapoAIHeader";
 import { SlideSpeakForm } from "@/components/diapoai/SlideSpeakForm";
 import { SlideSpeakPreview } from "@/components/diapoai/SlideSpeakPreview";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, Link, Presentation } from "lucide-react";
+import { InfoIcon, Gift } from "lucide-react";
 
 const DiapoAI = () => {
   const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
@@ -37,7 +38,7 @@ const DiapoAI = () => {
               <ul className="list-disc ml-6 space-y-1">
                 <li>Les présentations sont limitées à 10 diapositives maximum</li>
                 <li>Le service n'est pas conforme RGPD car les données sont traitées hors UE</li>
-                <li>Nous prenons en charge le coût de la solution pour vous</li>
+                <li>Nous prenons en charge le coût de la solution pour vous <Gift className="inline-block w-4 h-4 ml-1" /></li>
               </ul>
             </AlertDescription>
           </Alert>
