@@ -9,6 +9,7 @@ import FormationDialog from "@/components/FormationDialog";
 import FormationCard from "@/components/FormationCard";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+
 interface Formation {
   id: string;
   name: string;
@@ -30,6 +31,7 @@ interface Formation {
     type: string;
   }[];
 }
+
 const fetchFormations = async (): Promise<Formation[]> => {
   const {
     data,
@@ -39,25 +41,37 @@ const fetchFormations = async (): Promise<Formation[]> => {
   if (!data?.data?.programs) throw new Error('No formations found');
   return data.data.programs;
 };
+
 const Formations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const navigate = useNavigate();
-  const {
-    data: formations,
-    isLoading,
-    error
-  } = useQuery({
+
+  const { data: formations, isLoading, error } = useQuery({
     queryKey: ['formations'],
     queryFn: fetchFormations
   });
+
   const filteredFormations = useMemo(() => {
     if (!formations) return [];
-    return formations.filter(formation => {
-      const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) || formation.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
-    });
+    
+    return formations
+      .sort((a, b) => {
+        // Put Booster IA formation first
+        const isABooster = a.name.includes("Booster IA : Automatisez les processus métier");
+        const isBBooster = b.name.includes("Booster IA : Automatisez les processus métier");
+        
+        if (isABooster) return -1;
+        if (isBBooster) return 1;
+        return 0;
+      })
+      .filter(formation => {
+        const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            formation.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSearch;
+      });
   }, [formations, searchQuery]);
+
   return <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
@@ -147,4 +161,5 @@ const Formations = () => {
       <FormationDialog formation={selectedFormation} open={!!selectedFormation} onOpenChange={open => !open && setSelectedFormation(null)} />
     </div>;
 };
+
 export default Formations;
