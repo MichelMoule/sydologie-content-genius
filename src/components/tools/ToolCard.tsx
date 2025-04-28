@@ -7,9 +7,10 @@ interface ToolCardProps {
   description: string;
   image: string;
   path?: string;
+  partnerLogo?: string;
 }
 
-const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
+const ToolCard = ({ id, name, description, image, path, partnerLogo }: ToolCardProps) => {
   return (
     <Link 
       key={id} 
@@ -32,6 +33,13 @@ const ToolCard = ({ id, name, description, image, path }: ToolCardProps) => {
         {name}
       </h4>
       <p className="text-gray-700 font-dmsans">{description}</p>
+      
+      {partnerLogo && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+          <p className="text-xs text-gray-500">Propulsé par</p>
+          <img src={partnerLogo} alt="Partner logo" className="h-6" />
+        </div>
+      )}
     </Link>
   );
 };

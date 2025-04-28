@@ -29,6 +29,11 @@ const Outils = () => {
     default: "/placeholder.svg"
   };
 
+  // Define partner logos for tools that have them
+  const partnerLogos: Record<string, string> = {
+    diapoai: "/lovable-uploads/add91aaa-29b6-4d20-b3d2-ce7dd35edc3b.png"
+  };
+
   // Map the tools to the format expected by ToolSection
   const mapToolsToToolSection = (toolsList) => {
     return toolsList.map(tool => ({
@@ -36,7 +41,8 @@ const Outils = () => {
       name: tool.name,
       description: tool.description,
       image: toolImages[tool.id] || toolImages.default,
-      path: tool.link
+      path: tool.link,
+      partnerLogo: partnerLogos[tool.id] || null
     }));
   };
 

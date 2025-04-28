@@ -9,6 +9,7 @@ interface ToolSectionProps {
     description: string;
     image: string;
     path?: string;
+    partnerLogo?: string;
   }>;
 }
 
@@ -27,6 +28,7 @@ const ToolSection = ({ title, tools }: ToolSectionProps) => {
             description={tool.description}
             image={tool.image}
             path={tool.path}
+            partnerLogo={tool.partnerLogo}
           />
         ))}
       </div>
