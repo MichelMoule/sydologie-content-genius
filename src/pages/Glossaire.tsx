@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { GlossaireHeader } from "@/components/glossaire/GlossaireHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,12 +144,7 @@ const Glossaire = () => {
         </Link>
         
         <div className="flex flex-col space-y-8 mt-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold mb-4 font-dmsans">GlossAIre</h1>
-            <p className="text-xl text-zinc-600 font-dmsans">
-              Générez automatiquement des glossaires à partir de vos supports de formation Word ou TXT
-            </p>
-          </div>
+          <GlossaireHeader />
 
           <div className="w-full max-w-3xl mx-auto">
             <Card className="mb-8">
