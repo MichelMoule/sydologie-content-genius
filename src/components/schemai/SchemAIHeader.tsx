@@ -15,16 +15,6 @@ export const SchemAIHeader = () => {
         </div>
       </div>
       
-      <div className="mt-6 aspect-video w-full rounded-md overflow-hidden">
-        <iframe
-          src="https://www.youtube.com/embed/Y49H6_dL9qs"
-          title="Présentation de SchemAI"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-full"
-        />
-      </div>
-      
       <div className="mt-4 flex justify-end">
         <Link 
           to="https://sydo.fr/nos-outils/schema-et-infographie-pedagogiques" 
@@ -36,6 +26,17 @@ export const SchemAIHeader = () => {
           <span>Découvrir Sydo</span>
         </Link>
       </div>
+
+      <div className="mt-6 aspect-video w-full rounded-md overflow-hidden">
+        <iframe
+          src="https://www.youtube.com/embed/Y49H6_dL9qs"
+          title="Présentation de SchemAI"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
     </div>
   );
 };
+
