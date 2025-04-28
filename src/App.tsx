@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,7 +22,7 @@ import Legal from "./pages/Legal";
 import Settings from "./pages/Settings";
 import ResetPassword from "./pages/ResetPassword";
 import PromptEngineer from "./pages/PromptEngineer";
-import DiagramAI from "./pages/DiagramAI";
+import SchemAI from "./pages/SchemAI";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +46,7 @@ const App = () => (
           <Route path="/outils/glossaire" element={<Glossaire />} />
           <Route path="/outils/videoscript" element={<VideoScript />} />
           <Route path="/outils/diapoai" element={<DiapoAI />} />
-          <Route path="/outils/diagram" element={<DiagramAI />} />
+          <Route path="/outils/schemai" element={<SchemAI />} />
           <Route path="/outils/suggestions" element={<Suggestions />} />
           <Route path="/outils/prompt-engineer" element={<PromptEngineer />} />
           <Route path="/settings" element={<Settings />} />
