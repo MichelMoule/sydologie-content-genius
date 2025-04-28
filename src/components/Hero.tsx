@@ -19,17 +19,17 @@ const Hero = () => {
     <div className="w-full px-4 py-12 md:py-20 md:pb-32 bg-[#EDE8E0]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-8 relative">
         <div className="w-full md:w-3/5 pt-4 md:pt-20">
-          <div className="text-[#82C8A0] mb-4 text-sm uppercase tracking-wide font-medium">
+          <div className="text-[#82C8A0] mb-4 text-sm uppercase tracking-wide font-dmsans">
             BIENVENUE SUR SYDOLOGIE.AI
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight font-unbounded">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight font-dmsans">
             Découvrez nos outils utilisant{" "}
             <span className="text-[#82C8A0]">l'intelligence artificielle</span>{" "}
             au service de vos formations
           </h1>
           
           <div className="mt-8 md:mt-20 md:hidden">
-            <p className="text-gray-600 mb-6 text-base">
+            <p className="text-gray-600 mb-6 text-base font-dmsans">
               Nous sommes fiers de relancer Sydologie.ai suite à la demande des utilisateurs. Et le meilleur ? Tout est <strong>RGPD</strong> !
             </p>
             <div className="space-y-4 flex flex-col">

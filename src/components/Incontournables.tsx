@@ -1,5 +1,3 @@
-
-
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
@@ -39,7 +37,7 @@ const Incontournables = () => {
     <section className="w-full py-10 md:py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 md:mb-12 gap-4">
-          <h2 className="text-3xl md:text-4xl font-bold font-sans">
+          <h2 className="text-3xl md:text-4xl font-bold font-dmsans">
             <span className="text-[#1F5E40]">_</span>Les incontournables
           </h2>
           <Link to="/outils">
@@ -76,4 +74,3 @@ const Incontournables = () => {
 };
 
 export default Incontournables;
-
