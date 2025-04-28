@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -57,11 +56,11 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } else if (type === 'generate') {
-      const formatString = format === '1:1' ? 'format carré, 1:1' :
-                         format === '16:9' ? 'format horizontal, 16:9' :
-                         'format vertical, 9:16';
+      const formatString = format === '1:1' ? '1024x1024' :
+                         format === '16:9' ? '1536x1024' :
+                         '1024x1536';
 
-      const prompt = `Schéma pédagogique clair, professionnel, ${formatString}, avec marges, aucun élément ne doit être coupé ou toucher les bords. Inclure des textes explicatifs clairs et lisibles directement sur le schéma pour chaque élément important. Représenter : ${content}`;
+      const prompt = `Schéma pédagogique clair, professionnel, avec marges, aucun élément ne doit être coupé ou toucher les bords. Inclure des textes explicatifs clairs et lisibles directement sur le schéma pour chaque élément important. Représenter : ${content}`;
 
       console.log("Sending prompt to OpenAI:", prompt);
 
@@ -72,10 +71,10 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "dall-e-3",
+          model: "gpt-image-1",
           prompt: prompt,
-          n: 1,
-          size: "1024x1024",
+          size: formatString,
+          quality: "high",
         }),
       });
 
@@ -91,54 +90,14 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       }
       
       const imageData = data.data[0];
-      if (!imageData || (!imageData.b64_json && !imageData.url)) {
+      if (!imageData || (!imageData.b64_json)) {
         throw new Error('Réponse invalide de l\'API OpenAI (image data manquant): ' + JSON.stringify(data.data));
       }
-      
-      if (imageData.b64_json) {
-        return new Response(
-          JSON.stringify({ image: imageData.b64_json }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      } 
-      else if (imageData.url) {
-        try {
-          // Fetch the image from the URL
-          console.log("Fetching image from URL:", imageData.url);
-          const imageResponse = await fetch(imageData.url);
-          
-          if (!imageResponse.ok) {
-            throw new Error(`Failed to fetch image: ${imageResponse.status} ${imageResponse.statusText}`);
-          }
-          
-          // Get array buffer from response
-          const imageArrayBuffer = await imageResponse.arrayBuffer();
-          console.log(`Got image data: ${imageArrayBuffer.byteLength} bytes`);
-          
-          // Use a more memory-efficient approach to convert to base64
-          // Instead of using spread operator which can cause stack overflow
-          const bytes = new Uint8Array(imageArrayBuffer);
-          
-          // Convert to base64 in chunks to avoid stack overflow
-          let binary = '';
-          const chunkSize = 1024;
-          for (let i = 0; i < bytes.byteLength; i += chunkSize) {
-            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.byteLength));
-            binary += String.fromCharCode.apply(null, chunk);
-          }
-          
-          const base64Image = btoa(binary);
-          console.log(`Converted to base64: ${base64Image.length} chars`);
-          
-          return new Response(
-            JSON.stringify({ image: base64Image }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        } catch (error) {
-          console.error("Error fetching and converting image:", error);
-          throw new Error(`Erreur lors de la récupération de l'image: ${error.message}`);
-        }
-      }
+
+      return new Response(
+        JSON.stringify({ image: imageData.b64_json }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     throw new Error('Type non valide spécifié');
