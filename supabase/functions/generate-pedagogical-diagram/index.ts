@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -36,6 +37,11 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       });
 
       const data = await response.json();
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('Réponse invalide de l\'API OpenAI: ' + JSON.stringify(data));
+      }
+      
       const suggestions = data.choices[0].message.content
         .split('\n')
         .filter(line => line.match(/^\d+\./))
@@ -69,13 +75,17 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
 
       const data = await response.json();
       
+      if (!data.data || !data.data[0] || !data.data[0].b64_json) {
+        throw new Error('Réponse invalide de l\'API OpenAI: ' + JSON.stringify(data));
+      }
+      
       return new Response(
         JSON.stringify({ image: data.data[0].b64_json }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    throw new Error('Invalid type specified');
+    throw new Error('Type non valide spécifié');
   } catch (error) {
     console.error('Error:', error);
     return new Response(
