@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, MapPin, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, MapPin, User } from "lucide-react";
 
 interface FormationCardProps {
   formation: {
@@ -31,12 +31,10 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
   };
 
   const getFormationType = (formation: FormationCardProps['formation']) => {
-    // If formation name starts with "Le Bahut", return "Alternance"
     if (formation.name.startsWith('Le Bahut')) {
       return "Alternance";
     }
     
-    // Specific formations that should be "INTER et INTRA"
     const interIntraFormations = [
       "Automatisation, IA et développement assisté",
       "Concevoir et produire des ressources e-learning",
@@ -47,12 +45,26 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
       return "INTER et INTRA";
     }
     
-    // All other formations are "INTRA uniquement"
     return "INTRA uniquement";
   };
 
+  const isBoosterIAFormation = formation.name.includes("Booster IA : Automatisez les processus métier");
+  
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group font-dmsans" onClick={onClick}>
+    <Card 
+      className={`flex flex-col h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer group font-dmsans
+        ${isBoosterIAFormation ? 'ring-2 ring-[#72BB8E] relative' : ''}`} 
+      onClick={onClick}
+    >
+      {isBoosterIAFormation && (
+        <div className="absolute -top-4 left-4 z-10 flex gap-2">
+          <Badge className="bg-[#72BB8E] text-white">CPF</Badge>
+          <Badge variant="outline" className="bg-white">
+            Prochaine session : 15 mai - 4 juillet
+          </Badge>
+        </div>
+      )}
+      
       {formation.image?.url && (
         <div className="relative w-full h-36 md:h-48 overflow-hidden rounded-t-lg">
           <img
@@ -60,8 +72,14 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
             alt={formation.name}
             className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
           />
+          {isBoosterIAFormation && (
+            <div className="absolute bottom-0 left-0 right-0 bg-[#72BB8E]/90 text-white p-2 text-sm">
+              9 jours de formation sur 8 semaines
+            </div>
+          )}
         </div>
       )}
+      
       <CardHeader className="py-3 md:py-4">
         <CardTitle className="text-base md:text-xl line-clamp-2 mb-2 md:mb-4 font-dmsans">{formation.name}</CardTitle>
       </CardHeader>
