@@ -1,6 +1,5 @@
-
 import { Button } from "./ui/button";
-import { User, LogOut, Settings, Menu, X } from "lucide-react";
+import { User, LogOut, Settings, Menu, X, Discord } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +13,6 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({
       data: {
         session
@@ -23,7 +21,6 @@ const Navbar = () => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth changes
     const {
       data: {
         subscription
@@ -48,14 +45,12 @@ const Navbar = () => {
     <nav className="bg-[#82C8A0] text-[#EDE8E0] relative z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-sans flex items-center font-bold">
               Sydologie<span className="text-[#1F5E40] font-bold">.ai</span>
             </Link>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <Button 
               variant="ghost" 
@@ -66,7 +61,6 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-8 font-dmsans text-lg font-medium">
             <Link to="/outils" className="hover:text-white transition-colors">
               Outils
@@ -80,9 +74,16 @@ const Navbar = () => {
             <Link to="/contact" className="hover:text-white transition-colors">
               Nous contacter
             </Link>
+            <a 
+              href="https://discord.gg/sC44FXg2pE" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors flex items-center"
+            >
+              <Discord className="h-6 w-6" />
+            </a>
           </div>
 
-          {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2 font-dmsans">
             {user ? (
               <div className="flex items-center space-x-2">
@@ -108,7 +109,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-16 inset-x-0 bg-[#82C8A0] shadow-lg z-50">
           <div className="px-4 py-4 space-y-4 font-dmsans">
@@ -141,7 +141,17 @@ const Navbar = () => {
               Nous contacter
             </Link>
 
-            {/* Mobile Auth Links */}
+            <a 
+              href="https://discord.gg/sC44FXg2pE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Discord className="mr-2 h-5 w-5" />
+              Discord
+            </a>
+
             <div className="pt-4 border-t border-white/20">
               {user ? (
                 <div className="space-y-2">
