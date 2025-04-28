@@ -61,10 +61,10 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'dall-e-3',
+          model: "gpt-image-1",
           prompt: prompt,
           n: 1,
-          size: '1024x1024',
+          size: "1024x1024",
           response_format: 'b64_json'
         }),
       });
