@@ -1,4 +1,5 @@
 
+
 import Navbar from "@/components/Navbar";
 import ToolsHero from "@/components/tools/ToolsHero";
 import ToolSection from "@/components/tools/ToolSection";
@@ -25,6 +26,7 @@ const Outils = () => {
     videoscript: "/lovable-uploads/99315df8-42be-48a5-8197-0f97735a8cec.png",
     "prompt-engineer": "/lovable-uploads/d65fc816-3265-46b8-8cc5-9df7b7aff414.png",
     diapoai: "/lovable-uploads/e09e2047-10f7-447a-b3c7-fb3b5a726fec.png",
+    schemai: "/lovable-uploads/1b3e812b-a858-42cb-b3d4-6c437e7e8db2.png",
     // Utiliser une image par défaut pour les outils qui n'ont pas d'image spécifique
     default: "/placeholder.svg"
   };
@@ -70,3 +72,4 @@ const Outils = () => {
 };
 
 export default Outils;
+
