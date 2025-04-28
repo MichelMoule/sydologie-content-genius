@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, Circle, Line } from "fabric";
+import { fabric } from "fabric";
 import { Button } from "@/components/ui/button";
 import { Eraser, Pencil, Undo2, Delete } from "lucide-react";
 
@@ -10,13 +10,14 @@ interface DrawingCanvasProps {
 
 export function DrawingCanvas({ onDrawingComplete }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
   const [drawingMode, setDrawingMode] = useState<"draw" | "erase">("draw");
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvas = new FabricCanvas(canvasRef.current, {
+    // Initialize the fabric canvas
+    const canvas = new fabric.Canvas(canvasRef.current, {
       width: 800,
       height: 600,
       backgroundColor: "#ffffff",
