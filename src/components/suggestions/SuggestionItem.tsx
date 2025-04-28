@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, User, MessageCircle } from "lucide-react";
+import { ThumbsUp, User, MessageCircle, Check } from "lucide-react";
 import CommentSection from "@/components/suggestions/CommentSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,8 +33,27 @@ type SuggestionItemProps = {
 
 const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: SuggestionItemProps) => {
   const [expandedComment, setExpandedComment] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+
+  const checkAdminRole = async () => {
+    if (!currentUser) return;
+    
+    const { data, error } = await supabase
+      .rpc('has_role', { _role: 'admin' });
+      
+    if (error) {
+      console.error('Error checking admin role:', error);
+      return;
+    }
+    
+    setIsAdmin(!!data);
+  };
+
+  useState(() => {
+    checkAdminRole();
+  }, [currentUser]);
 
   const getScore = (suggestion: ToolSuggestion) => {
     return suggestion.upvotes_count;
@@ -59,7 +77,6 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
       
       if (existingVote) {
         if (existingVote.vote_type === voteType) {
-          // User is removing their upvote
           await supabase
             .from('tool_votes')
             .delete()
@@ -71,7 +88,6 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
             upvotes_count: suggestion.upvotes_count - 1
           });
         } else {
-          // This case shouldn't occur anymore since we only have upvotes now
           await supabase
             .from('tool_votes')
             .update({ vote_type: voteType })
@@ -84,7 +100,6 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
           });
         }
       } else {
-        // User is adding a new upvote
         await supabase
           .from('tool_votes')
           .insert([
@@ -109,6 +124,41 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
 
   const toggleExpandComment = () => {
     setExpandedComment(!expandedComment);
+  };
+
+  const markAsRealized = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tool_suggestions')
+        .update({ status: 'realized' })
+        .eq('id', suggestion.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success('Suggestion marquée comme réalisée');
+      if (data) {
+        updateSuggestion({
+          ...suggestion,
+          status: 'realized'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      toast.error('Erreur lors de la mise à jour du statut');
+    }
+  };
+
+  const StatusBadge = () => {
+    let color = 'bg-gray-500';
+    if (suggestion.status === 'realized') color = 'bg-green-500';
+    
+    return (
+      <Badge className={color + ' text-xs font-dmsans'}>
+        {suggestion.status === 'realized' ? 'Réalisé' : 'En attente'}
+      </Badge>
+    );
   };
 
   return (
@@ -147,6 +197,20 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
               {suggestion.category}
             </Badge>
             
+            <StatusBadge />
+            
+            {isAdmin && suggestion.status !== 'realized' && (
+              <Button
+                variant="outline"
+                size={isMobile ? "sm" : "default"}
+                className="flex items-center space-x-1 font-dmsans px-2 h-8 md:h-10 bg-green-100 hover:bg-green-200 border-green-500"
+                onClick={markAsRealized}
+              >
+                <Check size={isMobile ? 14 : 16} className="text-green-600" />
+                <span className="text-xs md:text-sm">Marquer comme réalisé</span>
+              </Button>
+            )}
+
             <div className="flex items-center gap-1 ml-auto md:ml-0">
               <span className="font-medium font-dmsans text-sm md:text-base text-sydologie-green">
                 {getScore(suggestion)}
