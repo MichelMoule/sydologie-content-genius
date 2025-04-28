@@ -24,7 +24,7 @@ interface DiagramFormProps {
   suggestions: string[];
 }
 
-export function DiagramForm({ onSubmit, isGenerating, suggestions }: DiagramFormProps) {
+export function DiagramForm({ onSubmit, isGenerating, suggestions = [] }: DiagramFormProps) {
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
   
   const form = useForm<z.infer<typeof formSchema>>({

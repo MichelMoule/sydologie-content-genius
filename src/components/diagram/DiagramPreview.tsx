@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface DiagramPreviewProps {
-  image: string;
+  diagramUrl: string;
 }
 
-export function DiagramPreview({ image }: DiagramPreviewProps) {
+export function DiagramPreview({ diagramUrl }: DiagramPreviewProps) {
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = image;
+    link.href = diagramUrl;
     link.download = `schema_${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
@@ -23,7 +23,7 @@ export function DiagramPreview({ image }: DiagramPreviewProps) {
         <div className="space-y-4">
           <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
             <img 
-              src={image} 
+              src={diagramUrl} 
               alt="Schéma généré"
               className="w-full h-full object-contain"
             />
