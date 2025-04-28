@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -26,6 +27,8 @@ const PromptEngineer = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">&lt; Outils</Link>
+        
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-6">

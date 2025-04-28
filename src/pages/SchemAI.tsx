@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -47,6 +48,8 @@ const SchemAI = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">&lt; Outils</Link>
+        
         <div className="max-w-5xl mx-auto space-y-6">
           <SchemAIHeader />
 
