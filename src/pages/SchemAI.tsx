@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { SchemAIHeader } from "@/components/schemai/SchemAIHeader";
 import { DiagramForm } from "@/components/diagram/DiagramForm";
 import { DiagramPreview } from "@/components/diagram/DiagramPreview";
+import { supabase } from "@/integrations/supabase/client";
 
 const SchemAI = () => {
   const [diagramUrl, setDiagramUrl] = useState<string | null>(null);
@@ -19,25 +20,53 @@ const SchemAI = () => {
       console.log("Form values:", values);
       
       if (values.type === "suggestions") {
-        // Simulate API call for suggestions
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        const mockSuggestions = [
-          "Un schéma circulaire montrant le cycle d'apprentissage",
-          "Un diagramme en arborescence illustrant les concepts clés",
-          "Une représentation en organigramme des étapes du processus"
-        ];
-        setSuggestions(mockSuggestions);
-        toast.success("Suggestions générées avec succès");
+        // Call the edge function to get suggestions
+        const { data, error } = await supabase.functions.invoke('generate-pedagogical-diagram', {
+          body: { 
+            content: values.content,
+            type: 'suggestions'
+          }
+        });
+
+        if (error) {
+          throw new Error(`Erreur API: ${error.message}`);
+        }
+
+        if (data?.suggestions && Array.isArray(data.suggestions)) {
+          setSuggestions(data.suggestions);
+          toast.success("Suggestions générées avec succès");
+        } else {
+          throw new Error("Format de réponse invalide");
+        }
       } else {
-        // Simulate API call for diagram generation
-        await new Promise(resolve => setTimeout(resolve, 2500));
-        // Placeholder URL - in a real app, this would come from your API
-        setDiagramUrl("https://placehold.co/600x400/png?text=Schéma+généré");
-        toast.success("Schéma généré avec succès");
+        // Call the edge function to generate the diagram
+        const content = values.description || values.content;
+        const format = values.format || "16:9";
+
+        const { data, error } = await supabase.functions.invoke('generate-pedagogical-diagram', {
+          body: { 
+            content: content,
+            type: 'generate',
+            format: format
+          }
+        });
+
+        if (error) {
+          throw new Error(`Erreur API: ${error.message}`);
+        }
+
+        if (data?.image) {
+          // Create a URL from the base64 image data
+          const imageUrl = `data:image/png;base64,${data.image}`;
+          setDiagramUrl(imageUrl);
+          toast.success("Schéma généré avec succès");
+        } else {
+          throw new Error("L'image n'a pas pu être générée");
+        }
       }
     } catch (error) {
       console.error("Error generating diagram:", error);
-      toast.error("Une erreur s'est produite lors de la génération");
+      toast.error(error instanceof Error ? error.message : "Une erreur s'est produite lors de la génération");
     } finally {
       setIsGenerating(false);
     }
