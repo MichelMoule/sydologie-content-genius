@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -18,6 +17,7 @@ import { QuizAnalysis } from "@/components/quiz/QuizAnalysis";
 import { QuizData } from "@/components/quiz/types";
 import { generateQuizPDF } from "@/components/quiz/QuizPDF";
 import { supabase } from "@/integrations/supabase/client";
+import { ListChecks } from "@/components/ui/list-checks";
 
 const Quiz = () => {
   const { toast } = useToast();
@@ -44,10 +44,9 @@ const Quiz = () => {
         return;
       }
 
-      // Add file validation
       if (values.courseFile) {
         const file = values.courseFile as File;
-        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        if (file.size > 5 * 1024 * 1024) {
           toast({
             variant: "destructive",
             title: "Erreur",
@@ -114,6 +113,18 @@ const Quiz = () => {
           &lt; Outils
         </Link>
         
+        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <ListChecks className="h-8 w-8 text-sydologie-green" />
+            <div>
+              <h1 className="text-3xl font-bold text-sydologie-green mb-2 font-dmsans">QUIIIIIZ?</h1>
+              <p className="text-lg text-gray-700 font-dmsans">
+                Créez des quiz interactifs pour évaluer vos apprenants en quelques minutes
+              </p>
+            </div>
+          </div>
+        </div>
+          
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">QUIIIIIZ?</h1>
