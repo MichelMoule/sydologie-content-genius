@@ -37,9 +37,14 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       });
 
       const data = await response.json();
+      console.log("OpenAI API response:", JSON.stringify(data));
       
-      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      if (!data.choices || data.choices.length === 0) {
         throw new Error('Réponse invalide de l\'API OpenAI: ' + JSON.stringify(data));
+      }
+      
+      if (!data.choices[0].message) {
+        throw new Error('Format de réponse OpenAI invalide: ' + JSON.stringify(data.choices[0]));
       }
       
       const suggestions = data.choices[0].message.content
@@ -58,6 +63,8 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
 
       const prompt = `Schéma pédagogique clair, professionnel, ${formatString}, avec marges, aucun élément ne doit être coupé ou toucher les bords. Inclure des textes explicatifs clairs et lisibles directement sur le schéma pour chaque élément important. Représenter : ${content}`;
 
+      console.log("Sending prompt to OpenAI:", prompt);
+
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
         headers: {
@@ -74,13 +81,23 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       });
 
       const data = await response.json();
+      console.log("Image API response structure:", Object.keys(data));
       
-      if (!data.data || !data.data[0] || !data.data[0].b64_json) {
-        throw new Error('Réponse invalide de l\'API OpenAI: ' + JSON.stringify(data));
+      if (!data.data) {
+        throw new Error('Réponse invalide de l\'API OpenAI (data manquant): ' + JSON.stringify(data));
+      }
+      
+      if (!data.data.length) {
+        throw new Error('Réponse invalide de l\'API OpenAI (tableau data vide): ' + JSON.stringify(data));
+      }
+      
+      const imageData = data.data[0];
+      if (!imageData || !imageData.b64_json) {
+        throw new Error('Réponse invalide de l\'API OpenAI (b64_json manquant): ' + JSON.stringify(data.data));
       }
       
       return new Response(
-        JSON.stringify({ image: data.data[0].b64_json }),
+        JSON.stringify({ image: imageData.b64_json }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
