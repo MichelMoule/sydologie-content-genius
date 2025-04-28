@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import { DiagramForm } from "@/components/diagram/DiagramForm";
 import { supabase } from "@/integrations/supabase/client";
 import { DiagramPreview } from "@/components/diagram/DiagramPreview";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info, ExternalLink, Youtube } from "lucide-react";
 
 const DiagramAI = () => {
   const { toast } = useToast();
@@ -84,7 +86,16 @@ const DiagramAI = () => {
               à partir de vos contenus. Notre IA vous aide à visualiser vos concepts.
             </p>
           </div>
-          
+
+          <Alert className="bg-yellow-50 border-yellow-200">
+            <Info className="h-4 w-4 text-yellow-800" />
+            <AlertDescription className="text-yellow-800">
+              Cette fonctionnalité utilise le modèle de génération d'image GPT d'OpenAI, 
+              qui n'est actuellement pas conforme au RGPD. Nous sommes en cours de démarches 
+              pour obtenir une version conforme à la réglementation européenne.
+            </AlertDescription>
+          </Alert>
+
           <div className="w-full max-w-4xl mx-auto">
             <DiagramForm 
               onSubmit={handleGenerate}
@@ -95,6 +106,30 @@ const DiagramAI = () => {
             {generatedImage && (
               <DiagramPreview image={generatedImage} />
             )}
+          </div>
+
+          <div className="mt-12 space-y-8">
+            <div className="aspect-video w-full max-w-3xl mx-auto">
+              <iframe
+                className="w-full h-full rounded-xl shadow-lg"
+                src="https://www.youtube.com/embed/Y49H6_dL9qs"
+                title="Sydo - Schémas et infographies pédagogiques"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+
+            <div className="text-center">
+              <a 
+                href="https://sydo.fr/nos-outils/schema-et-infographie-pedagogiques"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sydologie-green hover:underline"
+              >
+                En savoir plus sur les créations Sydo
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
