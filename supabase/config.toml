@@ -30,3 +30,6 @@ verify_jwt = false
 
 [functions.generate-diapo]
 verify_jwt = false
+
+[functions.generate-pedagogical-diagram]
+verify_jwt = false

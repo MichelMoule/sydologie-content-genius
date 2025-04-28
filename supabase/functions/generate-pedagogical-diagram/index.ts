@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -72,11 +71,10 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "gpt-image-1",
+          model: "dall-e-3",
           prompt: prompt,
           n: 1,
           size: "1024x1024",
-          response_format: 'b64_json'
         }),
       });
 
@@ -92,14 +90,33 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       }
       
       const imageData = data.data[0];
-      if (!imageData || !imageData.b64_json) {
-        throw new Error('Réponse invalide de l\'API OpenAI (b64_json manquant): ' + JSON.stringify(data.data));
+      if (!imageData || (!imageData.b64_json && !imageData.url)) {
+        throw new Error('Réponse invalide de l\'API OpenAI (image data manquant): ' + JSON.stringify(data.data));
       }
       
-      return new Response(
-        JSON.stringify({ image: imageData.b64_json }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (imageData.b64_json) {
+        return new Response(
+          JSON.stringify({ image: imageData.b64_json }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } 
+      else if (imageData.url) {
+        try {
+          const imageResponse = await fetch(imageData.url);
+          const imageArrayBuffer = await imageResponse.arrayBuffer();
+          const base64Image = btoa(
+            String.fromCharCode(...new Uint8Array(imageArrayBuffer))
+          );
+          
+          return new Response(
+            JSON.stringify({ image: base64Image }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        } catch (error) {
+          console.error("Error fetching and converting image:", error);
+          throw new Error(`Erreur lors de la récupération de l'image: ${error.message}`);
+        }
+      }
     }
 
     throw new Error('Type non valide spécifié');
