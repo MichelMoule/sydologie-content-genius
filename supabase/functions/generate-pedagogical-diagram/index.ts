@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -47,12 +46,11 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } else if (type === 'generate') {
-      // Generate diagram image
       const formatString = format === '1:1' ? 'format carré, 1:1' :
                          format === '16:9' ? 'format horizontal, 16:9' :
                          'format vertical, 9:16';
 
-      const prompt = `Schéma pédagogique clair, professionnel, ${formatString}, avec marges, aucun élément ne doit être coupé ou toucher les bords. Représenter : ${content}`;
+      const prompt = `Schéma pédagogique clair, professionnel, ${formatString}, avec marges, aucun élément ne doit être coupé ou toucher les bords. Inclure des textes explicatifs clairs et lisibles directement sur le schéma pour chaque élément important. Représenter : ${content}`;
 
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
