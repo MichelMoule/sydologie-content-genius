@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ const SuggestionItem = ({ suggestion, index, currentUser, updateSuggestion }: Su
     setIsAdmin(!!data);
   };
 
-  useState(() => {
+  useEffect(() => {
     checkAdminRole();
   }, [currentUser]);
 
