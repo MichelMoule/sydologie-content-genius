@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,20 +6,16 @@ import { SlideSpeakForm } from "@/components/diapoai/SlideSpeakForm";
 import { SlideSpeakPreview } from "@/components/diapoai/SlideSpeakPreview";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon, Gift } from "lucide-react";
-
 const DiapoAI = () => {
   const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-
   const handlePresentationGenerating = (status: boolean) => {
     setIsGenerating(status);
   };
-
   const handlePresentationGenerated = (url: string) => {
     setPresentationUrl(url);
     setIsGenerating(false);
   };
-
   return <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
       
@@ -46,13 +41,9 @@ const DiapoAI = () => {
           <div className="grid gap-8">
             <SlideSpeakForm onPresentationGenerating={handlePresentationGenerating} onPresentationGenerated={handlePresentationGenerated} />
             
-            {!presentationUrl && !isGenerating && (
-              <div className="bg-white p-8 rounded-lg shadow-md text-center">
-                <p className="text-muted-foreground">
-                  Entrez votre contenu et générz votre présentation pour la visualiser ici
-                </p>
-              </div>
-            )}
+            {!presentationUrl && !isGenerating && <div className="bg-white p-8 rounded-lg shadow-md text-center">
+                <p className="text-muted-foreground">Entrez votre contenu et générez votre présentation pour la visualiser ici</p>
+              </div>}
             
             {presentationUrl && <SlideSpeakPreview presentationUrl={presentationUrl} />}
           </div>
@@ -62,5 +53,4 @@ const DiapoAI = () => {
       <Footer />
     </div>;
 };
-
 export default DiapoAI;
