@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -8,22 +7,17 @@ import { PromptForm } from "@/components/prompt/PromptForm";
 import { PromptResult } from "@/components/prompt/PromptResult";
 import { Text } from "lucide-react";
 import type { PromptResult as PromptResultType } from "@/components/prompt/types";
-
 const PromptEngineer = () => {
   const [promptResult, setPromptResult] = useState<PromptResultType | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-
   const handlePromptGenerating = (status: boolean) => {
     setIsGenerating(status);
   };
-
   const handlePromptGenerated = (result: PromptResultType) => {
     setPromptResult(result);
     setIsGenerating(false);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
+  return <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-foreground flex flex-col font-dmsans">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
@@ -43,23 +37,11 @@ const PromptEngineer = () => {
           </div>
 
           <div className="grid gap-8">
-            <PromptForm 
-              onPromptGenerating={handlePromptGenerating}
-              onPromptGenerated={handlePromptGenerated} 
-            />
+            <PromptForm onPromptGenerating={handlePromptGenerating} onPromptGenerated={handlePromptGenerated} />
             
-            {!promptResult && !isGenerating && (
-              <Alert className="bg-muted border border-muted-foreground/20">
-                <Text className="h-5 w-5" />
-                <AlertDescription className="font-dmsans">
-                  Créez votre prompt en remplissant le formulaire ci-dessus. L'IA vous aidera à construire un prompt performant et adapté à vos besoins.
-                </AlertDescription>
-              </Alert>
-            )}
+            {!promptResult && !isGenerating}
             
-            {promptResult && (
-              <PromptResult result={promptResult} />
-            )}
+            {promptResult && <PromptResult result={promptResult} />}
 
             {/* Information supplémentaire */}
             <div className="bg-muted rounded-lg p-6 mt-6">
@@ -90,8 +72,6 @@ const PromptEngineer = () => {
       </div>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PromptEngineer;
