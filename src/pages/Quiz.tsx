@@ -10,14 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Download } from "lucide-react";
+import { Download, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizForm, formSchema } from "@/components/quiz/QuizForm";
 import { QuizAnalysis } from "@/components/quiz/QuizAnalysis";
 import { QuizData } from "@/components/quiz/types";
 import { generateQuizPDF } from "@/components/quiz/QuizPDF";
 import { supabase } from "@/integrations/supabase/client";
-import { ListChecks } from "@/components/ui/list-checks";
 
 const Quiz = () => {
   const { toast } = useToast();
