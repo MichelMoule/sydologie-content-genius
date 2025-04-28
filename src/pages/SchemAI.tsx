@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -10,7 +9,7 @@ import { DiagramPreview } from "@/components/diagram/DiagramPreview";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info, ExternalLink, Youtube } from "lucide-react";
 
-const DiagramAI = () => {
+const SchemAI = () => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -77,7 +76,7 @@ const DiagramAI = () => {
         
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
-            <h1 className="text-6xl font-bold">DiagramAI</h1>
+            <h1 className="text-6xl font-bold">SchemAI</h1>
             <h2 className="text-3xl font-bold leading-tight">
               Générez des schémas pédagogiques avec l'IA
             </h2>
@@ -139,4 +138,4 @@ const DiagramAI = () => {
   );
 };
 
-export default DiagramAI;
+export default SchemAI;
