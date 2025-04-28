@@ -8,6 +8,8 @@ import { SchemAIHeader } from "@/components/schemai/SchemAIHeader";
 import { DiagramForm } from "@/components/diagram/DiagramForm";
 import { DiagramPreview } from "@/components/diagram/DiagramPreview";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 const SchemAI = () => {
   const [diagramUrl, setDiagramUrl] = useState<string | null>(null);
@@ -80,6 +82,14 @@ const SchemAI = () => {
         <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">&lt; Outils</Link>
         
         <div className="max-w-5xl mx-auto space-y-6">
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Avertissement RGPD</AlertTitle>
+            <AlertDescription>
+              Cette fonctionnalité utilise des services externes pour la génération des schémas, et n'est actuellement pas conforme au RGPD. Nous travaillons activement sur ce sujet pour garantir la protection de vos données.
+            </AlertDescription>
+          </Alert>
+
           <SchemAIHeader />
 
           <div className="grid gap-8">
