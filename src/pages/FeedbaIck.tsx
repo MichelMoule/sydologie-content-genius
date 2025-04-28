@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
@@ -11,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Download } from "lucide-react";
+import { Download, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeedbackForm, formSchema } from "@/components/feedback/FeedbackForm";
 import { FeedbackAnalysis } from "@/components/feedback/FeedbackAnalysis";
@@ -107,6 +106,18 @@ const FeedbaIck = () => {
           &lt; Outils
         </Link>
         
+        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <MessageSquare className="h-8 w-8 text-sydologie-green" />
+            <div>
+              <h1 className="text-3xl font-bold text-sydologie-green mb-2 font-dmsans">FEEDBAICK</h1>
+              <p className="text-lg text-gray-700 font-dmsans">
+                Analysez rapidement les retours de vos formations avec l'IA
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col space-y-8 mt-8">
           <div className="text-center space-y-4">
             <h1 className="text-6xl font-bold font-dmsans">FEEDBAICK</h1>
