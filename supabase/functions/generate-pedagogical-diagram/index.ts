@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -102,11 +103,32 @@ Chaque proposition doit être claire et concise, décrivant précisément le sch
       } 
       else if (imageData.url) {
         try {
+          // Fetch the image from the URL
+          console.log("Fetching image from URL:", imageData.url);
           const imageResponse = await fetch(imageData.url);
+          
+          if (!imageResponse.ok) {
+            throw new Error(`Failed to fetch image: ${imageResponse.status} ${imageResponse.statusText}`);
+          }
+          
+          // Get array buffer from response
           const imageArrayBuffer = await imageResponse.arrayBuffer();
-          const base64Image = btoa(
-            String.fromCharCode(...new Uint8Array(imageArrayBuffer))
-          );
+          console.log(`Got image data: ${imageArrayBuffer.byteLength} bytes`);
+          
+          // Use a more memory-efficient approach to convert to base64
+          // Instead of using spread operator which can cause stack overflow
+          const bytes = new Uint8Array(imageArrayBuffer);
+          
+          // Convert to base64 in chunks to avoid stack overflow
+          let binary = '';
+          const chunkSize = 1024;
+          for (let i = 0; i < bytes.byteLength; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.byteLength));
+            binary += String.fromCharCode.apply(null, chunk);
+          }
+          
+          const base64Image = btoa(binary);
+          console.log(`Converted to base64: ${base64Image.length} chars`);
           
           return new Response(
             JSON.stringify({ image: base64Image }),
