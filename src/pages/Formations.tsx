@@ -52,27 +52,25 @@ const Formations = () => {
     queryFn: fetchFormations
   });
 
+  const featuredFormation = useMemo(() => {
+    if (!formations) return null;
+    return formations.find(f => f.name.includes("Booster IA : Automatisez les processus métier"));
+  }, [formations]);
+
   const filteredFormations = useMemo(() => {
     if (!formations) return [];
     
     return formations
-      .sort((a, b) => {
-        // Put Booster IA formation first
-        const isABooster = a.name.includes("Booster IA : Automatisez les processus métier");
-        const isBBooster = b.name.includes("Booster IA : Automatisez les processus métier");
-        
-        if (isABooster) return -1;
-        if (isBBooster) return 1;
-        return 0;
-      })
       .filter(formation => {
         const matchesSearch = formation.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             formation.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesSearch;
+        const isNotFeatured = !formation.name.includes("Booster IA : Automatisez les processus métier");
+        return matchesSearch && isNotFeatured;
       });
   }, [formations, searchQuery]);
 
-  return <div className="min-h-screen bg-background font-dmsans">
+  return (
+    <div className="min-h-screen bg-background font-dmsans">
       <Navbar />
       
       <section className="relative overflow-hidden py-16 lg:py-24">
@@ -110,6 +108,15 @@ const Formations = () => {
         </div>
       </section>
 
+      {!isLoading && featuredFormation && (
+        <section className="container mx-auto px-4 mb-12">
+          <div className="bg-[#72BB8E]/5 rounded-xl p-6 md:p-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-[#72BB8E]">Formation à la une</h2>
+            <FormationCard formation={featuredFormation} onClick={() => setSelectedFormation(featuredFormation)} />
+          </div>
+        </section>
+      )}
+
       <section className="container mx-auto px-4 mb-8">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="w-full md:w-[300px]">
@@ -119,30 +126,44 @@ const Formations = () => {
       </section>
 
       <section className="container mx-auto px-4">
-        {error ? <div className="text-sydologie-red text-center py-8">
+        {error ? (
+          <div className="text-sydologie-red text-center py-8">
             Une erreur est survenue lors du chargement des formations.
-          </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? Array.from({
-          length: 6
-        }).map((_, index) => <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-                  <div className="w-full h-48 bg-muted rounded-t-lg">
-                    <Skeleton className="h-full w-full" />
-                  </div>
-                  <div className="p-6">
-                    <Skeleton className="h-8 w-3/4 mb-4" />
-                    <div className="space-y-3 mb-4">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoading
+              ? Array.from({ length: 6 }).map((_, index) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                    <div className="w-full h-48 bg-muted rounded-t-lg">
+                      <Skeleton className="h-full w-full" />
                     </div>
-                    <Skeleton className="h-10 w-full" />
-                  </div>
-                </Card>) : filteredFormations.map(formation => <FormationCard key={formation.id} formation={formation} onClick={() => setSelectedFormation(formation)} />)}
-          </div>}
+                    <div className="p-6">
+                      <Skeleton className="h-8 w-3/4 mb-4" />
+                      <div className="space-y-3 mb-4">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </Card>
+                ))
+              : filteredFormations.map(formation => (
+                  <FormationCard
+                    key={formation.id}
+                    formation={formation}
+                    onClick={() => setSelectedFormation(formation)}
+                  />
+                ))}
+          </div>
+        )}
         
-        {!isLoading && filteredFormations.length === 0 && <div className="text-center py-8 text-muted-foreground">
+        {!isLoading && filteredFormations.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
             Aucune formation ne correspond à vos critères de recherche.
-          </div>}
+          </div>
+        )}
       </section>
 
       <section className="container mx-auto px-4 py-16 mt-8">
@@ -159,7 +180,8 @@ const Formations = () => {
       </section>
 
       <FormationDialog formation={selectedFormation} open={!!selectedFormation} onOpenChange={open => !open && setSelectedFormation(null)} />
-    </div>;
+    </div>
+  );
 };
 
 export default Formations;
