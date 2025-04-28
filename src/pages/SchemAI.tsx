@@ -66,6 +66,19 @@ const SchemAI = () => {
             )}
             
             {diagramUrl && <DiagramPreview diagramUrl={diagramUrl} />}
+
+            <div className="mt-12 bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Découvrez SchemAI en vidéo</h2>
+              <div className="aspect-video w-full rounded-md overflow-hidden">
+                <iframe
+                  src="https://www.youtube.com/embed/Y49H6_dL9qs"
+                  title="Présentation de SchemAI"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
