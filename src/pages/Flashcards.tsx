@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Rotate3D, Wand2 } from "lucide-react";
+import { Rotate3D, Wand2, FileSearch } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface Flashcard {
@@ -92,86 +92,86 @@ const Flashcards = () => {
           &lt; Outils
         </Link>
         
-        <div className="flex flex-col space-y-8 mt-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-6xl font-bold font-dmsans">FLASHCARDS</h1>
-            <h2 className="text-3xl font-bold leading-tight font-dmsans">
-              Générez des cartes pour mémoriser vos contenus
-            </h2>
-            <p className="text-lg font-dmsans">
-              Utilisez l'IA pour générer des flashcards à partir de vos contenus de formation.
-            </p>
-          </div>
-
-          <div className="w-full max-w-4xl mx-auto space-y-4">
-            <div className="p-4 border rounded-lg space-y-4">
-              <h3 className="text-xl font-semibold mb-4 font-dmsans">Génération par IA</h3>
-              <div className="space-y-2">
-                <label htmlFor="numberOfCards" className="text-sm font-medium font-dmsans">
-                  Nombre de flashcards à générer (1-20)
-                </label>
-                <Input
-                  id="numberOfCards"
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={numberOfCards}
-                  onChange={(e) => setNumberOfCards(Math.min(Math.max(1, parseInt(e.target.value) || 1), 20))}
-                  className="w-full font-dmsans"
-                />
-              </div>
-              <Textarea
-                placeholder="Collez votre contenu ici pour générer automatiquement des flashcards..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="min-h-[150px] font-dmsans"
-              />
-              <Button 
-                onClick={handleGenerateCards} 
-                className="w-full font-dmsans"
-                disabled={isGenerating}
-              >
-                <Wand2 className="mr-2" />
-                {isGenerating ? "Génération en cours..." : "Générer des flashcards"}
-              </Button>
+        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <FileSearch className="h-8 w-8 text-sydologie-green" />
+            <div>
+              <h1 className="text-3xl font-bold text-sydologie-green mb-2 font-dmsans">FLASHCARDS</h1>
+              <p className="text-lg text-gray-700 font-dmsans">
+                Utilisez l'IA pour générer des flashcards à partir de vos contenus de formation
+              </p>
             </div>
-
-            {cards.length > 0 && (
-              <div className="mt-8 space-y-4">
-                <Card className="relative p-6 min-h-[200px] flex items-center justify-center cursor-pointer font-dmsans"
-                      onClick={() => setIsFlipped(!isFlipped)}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsFlipped(!isFlipped);
-                    }}
-                  >
-                    <Rotate3D className="h-4 w-4" />
-                  </Button>
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2 font-dmsans">
-                      Carte {currentCardIndex + 1} sur {cards.length}
-                    </p>
-                    <p className="text-xl font-dmsans">
-                      {isFlipped ? currentCard.back : currentCard.front}
-                    </p>
-                  </div>
-                </Card>
-
-                <div className="flex justify-between">
-                  <Button onClick={handlePrevious} disabled={cards.length <= 1} className="font-dmsans">
-                    Précédent
-                  </Button>
-                  <Button onClick={handleNext} disabled={cards.length <= 1} className="font-dmsans">
-                    Suivant
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
+        </div>
+
+        <div className="w-full max-w-4xl mx-auto space-y-4">
+          <div className="p-4 border rounded-lg space-y-4">
+            <h3 className="text-xl font-semibold mb-4 font-dmsans">Génération par IA</h3>
+            <div className="space-y-2">
+              <label htmlFor="numberOfCards" className="text-sm font-medium font-dmsans">
+                Nombre de flashcards à générer (1-20)
+              </label>
+              <Input
+                id="numberOfCards"
+                type="number"
+                min="1"
+                max="20"
+                value={numberOfCards}
+                onChange={(e) => setNumberOfCards(Math.min(Math.max(1, parseInt(e.target.value) || 1), 20))}
+                className="w-full font-dmsans"
+              />
+            </div>
+            <Textarea
+              placeholder="Collez votre contenu ici pour générer automatiquement des flashcards..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="min-h-[150px] font-dmsans"
+            />
+            <Button 
+              onClick={handleGenerateCards} 
+              className="w-full font-dmsans"
+              disabled={isGenerating}
+            >
+              <Wand2 className="mr-2" />
+              {isGenerating ? "Génération en cours..." : "Générer des flashcards"}
+            </Button>
+          </div>
+
+          {cards.length > 0 && (
+            <div className="mt-8 space-y-4">
+              <Card className="relative p-6 min-h-[200px] flex items-center justify-center cursor-pointer font-dmsans"
+                    onClick={() => setIsFlipped(!isFlipped)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsFlipped(!isFlipped);
+                  }}
+                >
+                  <Rotate3D className="h-4 w-4" />
+                </Button>
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2 font-dmsans">
+                    Carte {currentCardIndex + 1} sur {cards.length}
+                  </p>
+                  <p className="text-xl font-dmsans">
+                    {isFlipped ? currentCard.back : currentCard.front}
+                  </p>
+                </div>
+              </Card>
+
+              <div className="flex justify-between">
+                <Button onClick={handlePrevious} disabled={cards.length <= 1} className="font-dmsans">
+                  Précédent
+                </Button>
+                <Button onClick={handleNext} disabled={cards.length <= 1} className="font-dmsans">
+                  Suivant
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
