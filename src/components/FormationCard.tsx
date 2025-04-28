@@ -59,6 +59,7 @@ const FormationCard = ({ formation, onClick }: FormationCardProps) => {
       {isBoosterIAFormation && (
         <div className="absolute -top-4 left-4 z-10 flex gap-2">
           <Badge className="bg-[#72BB8E] text-white">CPF</Badge>
+          <Badge className="bg-[#F97316] text-white">Certifiante</Badge>
           <Badge variant="outline" className="bg-white">
             Prochaine session : 15 mai - 4 juillet
           </Badge>
