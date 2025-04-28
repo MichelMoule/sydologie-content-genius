@@ -27,15 +27,15 @@ const PromptEngineer = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 flex-grow overflow-auto">
-        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block">&lt; Outils</Link>
+        <Link to="/outils" className="text-sydologie-green hover:underline mb-8 inline-block font-dmsans">&lt; Outils</Link>
         
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-6">
               <Text className="h-8 w-8 text-sydologie-green" />
               <div>
-                <h1 className="text-3xl font-bold text-sydologie-green mb-2">PromptEngineer</h1>
-                <p className="text-lg text-gray-700">
+                <h1 className="text-3xl font-bold text-sydologie-green mb-2 font-dmsans">PromptEngineer</h1>
+                <p className="text-lg text-gray-700 font-dmsans">
                   Créez des prompts optimisés pour vos projets en quelques minutes
                 </p>
               </div>
@@ -51,7 +51,7 @@ const PromptEngineer = () => {
             {!promptResult && !isGenerating && (
               <Alert className="bg-muted border border-muted-foreground/20">
                 <Text className="h-5 w-5" />
-                <AlertDescription>
+                <AlertDescription className="font-dmsans">
                   Créez votre prompt en remplissant le formulaire ci-dessus. L'IA vous aidera à construire un prompt performant et adapté à vos besoins.
                 </AlertDescription>
               </Alert>
@@ -63,11 +63,11 @@ const PromptEngineer = () => {
 
             {/* Information supplémentaire */}
             <div className="bg-muted rounded-lg p-6 mt-6">
-              <h2 className="text-xl font-semibold mb-4">Comment créer un bon prompt ?</h2>
+              <h2 className="text-xl font-semibold mb-4 font-dmsans">Comment créer un bon prompt ?</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-medium mb-2">Les principes fondamentaux</h3>
-                  <ul className="list-disc space-y-2 pl-5">
+                  <h3 className="font-medium mb-2 font-dmsans">Les principes fondamentaux</h3>
+                  <ul className="list-disc space-y-2 pl-5 font-dmsans">
                     <li>Soyez précis et spécifique dans vos demandes</li>
                     <li>Fournissez du contexte pour aider l'IA à comprendre</li>
                     <li>Structurez votre prompt avec des sections claires</li>
@@ -75,8 +75,8 @@ const PromptEngineer = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Adaptez selon votre besoin</h3>
-                  <ul className="list-disc space-y-2 pl-5">
+                  <h3 className="font-medium mb-2 font-dmsans">Adaptez selon votre besoin</h3>
+                  <ul className="list-disc space-y-2 pl-5 font-dmsans">
                     <li>Utilisez un ton adapté à votre audience</li>
                     <li>Ajustez le niveau de détail requis</li>
                     <li>Donnez des exemples si nécessaire</li>
