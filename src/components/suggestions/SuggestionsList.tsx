@@ -27,6 +27,14 @@ type SuggestionsListProps = {
 };
 
 const SuggestionsList = ({ suggestions, setSuggestions, loading, user }: SuggestionsListProps) => {
+  const updateSuggestion = (updatedSuggestion: ToolSuggestion) => {
+    setSuggestions(prev => 
+      prev.map(suggestion => 
+        suggestion.id === updatedSuggestion.id ? updatedSuggestion : suggestion
+      )
+    );
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12 font-dmsans">
