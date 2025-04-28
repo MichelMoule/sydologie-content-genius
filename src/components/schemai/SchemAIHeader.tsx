@@ -1,10 +1,7 @@
-
 import { Link } from "react-router-dom";
 import { ImageIcon, Link as LinkIcon } from "lucide-react";
-
 export const SchemAIHeader = () => {
-  return (
-    <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+  return <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
       <div className="flex items-center gap-3 mb-6">
         <ImageIcon className="h-8 w-8 text-sydologie-green" />
         <div>
@@ -16,16 +13,10 @@ export const SchemAIHeader = () => {
       </div>
       
       <div className="mt-4 flex justify-end">
-        <Link 
-          to="https://sydo.fr/nos-outils/schema-et-infographie-pedagogiques" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="flex items-center text-sydologie-green hover:underline gap-1"
-        >
+        <Link to="https://sydo.fr/nos-outils/schema-et-infographie-pedagogiques" target="_blank" rel="noopener noreferrer" className="flex items-center text-sydologie-green hover:underline gap-1">
           <LinkIcon className="h-4 w-4" />
-          <span>Découvrir Sydo</span>
+          <span>Découvrir les schémas Sydo</span>
         </Link>
       </div>
-    </div>
-  );
+    </div>;
 };
