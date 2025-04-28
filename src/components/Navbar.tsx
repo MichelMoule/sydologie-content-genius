@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { User, LogOut, Settings, Menu, X, Discord } from "lucide-react";
+import { User, LogOut, Settings, Menu, X, MessageCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -80,7 +80,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               className="hover:text-white transition-colors flex items-center"
             >
-              <Discord className="h-6 w-6" />
+              <MessageCircle className="h-6 w-6" />
             </a>
           </div>
 
@@ -148,7 +148,7 @@ const Navbar = () => {
               className="flex items-center py-2 px-3 text-xl hover:bg-white/10 rounded-lg"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Discord className="mr-2 h-5 w-5" />
+              <MessageCircle className="mr-2 h-5 w-5" />
               Discord
             </a>
 
